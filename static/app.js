@@ -1,17 +1,26 @@
 const state = {
   session: null,
   selected: new Set(),
-  config: { llm_configured: false },
+  config: { llm_configured: false, audio_ready: false },
+  recorder: null,
+  recorderStream: null,
+  recorderChunks: [],
+  currentAudio: null,
+  currentAudioUrl: null,
 };
 
 const $ = (id) => document.getElementById(id);
 
 async function api(url, options = {}) {
-  const response = await fetch(url, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-    ...options,
-  });
-  const data = response.headers.get("content-type")?.includes("application/json") ? await response.json() : await response.text();
+  const isFormData = options.body instanceof FormData;
+  const headers = isFormData
+    ? { ...(options.headers || {}) }
+    : { "Content-Type": "application/json", ...(options.headers || {}) };
+  const response = await fetch(url, { headers, ...options });
+  const contentType = response.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
   if (!response.ok) {
     const message = data?.detail || data?.error || (typeof data === "string" ? data : `HTTP ${response.status}`);
     const error = new Error(message);
@@ -21,6 +30,24 @@ async function api(url, options = {}) {
   return data;
 }
 
+async function audioApi(url, options = {}) {
+  const response = await fetch(url, {
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    ...options,
+  });
+  if (!response.ok) {
+    let message = `HTTP ${response.status}`;
+    try {
+      const data = await response.json();
+      message = data?.detail || data?.error || message;
+    } catch (_) {
+      // Keep the HTTP status when the speech service did not return JSON.
+    }
+    throw new Error(message);
+  }
+  return response.blob();
+}
+
 function selectedTurnIds() {
   return [...state.selected];
 }
@@ -28,7 +55,7 @@ function selectedTurnIds() {
 function setSession(session) {
   state.session = session;
   if (session?.id) localStorage.setItem("ccm-current-session", session.id);
-  const existing = new Set(session.turns.map((t) => t.id));
+  const existing = new Set(session.turns.map((turn) => turn.id));
   state.selected = new Set([...state.selected].filter((id) => existing.has(id)));
   render();
 }
@@ -41,6 +68,8 @@ function render() {
   $("send").disabled = !ready || !state.config.llm_configured;
   $("export-json").disabled = !ready;
   $("export-md").disabled = !ready;
+  $("mic").disabled = !ready || !state.config.audio_ready || !navigator.mediaDevices?.getUserMedia;
+  $("speak-replies").disabled = !state.config.audio_ready;
   const hasSelection = selectedTurnIds().length > 0;
   $("add-annotation").disabled = !hasSelection;
   $("add-derived").disabled = !hasSelection;
@@ -73,26 +102,28 @@ function renderConversation() {
 
 function renderWorkbench() {
   const ids = selectedTurnIds();
-  $("selection-summary").textContent = ids.length ? `${ids.length} turno${ids.length === 1 ? "" : "s"} seleccionado${ids.length === 1 ? "" : "s"}.` : "No hay turnos seleccionados.";
+  $("selection-summary").textContent = ids.length
+    ? `${ids.length} turno${ids.length === 1 ? "" : "s"} seleccionado${ids.length === 1 ? "" : "s"}.`
+    : "No hay turnos seleccionados.";
   if (!state.session) return;
 
-  $("annotations").innerHTML = state.session.annotations.map((a) => `
-    <div class="card"><strong>${escapeHtml(a.label)}</strong><div>${escapeHtml(a.note || "—")}</div><div class="refs">${a.source_turn_ids.map(escapeHtml).join(", ")}</div></div>
+  $("annotations").innerHTML = state.session.annotations.map((annotation) => `
+    <div class="card"><strong>${escapeHtml(annotation.label)}</strong><div>${escapeHtml(annotation.note || "—")}</div><div class="refs">${annotation.source_turn_ids.map(escapeHtml).join(", ")}</div></div>
   `).join("");
 
-  $("derived-items").innerHTML = state.session.derived_items.map((i) => `
-    <div class="card" data-derived-id="${i.id}">
-      <strong>${escapeHtml(i.kind)} · ${escapeHtml(i.status)}</strong>
-      <textarea class="derived-edit-text" rows="3">${escapeHtml(i.text)}</textarea>
+  $("derived-items").innerHTML = state.session.derived_items.map((item) => `
+    <div class="card" data-derived-id="${item.id}">
+      <strong>${escapeHtml(item.kind)} · ${escapeHtml(item.status)}</strong>
+      <textarea class="derived-edit-text" rows="3">${escapeHtml(item.text)}</textarea>
       <select class="derived-edit-status">
-        ${["provisional", "reviewed", "disputed", "withdrawn"].map((s) => `<option value="${s}" ${s === i.status ? "selected" : ""}>${s}</option>`).join("")}
+        ${["provisional", "reviewed", "disputed", "withdrawn"].map((status) => `<option value="${status}" ${status === item.status ? "selected" : ""}>${status}</option>`).join("")}
       </select>
-      <input class="derived-edit-note" value="${escapeHtml(i.note || "")}" placeholder="Nota" />
+      <input class="derived-edit-note" value="${escapeHtml(item.note || "")}" placeholder="Nota" />
       <div class="row-actions">
         <button class="save-derived">Guardar cambios</button>
         <button class="delete-derived">Eliminar</button>
       </div>
-      <div class="refs">fuentes: ${i.source_turn_ids.map(escapeHtml).join(", ")}</div>
+      <div class="refs">fuentes: ${item.source_turn_ids.map(escapeHtml).join(", ")}</div>
     </div>
   `).join("");
 
@@ -121,15 +152,15 @@ function renderWorkbench() {
   });
 
   const relationOptions = [
-    ...state.session.turns.map((t) => ({ id: t.id, label: `${t.role === "user" ? "turno participante" : "turno sistema"}: ${short(t.text)}` })),
-    ...state.session.derived_items.map((i) => ({ id: i.id, label: `${i.kind}: ${short(i.text)}` })),
+    ...state.session.turns.map((turn) => ({ id: turn.id, label: `${turn.role === "user" ? "turno participante" : "turno sistema"}: ${short(turn.text)}` })),
+    ...state.session.derived_items.map((item) => ({ id: item.id, label: `${item.kind}: ${short(item.text)}` })),
   ];
   [$("relation-source"), $("relation-target")].forEach((select) => {
-    select.innerHTML = relationOptions.map((o) => `<option value="${o.id}">${escapeHtml(o.label)}</option>`).join("");
+    select.innerHTML = relationOptions.map((option) => `<option value="${option.id}">${escapeHtml(option.label)}</option>`).join("");
   });
   $("add-relation").disabled = relationOptions.length < 2;
-  $("relations").innerHTML = state.session.relations.map((r) => `
-    <div class="card"><strong>${escapeHtml(r.relation_type)}</strong><div>${escapeHtml(r.source_id)} → ${escapeHtml(r.target_id)}</div><div>${escapeHtml(r.note || "")}</div></div>
+  $("relations").innerHTML = state.session.relations.map((relation) => `
+    <div class="card"><strong>${escapeHtml(relation.relation_type)}</strong><div>${escapeHtml(relation.source_id)} → ${escapeHtml(relation.target_id)}</div><div>${escapeHtml(relation.note || "")}</div></div>
   `).join("");
 }
 
@@ -160,10 +191,114 @@ async function mutate(url, options) {
   }
 }
 
+function stopPlayback() {
+  if (state.currentAudio) {
+    state.currentAudio.pause();
+    state.currentAudio.src = "";
+    state.currentAudio = null;
+  }
+  if (state.currentAudioUrl) {
+    URL.revokeObjectURL(state.currentAudioUrl);
+    state.currentAudioUrl = null;
+  }
+}
+
+async function speak(text) {
+  if (!state.config.audio_ready || !$("speak-replies").checked || !text?.trim()) return;
+  stopPlayback();
+  $("send-status").textContent = "Preparando voz…";
+  try {
+    const blob = await audioApi("/api/audio/speech", {
+      method: "POST",
+      body: JSON.stringify({ text }),
+    });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    state.currentAudio = audio;
+    state.currentAudioUrl = url;
+    audio.addEventListener("ended", stopPlayback, { once: true });
+    await audio.play();
+  } catch (error) {
+    $("send-status").textContent = `No se pudo reproducir la voz: ${error.message}`;
+  } finally {
+    if (!state.currentAudio) $("send-status").textContent = "";
+  }
+}
+
+function preferredRecordingType() {
+  const candidates = ["audio/webm;codecs=opus", "audio/ogg;codecs=opus", "audio/webm", "audio/ogg"];
+  return candidates.find((type) => window.MediaRecorder?.isTypeSupported?.(type)) || "";
+}
+
+function recordingFilename(type) {
+  return type.includes("ogg") ? "speech.ogg" : "speech.webm";
+}
+
+async function transcribeRecording(blob) {
+  $("transcription-status").textContent = "Transcribiendo…";
+  const form = new FormData();
+  form.append("file", blob, recordingFilename(blob.type));
+  try {
+    const result = await api("/api/audio/transcribe", { method: "POST", body: form });
+    $("message").value = result.text;
+    $("transcription-status").textContent = "Transcripción automática: revisala o corregila antes de enviar.";
+    $("message").focus();
+  } catch (error) {
+    $("transcription-status").textContent = `No se pudo transcribir: ${error.message}`;
+  }
+}
+
+async function startRecording() {
+  if (!navigator.mediaDevices?.getUserMedia || state.recorder) return;
+  stopPlayback();
+  $("transcription-status").textContent = "Escuchando…";
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mimeType = preferredRecordingType();
+    const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    state.recorder = recorder;
+    state.recorderStream = stream;
+    state.recorderChunks = [];
+    recorder.addEventListener("dataavailable", (event) => {
+      if (event.data.size > 0) state.recorderChunks.push(event.data);
+    });
+    recorder.addEventListener("stop", async () => {
+      const type = recorder.mimeType || state.recorderChunks[0]?.type || "audio/webm";
+      const blob = new Blob(state.recorderChunks, { type });
+      state.recorder = null;
+      state.recorderChunks = [];
+      state.recorderStream?.getTracks().forEach((track) => track.stop());
+      state.recorderStream = null;
+      $("mic").textContent = "Hablar";
+      render();
+      if (blob.size > 0) await transcribeRecording(blob);
+    }, { once: true });
+    recorder.start();
+    $("mic").textContent = "Terminar";
+  } catch (error) {
+    state.recorder = null;
+    state.recorderStream = null;
+    $("transcription-status").textContent = `No se pudo usar el micrófono: ${error.message}`;
+  }
+}
+
+function stopRecording() {
+  if (state.recorder?.state === "recording") state.recorder.stop();
+}
+
+$("mic").addEventListener("click", async () => {
+  if (state.recorder) stopRecording();
+  else await startRecording();
+});
+
 $("new-session").addEventListener("click", async () => {
+  stopPlayback();
   state.selected.clear();
-  setSession(await api("/api/sessions", { method: "POST", body: JSON.stringify({}) }));
+  const session = await api("/api/sessions", { method: "POST", body: JSON.stringify({}) });
+  setSession(session);
   $("message").focus();
+  const opening = session.turns.find((turn) => turn.role === "assistant")?.text;
+  if (opening) void speak(opening);
 });
 
 $("composer").addEventListener("submit", async (event) => {
@@ -171,17 +306,23 @@ $("composer").addEventListener("submit", async (event) => {
   if (!state.session || !state.config.llm_configured) return;
   const text = $("message").value;
   if (!text.trim()) return;
+  stopPlayback();
   $("message").value = "";
+  $("transcription-status").textContent = "";
   $("send").disabled = true;
   $("send-status").textContent = "Pensando…";
   try {
-    const result = await api(`/api/sessions/${state.session.id}/turns`, { method: "POST", body: JSON.stringify({ text }) });
+    const result = await api(`/api/sessions/${state.session.id}/turns`, {
+      method: "POST",
+      body: JSON.stringify({ text }),
+    });
     setSession(result.session);
+    $("send-status").textContent = "";
+    void speak(result.assistant_turn.text);
   } catch (error) {
     if (error.payload?.session) setSession(error.payload.session);
     $("send-status").textContent = `No se pudo generar respuesta: ${error.message}`;
   } finally {
-    $("send-status").textContent = "";
     $("send").disabled = !state.config.llm_configured;
     $("message").focus();
   }
@@ -256,15 +397,30 @@ $("export-md").addEventListener("click", () => window.location.assign(`/api/sess
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x === tab));
-    document.querySelectorAll(".tab-panel").forEach((x) => x.classList.toggle("active", x.id === `tab-${tab.dataset.tab}`));
+    document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
+    document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.toggle("active", panel.id === `tab-${tab.dataset.tab}`));
   });
 });
 
 async function init() {
   state.config = await api("/api/config");
-  $("model-status").textContent = state.config.llm_configured ? `modelo: ${state.config.model}` : "modelo sin configurar";
-  $("model-status").title = state.config.llm_configured ? "El modelo está configurado" : "Definí LLM_MODEL y LLM_API_KEY u OPENAI_API_KEY";
+  if (state.config.llm_configured) {
+    const provider = state.config.llm?.provider ? `${state.config.llm.provider} · ` : "";
+    $("model-status").textContent = `${provider}${state.config.model}`;
+    $("model-status").title = `perfil local: ${state.config.llm?.profile || "auto"}`;
+  } else {
+    $("model-status").textContent = "modelo local no disponible";
+    $("model-status").title = state.config.llm?.reason || "Iniciá Ollama u oMLX y descargá el modelo configurado.";
+  }
+
+  if (state.config.audio_ready) {
+    $("speech-status").textContent = "voz local";
+    $("speech-status").title = `STT: ${state.config.audio?.stt_model}\nTTS: ${state.config.audio?.tts_model}`;
+  } else {
+    $("speech-status").textContent = "voz local no disponible";
+    $("speech-status").title = state.config.audio?.reason || "Iniciá MLX-Audio en el puerto configurado.";
+  }
+
   const previous = localStorage.getItem("ccm-current-session");
   if (previous) {
     try {
@@ -276,6 +432,11 @@ async function init() {
   }
   render();
 }
+
+window.addEventListener("beforeunload", () => {
+  stopPlayback();
+  state.recorderStream?.getTracks().forEach((track) => track.stop());
+});
 
 init().catch((error) => {
   $("model-status").textContent = "error de inicio";
