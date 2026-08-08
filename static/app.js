@@ -88,7 +88,10 @@ function renderWorkbench() {
         ${["provisional", "reviewed", "disputed", "withdrawn"].map((s) => `<option value="${s}" ${s === i.status ? "selected" : ""}>${s}</option>`).join("")}
       </select>
       <input class="derived-edit-note" value="${escapeHtml(i.note || "")}" placeholder="Nota" />
-      <button class="save-derived">Guardar cambios</button>
+      <div class="row-actions">
+        <button class="save-derived">Guardar cambios</button>
+        <button class="delete-derived">Eliminar</button>
+      </div>
       <div class="refs">fuentes: ${i.source_turn_ids.map(escapeHtml).join(", ")}</div>
     </div>
   `).join("");
@@ -105,6 +108,15 @@ function renderWorkbench() {
           note: card.querySelector(".derived-edit-note").value,
         }),
       });
+    });
+  });
+
+  document.querySelectorAll(".delete-derived").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const card = button.closest(".card");
+      const id = card.dataset.derivedId;
+      if (!confirm("¿Eliminar este material derivado provisional? La transcripción no se modifica.")) return;
+      await mutate(`/api/sessions/${state.session.id}/derived/${id}`, { method: "DELETE" });
     });
   });
 
