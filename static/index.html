@@ -14,6 +14,7 @@
     </div>
     <div class="toolbar">
       <span id="model-status" class="status">modelo…</span>
+      <span id="speech-status" class="status">voz…</span>
       <button id="new-session">Nueva conversación</button>
       <button id="export-json" disabled>JSON</button>
       <button id="export-md" disabled>Markdown</button>
@@ -25,13 +26,18 @@
       <div class="panel-heading">
         <div>
           <h1>Conversación</h1>
-          <p>Contá por donde quieras. Seleccioná turnos para trabajarlos a la derecha.</p>
+          <p>Contá por donde quieras. Podés escribir o hablar. La transcripción de voz se puede revisar antes de enviarla.</p>
         </div>
       </div>
       <div id="conversation" class="conversation" aria-live="polite"></div>
       <form id="composer" class="composer">
         <textarea id="message" rows="3" placeholder="Escribí acá…" disabled></textarea>
+        <div id="transcription-status" class="muted" aria-live="polite"></div>
         <div class="composer-row">
+          <div class="voice-actions">
+            <button id="mic" type="button" disabled>Hablar</button>
+            <label class="inline-control"><input id="speak-replies" type="checkbox" checked /> escuchar respuestas</label>
+          </div>
           <span id="send-status" class="muted"></span>
           <button id="send" type="submit" disabled>Enviar</button>
         </div>
