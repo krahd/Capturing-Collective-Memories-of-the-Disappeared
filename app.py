@@ -146,6 +146,17 @@ def update_derived(session_id: str, item_id: str, body: DerivedUpdate) -> dict[s
     return item.__dict__
 
 
+@app.delete("/api/sessions/{session_id}/derived/{item_id}")
+def delete_derived(session_id: str, item_id: str) -> dict[str, Any]:
+    session = get_session_or_404(session_id)
+    try:
+        item = session.delete_derived_item(item_id)
+    except ValueError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    store.save(session)
+    return {"deleted": item.id}
+
+
 @app.post("/api/sessions/{session_id}/relations")
 def add_relation(session_id: str, body: RelationCreate) -> dict[str, Any]:
     session = get_session_or_404(session_id)
