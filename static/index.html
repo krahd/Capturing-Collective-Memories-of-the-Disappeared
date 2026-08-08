@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es-UY">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Memorias — prototipo conversacional</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <strong>Memorias</strong>
+      <span class="muted">prototipo descartable</span>
+    </div>
+    <div class="toolbar">
+      <span id="model-status" class="status">modelo…</span>
+      <button id="new-session">Nueva conversación</button>
+      <button id="export-json" disabled>JSON</button>
+      <button id="export-md" disabled>Markdown</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="conversation-panel">
+      <div class="panel-heading">
+        <div>
+          <h1>Conversación</h1>
+          <p>Contá por donde quieras. Seleccioná turnos para trabajarlos a la derecha.</p>
+        </div>
+      </div>
+      <div id="conversation" class="conversation" aria-live="polite"></div>
+      <form id="composer" class="composer">
+        <textarea id="message" rows="3" placeholder="Escribí acá…" disabled></textarea>
+        <div class="composer-row">
+          <span id="send-status" class="muted"></span>
+          <button id="send" type="submit" disabled>Enviar</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="workbench-panel">
+      <div class="panel-heading">
+        <div>
+          <h1>Mesa de trabajo</h1>
+          <p id="selection-summary">No hay turnos seleccionados.</p>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="annotate">Anotar</button>
+        <button class="tab" data-tab="derived">Material derivado</button>
+        <button class="tab" data-tab="relations">Relaciones</button>
+      </div>
+
+      <section class="tab-panel active" id="tab-annotate">
+        <label>Estado / etiqueta
+          <select id="annotation-label">
+            <option value="uncertain">incierto</option>
+            <option value="hearsay">de oídas</option>
+            <option value="correction">corrección</option>
+            <option value="withdrawn">retirado</option>
+            <option value="significant">significativo</option>
+            <option value="other">otro</option>
+          </select>
+        </label>
+        <label>Nota
+          <textarea id="annotation-note" rows="4" placeholder="Nota de trabajo…"></textarea>
+        </label>
+        <button id="add-annotation" disabled>Agregar anotación</button>
+        <div id="annotations" class="cards"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-derived">
+        <div class="row-actions">
+          <button id="auto-extract" disabled>Extraer provisionalmente con el modelo</button>
+        </div>
+        <label>Tipo
+          <select id="derived-kind">
+            <option value="entity">persona / entidad</option>
+            <option value="event">evento</option>
+            <option value="place">lugar</option>
+            <option value="time">tiempo</option>
+            <option value="theme">tema</option>
+            <option value="uncertainty">incertidumbre</option>
+            <option value="hearsay">de oídas</option>
+            <option value="correction">corrección</option>
+            <option value="relation">relación</option>
+            <option value="other">otro</option>
+          </select>
+        </label>
+        <label>Texto provisional
+          <textarea id="derived-text" rows="4" placeholder="Descripción breve, sin convertirla en hecho…"></textarea>
+        </label>
+        <button id="add-derived" disabled>Agregar</button>
+        <div id="derived-items" class="cards"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-relations">
+        <p class="muted">Relacioná material derivado con otro elemento. Por ejemplo, una corrección con aquello que modifica.</p>
+        <label>Origen
+          <select id="relation-source"></select>
+        </label>
+        <label>Relación
+          <select id="relation-type">
+            <option value="corrects">corrige</option>
+            <option value="qualifies">califica</option>
+            <option value="contradicts">contradice</option>
+            <option value="refers-to">se refiere a</option>
+            <option value="related-to">relacionado con</option>
+          </select>
+        </label>
+        <label>Destino
+          <select id="relation-target"></select>
+        </label>
+        <label>Nota
+          <input id="relation-note" type="text" />
+        </label>
+        <button id="add-relation" disabled>Agregar relación</button>
+        <div id="relations" class="cards"></div>
+      </section>
+    </aside>
+  </main>
+
+  <template id="turn-template">
+    <article class="turn">
+      <label class="turn-select"><input type="checkbox" /><span></span></label>
+      <div class="turn-body">
+        <div class="turn-meta"></div>
+        <div class="turn-text"></div>
+      </div>
+    </article>
+  </template>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
