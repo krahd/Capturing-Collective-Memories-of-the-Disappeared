@@ -119,6 +119,19 @@ class Session:
         self.touch()
         return item
 
+    def delete_derived_item(self, item_id: str) -> DerivedItem:
+        item = self._find_item(item_id)
+        self.derived_items = [candidate for candidate in self.derived_items if candidate.id != item_id]
+        # Relations are working structures, not source records. Remove dangling
+        # relations when a provisional derived item is deliberately discarded.
+        self.relations = [
+            relation
+            for relation in self.relations
+            if relation.source_id != item_id and relation.target_id != item_id
+        ]
+        self.touch()
+        return item
+
     def add_relation(self, relation_type: str, source_id: str, target_id: str, note: str = "") -> Relation:
         known = {t.id for t in self.turns} | {a.id for a in self.annotations} | {i.id for i in self.derived_items}
         if source_id not in known or target_id not in known:
