@@ -3,18 +3,21 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from model import LLMClient, opening_message
+from audio import SpeechService
+from local_model import LLMClient
+from model import opening_message
 from state import SessionStore, export_markdown
 
 ROOT = Path(__file__).resolve().parent
 store = SessionStore(ROOT / "data" / "sessions")
 llm = LLMClient()
-app = FastAPI(title="Collective Memories Prototype", version="0.1.0")
+speech = SpeechService()
+app = FastAPI(title="Collective Memories Prototype", version="0.2.0")
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 
 
@@ -54,14 +57,65 @@ class RelationCreate(BaseModel):
     note: str = ""
 
 
+class SpeechCreate(BaseModel):
+    text: str = Field(min_length=1)
+
+
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(ROOT / "static" / "index.html")
 
 
 @app.get("/api/config")
-def config() -> dict[str, Any]:
-    return {"llm_configured": llm.configured, "model": llm.model if llm.configured else None}
+async def config() -> dict[str, Any]:
+    llm_status = await llm.status()
+    audio_status = await speech.health()
+    return {
+        "llm_configured": bool(llm_status.get("ready")),
+        "llm": llm_status,
+        "model": llm_status.get("model"),
+        "audio_configured": speech.configured,
+        "audio_ready": bool(audio_status.get("ready")),
+        "audio": {
+            **audio_status,
+            "stt_model": speech.config.stt_model,
+            "tts_model": speech.config.tts_model,
+            "tts_voice": speech.config.tts_voice,
+        },
+    }
+
+
+@app.post("/api/audio/transcribe")
+async def transcribe_audio(file: UploadFile = File(...)) -> dict[str, Any]:
+    audio = await file.read()
+    if len(audio) > 25 * 1024 * 1024:
+        raise HTTPException(413, "El fragmento de audio es demasiado grande")
+    try:
+        text = await speech.transcribe(
+            audio,
+            filename=file.filename or "speech.webm",
+            content_type=file.content_type or "application/octet-stream",
+        )
+    except Exception as exc:
+        raise HTTPException(503, str(exc)) from exc
+    return {
+        "text": text,
+        "model": speech.config.stt_model,
+        "provisional": True,
+    }
+
+
+@app.post("/api/audio/speech")
+async def synthesise_speech(body: SpeechCreate) -> Response:
+    try:
+        audio, content_type = await speech.synthesise(body.text)
+    except Exception as exc:
+        raise HTTPException(503, str(exc)) from exc
+    return Response(
+        content=audio,
+        media_type=content_type,
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @app.get("/api/sessions")
@@ -96,7 +150,9 @@ async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
     store.save(session)
 
     try:
-        assistant_text = await llm.chat([{"role": t.role, "text": t.text} for t in session.turns])
+        assistant_text = await llm.chat(
+            [{"role": turn.role, "text": turn.text} for turn in session.turns]
+        )
     except Exception as exc:
         # Preserve the participant turn even if generation fails.
         return JSONResponse(
@@ -110,7 +166,11 @@ async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
 
     assistant_turn = session.add_turn("assistant", assistant_text)
     store.save(session)
-    return {"user_turn": user_turn.__dict__, "assistant_turn": assistant_turn.__dict__, "session": session.to_dict()}
+    return {
+        "user_turn": user_turn.__dict__,
+        "assistant_turn": assistant_turn.__dict__,
+        "session": session.to_dict(),
+    }
 
 
 @app.post("/api/sessions/{session_id}/annotations")
@@ -128,7 +188,9 @@ def add_annotation(session_id: str, body: AnnotationCreate) -> dict[str, Any]:
 def add_derived(session_id: str, body: DerivedCreate) -> dict[str, Any]:
     session = get_session_or_404(session_id)
     try:
-        item = session.add_derived_item(body.kind, body.text, body.source_turn_ids, body.note)
+        item = session.add_derived_item(
+            body.kind, body.text, body.source_turn_ids, body.note
+        )
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     store.save(session)
@@ -136,10 +198,14 @@ def add_derived(session_id: str, body: DerivedCreate) -> dict[str, Any]:
 
 
 @app.patch("/api/sessions/{session_id}/derived/{item_id}")
-def update_derived(session_id: str, item_id: str, body: DerivedUpdate) -> dict[str, Any]:
+def update_derived(
+    session_id: str, item_id: str, body: DerivedUpdate
+) -> dict[str, Any]:
     session = get_session_or_404(session_id)
     try:
-        item = session.update_derived_item(item_id, **body.model_dump(exclude_none=True))
+        item = session.update_derived_item(
+            item_id, **body.model_dump(exclude_none=True)
+        )
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     store.save(session)
@@ -161,7 +227,9 @@ def delete_derived(session_id: str, item_id: str) -> dict[str, Any]:
 def add_relation(session_id: str, body: RelationCreate) -> dict[str, Any]:
     session = get_session_or_404(session_id)
     try:
-        rel = session.add_relation(body.relation_type, body.source_id, body.target_id, body.note)
+        rel = session.add_relation(
+            body.relation_type, body.source_id, body.target_id, body.note
+        )
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     store.save(session)
@@ -171,24 +239,28 @@ def add_relation(session_id: str, body: RelationCreate) -> dict[str, Any]:
 @app.post("/api/sessions/{session_id}/extract")
 async def extract(session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     session = get_session_or_404(session_id)
-    source_turn_ids = payload.get("source_turn_ids") or [t.id for t in session.turns if t.role == "user"]
-    known = {t.id: t for t in session.turns}
+    source_turn_ids = payload.get("source_turn_ids") or [
+        turn.id for turn in session.turns if turn.role == "user"
+    ]
+    known = {turn.id: turn for turn in session.turns}
     try:
-        turns = [known[x] for x in source_turn_ids]
+        turns = [known[turn_id] for turn_id in source_turn_ids]
     except KeyError as exc:
         raise HTTPException(400, f"Turno fuente desconocido: {exc.args[0]}") from exc
     try:
-        extracted = await llm.extract([t.__dict__ for t in turns])
+        extracted = await llm.extract([turn.__dict__ for turn in turns])
     except Exception as exc:
         raise HTTPException(503, str(exc)) from exc
 
     created = []
     for raw in extracted:
-        refs = [x for x in raw.get("source_turn_ids", []) if x in known]
+        refs = [turn_id for turn_id in raw.get("source_turn_ids", []) if turn_id in known]
         if not refs or not raw.get("text"):
             continue
         try:
-            item = session.add_derived_item(raw.get("kind", "other"), raw["text"], refs)
+            item = session.add_derived_item(
+                raw.get("kind", "other"), raw["text"], refs
+            )
             created.append(item.__dict__)
         except ValueError:
             continue
