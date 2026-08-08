@@ -60,6 +60,22 @@ def test_derived_item_is_editable_without_changing_transcript(tmp_path):
     assert "posterior" in item.text
 
 
+def test_deleting_derived_item_preserves_transcript_and_removes_dangling_relations(tmp_path):
+    session = SessionStore(tmp_path).create()
+    turn = session.add_turn("user", "Primero dije La Teja, pero después me corregí.")
+    item = session.add_derived_item("place", "La Teja", [turn.id])
+    other = session.add_derived_item("correction", "Corrección posterior", [turn.id])
+    session.add_relation("corrects", other.id, item.id)
+    original = turn.text
+
+    deleted = session.delete_derived_item(item.id)
+
+    assert deleted.id == item.id
+    assert all(candidate.id != item.id for candidate in session.derived_items)
+    assert session.relations == []
+    assert session.turns[0].text == original
+
+
 def test_markdown_export_contains_exact_turn_ids_and_provisional_warning(tmp_path):
     session = SessionStore(tmp_path).create("Memoria")
     turn = session.add_turn("user", "No sé si fue martes o miércoles.")
