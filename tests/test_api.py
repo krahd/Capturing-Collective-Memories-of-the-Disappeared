@@ -40,8 +40,15 @@ def test_two_view_api_flow(tmp_path, monkeypatch):
         json={"source_turn_ids": [user_turn["id"]], "kind": "time", "text": "Alrededor de 1978, según recuerdo incierto"},
     )
     assert derived.status_code == 200
+    derived_id = derived.json()["id"]
 
     md = client.get(f"/api/sessions/{session_id}/export.md")
     assert md.status_code == 200
     assert user_turn["id"] in md.text
     assert "No me acuerdo bien, creo que era por el 78." in md.text
+
+    deleted = client.delete(f"/api/sessions/{session_id}/derived/{derived_id}")
+    assert deleted.status_code == 200
+    after = client.get(f"/api/sessions/{session_id}").json()
+    assert after["derived_items"] == []
+    assert any(t["id"] == user_turn["id"] and t["text"] == "No me acuerdo bien, creo que era por el 78." for t in after["turns"])
