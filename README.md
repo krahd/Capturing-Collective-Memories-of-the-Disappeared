@@ -1,59 +1,75 @@
 # Capturing Collective Memories of the Disappeared
 
-This repository contains the new implementation of the research project *Capturing Collective Memories of the Disappeared with Artificial Intelligence*.
+This repository is the dedicated implementation space for **Capturing Collective Memories of the Disappeared with Artificial Intelligence**, a research project on conversational interfaces for eliciting and preserving dispersed, partial and situated memories connected to Uruguay's detained-disappeared.
 
-The project is distinct from `desaparecidos.uy`, which is a separate computational memorial artwork.
+It is a different project from `desaparecidos.uy`, the computational memorial artwork.
 
-## Current phase: disposable interaction prototype
+## Current phase
 
-The immediate goal is to build a first working prototype that demonstrates two things:
+The current code is intentionally a **disposable interaction prototype**. Its purpose is to make the conversational interaction and the apparatus for working on a conversation concrete enough to test. The prototype is not the architecture of the eventual research system and does not need to survive into it.
 
-1. a conversational interaction that feels natural enough to support memory elicitation;
-2. an apparatus for working on the conversation itself after and during capture.
+The current goal is defined in `GOAL.md`; interaction rationale and non-goals are in `PROTOTYPE.md`.
 
-This prototype is intentionally disposable. Its code does not need to survive into the final research system and should not constrain the later architecture.
+## What the prototype does
 
-The prototype exists to expose interaction requirements, failure modes, useful conversational operations, and research questions. Once it works and has been tested, the project will design the proper architecture and implement the actual system from first principles.
+It has two coordinated views:
 
-## Prototype priorities
+- **Conversation**: participant-led text conversation, driven by a compact policy for natural Uruguayan Spanish, non-leading follow-up, digression, uncertainty, correction and refusal.
+- **Mesa de trabajo**: select transcript turns, annotate them, create or model-extract provisional entities/events/themes, edit derived material, connect corrections/qualifications, and export the whole session.
 
-### Natural conversational interaction
+The raw transcript is never silently rewritten when derived material changes.
 
-The prototype should support a fluid, participant-led conversation rather than a questionnaire disguised as chat. It should be able to:
+## Run locally
 
-- sustain context across turns;
-- ask relevant, non-leading follow-up questions;
-- recognise uncertainty, hesitation, correction, digression, and partial recollection;
-- avoid treating remembered material as established fact;
-- allow the participant to redirect the conversation;
-- make conversational repair possible;
-- preserve the participant's wording rather than silently normalising it into an authoritative narrative.
+Python 3.11+ is recommended.
 
-Voice interaction may be added if it materially improves the prototype, but the first objective is interaction quality rather than infrastructure completeness.
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
 
-### Apparatus for working on the conversation
+Configure an OpenAI-compatible Chat Completions endpoint:
 
-The prototype should expose the conversation as material that can be inspected and worked on rather than only stored as a transcript. Candidate operations include:
+```bash
+export LLM_MODEL='YOUR_MODEL'
+export LLM_API_KEY='YOUR_API_KEY'
+# optional; defaults to https://api.openai.com/v1/chat/completions
+export LLM_API_URL='https://api.openai.com/v1/chat/completions'
+```
 
-- turn-by-turn transcript inspection;
-- marking passages as uncertain, hearsay, corrected, withdrawn, or especially significant;
-- linking later corrections to earlier turns;
-- extracting provisional people, places, dates, events, relationships, and themes while preserving links to source turns;
-- comparing contradictory or alternative recollections without resolving them automatically;
-- participant review and correction of extracted material;
-- annotations and researcher notes kept distinct from participant speech;
-- export of both raw conversation and derived structures with provenance intact.
+`OPENAI_API_KEY` can be used instead of `LLM_API_KEY`.
 
-These are prototype hypotheses, not final architectural commitments.
+Start:
 
-## Development rule
+```bash
+bash start.sh
+```
 
-Optimise this phase for speed of learning, observability, and interaction quality. Avoid premature production architecture, migration guarantees, long-term storage design, or abstraction intended only for future reuse.
+Or, with the environment already active:
 
-The eventual production system will be designed after the prototype has been exercised and its requirements are better understood.
+```bash
+uvicorn app:app --reload --port 8765
+```
 
-## Research boundary
+Open `http://127.0.0.1:8765`.
 
-The system is intended to support the elicitation and preservation of situated collective memories concerning Uruguay's disappeared. It is not an adjudication system and should not convert recollection, hearsay, uncertainty, contradiction, or silence into a single authoritative historical account.
+Without a configured model, the workbench and session creation still run, but sending conversational turns and automatic extraction are disabled. This is deliberate: the prototype does not fake conversational quality with canned replies.
 
-Initial development and testing should use synthetic, researcher-authored, or already-public material until appropriate governance and human-subjects procedures are in place for participant deployment.
+## Tests
+
+```bash
+pytest -q
+```
+
+The deterministic tests cover transcript preservation, provenance, correction relations, editable derived material, exports, and core interaction-policy invariants. CI runs the same suite on every push and pull request.
+
+Naturalness cannot be established by unit tests. `docs/MANUAL-TESTS.md` contains researcher-authored Uruguayan-Spanish scenarios and a scoring rubric. Record actual model behaviour in `docs/TEST-REPORT.md` before claiming the interaction is validated.
+
+## Data
+
+Prototype sessions are written as local JSON under `data/sessions/` and ignored by git. Do not use real participant or sensitive testimony data in this disposable prototype without the appropriate research/governance route.
+
+## Design boundary
+
+The prototype deliberately does **not** solve authentication, final consent, production storage, security, archival schema, long-term stewardship, deployment, institutional governance, or final provider selection. Those decisions belong to the next phase, after interaction testing has produced evidence about what the system actually needs.
