@@ -33,12 +33,42 @@ Configure an OpenAI-compatible Chat Completions endpoint:
 
 ```bash
 export LLM_MODEL='YOUR_MODEL'
-export LLM_API_KEY='YOUR_API_KEY'
 # optional; defaults to https://api.openai.com/v1/chat/completions
 export LLM_API_URL='https://api.openai.com/v1/chat/completions'
+# required by api.openai.com; optional for unauthenticated local servers
+export LLM_API_KEY='YOUR_API_KEY'
 ```
 
 `OPENAI_API_KEY` can be used instead of `LLM_API_KEY`.
+
+For local evaluation, the prototype deliberately remains provider-neutral. Point
+`LLM_API_URL` directly at any already-running OpenAI-compatible local server;
+no Modelito dependency is required by this disposable code. Common examples are:
+
+```bash
+# Ollama OpenAI-compatible endpoint
+export LLM_API_URL='http://127.0.0.1:11434/v1/chat/completions'
+export LLM_MODEL='YOUR_OLLAMA_MODEL'
+unset LLM_API_KEY OPENAI_API_KEY
+
+# BaseRT commonly serves on 8080
+# export LLM_API_URL='http://127.0.0.1:8080/v1/chat/completions'
+
+# vllm-mlx and oMLX commonly serve on 8000
+# export LLM_API_URL='http://127.0.0.1:8000/v1/chat/completions'
+```
+
+Modelito is useful alongside the prototype for local-runtime readiness and
+workload benchmarking, while the prototype itself continues to exercise the
+same OpenAI-compatible boundary that the eventual system may replace:
+
+```bash
+modelito-doctor --provider auto --model 'YOUR_MODEL'
+modelito-benchmark-local --provider ollama --model 'YOUR_MODEL' --json
+```
+
+Use provider-specific model identifiers when comparing runtimes; an Ollama tag
+should not be assumed to be identical to an MLX/Hugging Face model identifier.
 
 Start:
 
@@ -62,7 +92,7 @@ Without a configured model, the workbench and session creation still run, but se
 pytest -q
 ```
 
-The deterministic tests cover transcript preservation, provenance, correction relations, editable derived material, exports, and core interaction-policy invariants. CI runs the same suite on every push and pull request.
+The deterministic tests cover transcript preservation, provenance, correction relations, editable derived material, exports, core interaction-policy invariants, and local unauthenticated model configuration. CI runs the same suite on every push and pull request.
 
 Naturalness cannot be established by unit tests. `docs/MANUAL-TESTS.md` contains researcher-authored Uruguayan-Spanish scenarios and a scoring rubric. Record actual model behaviour in `docs/TEST-REPORT.md` before claiming the interaction is validated.
 
