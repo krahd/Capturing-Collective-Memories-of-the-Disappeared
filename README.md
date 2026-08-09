@@ -8,18 +8,30 @@ It is a different project from `desaparecidos.uy`, the computational memorial ar
 
 The current code is intentionally a **disposable interaction prototype**. Its purpose is to make the conversational interaction and the apparatus for working on a conversation concrete enough to test. The prototype is not the architecture of the eventual research system and does not need to survive into it.
 
-The current goal is defined in `GOAL.md`; interaction rationale and non-goals are in `PROTOTYPE.md`.
+The current goal is defined in `GOAL.md`; interaction rationale and non-goals are in `PROTOTYPE.md`. The local-model/speech configuration and current runtime research are in `docs/LOCAL-STACK.md`.
 
 ## What the prototype does
 
 It has two coordinated views:
 
-- **Conversation**: participant-led text conversation, driven by a compact policy for natural Uruguayan Spanish, non-leading follow-up, digression, uncertainty, correction and refusal.
+- **Conversation**: participant-led conversation driven by a compact policy for natural Uruguayan Spanish, non-leading follow-up, digression, uncertainty, correction and refusal. Input can be typed or locally transcribed from the microphone; ASR text remains editable before it is sent.
 - **Mesa de trabajo**: select transcript turns, annotate them, create or model-extract provisional entities/events/themes, edit derived material, connect corrections/qualifications, and export the whole session.
 
 The raw transcript is never silently rewritten when derived material changes.
 
-## Run locally
+## Local-first model stack
+
+The prototype no longer requires a hosted LLM API. Text generation is selected through the development branch of `modelito`:
+
+- `portable`: Ollama;
+- `mac-performance`: BaseRT → oMLX → Ollama on Apple Silicon;
+- selection order can be overridden after machine-specific benchmarking.
+
+Speech uses a separate local **MLX-Audio** OpenAI-compatible service. The initial low-latency defaults are Qwen3-ASR 0.6B 8-bit and Qwen3-TTS 0.6B Base 8-bit. These are testing baselines, not final model choices.
+
+See `docs/LOCAL-STACK.md` before installing models. It records the upstream evidence, alternatives and M1 Max evaluation protocol.
+
+## Install the prototype
 
 Python 3.11+ is recommended.
 
@@ -29,18 +41,42 @@ python3 -m venv .venv
 pip install -r requirements.txt
 ```
 
-Configure an OpenAI-compatible Chat Completions endpoint:
+The requirements currently install Modelito directly from its `feature/local-runtime-profiles` branch so the prototype can exercise the new local-only selection API before that work is merged/released.
+
+### Portable text path
+
+With current Ollama installed:
 
 ```bash
-export LLM_MODEL='YOUR_MODEL'
-export LLM_API_KEY='YOUR_API_KEY'
-# optional; defaults to https://api.openai.com/v1/chat/completions
-export LLM_API_URL='https://api.openai.com/v1/chat/completions'
+ollama run gemma4:12b-mlx
+export MODELITO_LOCAL_PROFILE='portable'
 ```
 
-`OPENAI_API_KEY` can be used instead of `LLM_API_KEY`.
+### Mac-performance path
 
-Start:
+Run one or more supported local servers, then use:
+
+```bash
+export MODELITO_LOCAL_PROFILE='mac-performance'
+# optional benchmark-derived override:
+# export MODELITO_LOCAL_PREFER='omlx,basert,ollama'
+```
+
+Provider-specific model/environment variables are documented in `docs/LOCAL-STACK.md`.
+
+### Speech
+
+Run MLX-Audio separately, by default on port 8001, and configure if needed:
+
+```bash
+export AUDIO_BASE_URL='http://127.0.0.1:8001/v1'
+export STT_MODEL='mlx-community/Qwen3-ASR-0.6B-8bit'
+export TTS_MODEL='mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit'
+```
+
+The app checks the local services at runtime. It does not download models automatically.
+
+## Start
 
 ```bash
 bash start.sh
@@ -54,7 +90,7 @@ uvicorn app:app --reload --port 8765
 
 Open `http://127.0.0.1:8765`.
 
-Without a configured model, the workbench and session creation still run, but sending conversational turns and automatic extraction are disabled. This is deliberate: the prototype does not fake conversational quality with canned replies.
+If no local LLM is ready, the workbench and session creation still run but conversational sending and automatic extraction are disabled. If MLX-Audio is not ready, text conversation still works but microphone/TTS controls are disabled. The prototype does not fake model readiness with canned replies.
 
 ## Tests
 
@@ -62,7 +98,7 @@ Without a configured model, the workbench and session creation still run, but se
 pytest -q
 ```
 
-The deterministic tests cover transcript preservation, provenance, correction relations, editable derived material, exports, and core interaction-policy invariants. CI runs the same suite on every push and pull request.
+CI also compiles the Python modules and syntax-checks the browser JavaScript. Deterministic tests cover transcript preservation, provenance, correction relations, editable/deletable derived material, exports, interaction-policy invariants, local-runtime configuration, speech request shapes and end-to-end API operations without downloading models.
 
 Naturalness cannot be established by unit tests. `docs/MANUAL-TESTS.md` contains researcher-authored Uruguayan-Spanish scenarios and a scoring rubric. Record actual model behaviour in `docs/TEST-REPORT.md` before claiming the interaction is validated.
 
@@ -72,4 +108,4 @@ Prototype sessions are written as local JSON under `data/sessions/` and ignored 
 
 ## Design boundary
 
-The prototype deliberately does **not** solve authentication, final consent, production storage, security, archival schema, long-term stewardship, deployment, institutional governance, or final provider selection. Those decisions belong to the next phase, after interaction testing has produced evidence about what the system actually needs.
+The prototype deliberately does **not** solve authentication, final consent, production storage, security, archival schema, long-term stewardship, deployment, institutional governance or final provider selection. Those decisions belong to the next phase, after interaction testing has produced evidence about what the system actually needs.
