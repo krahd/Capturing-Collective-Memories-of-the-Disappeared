@@ -5,13 +5,18 @@ import asyncio
 from datetime import datetime, timezone
 import json
 from pathlib import Path
+import sys
 import time
 from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from model import LLMClient
 
 
-ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SCENARIOS = ROOT / "evaluation" / "scenarios.json"
 DEFAULT_RESULTS_DIR = ROOT / "evaluation" / "results"
 
