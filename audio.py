@@ -8,7 +8,7 @@ import httpx
 
 
 DEFAULT_STT_MODEL = "mlx-community/Qwen3-ASR-0.6B-8bit"
-DEFAULT_TTS_MODEL = "mlx-community/Qwen3-TTS-12Hz-1.7B-Base-8bit"
+DEFAULT_TTS_MODEL = "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit"
 
 
 @dataclass(frozen=True)
@@ -75,9 +75,6 @@ class SpeechService:
 
         data: dict[str, str] = {"model": self.config.stt_model}
         if language:
-            # OpenAI-compatible transcription servers commonly accept a
-            # language hint. MLX-Audio ignores unsupported optional fields
-            # rather than requiring this prototype to know model internals.
             data["language"] = language
 
         files = {"file": (filename, audio, content_type or "application/octet-stream")}
