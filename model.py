@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 
@@ -70,11 +71,22 @@ class LLMClient:
 
     @property
     def configured(self) -> bool:
-        return bool(self.api_key and self.model)
+        if not self.model:
+            return False
+        hostname = (urlparse(self.api_url).hostname or "").lower()
+        if hostname == "api.openai.com" and not self.api_key:
+            return False
+        return True
+
+    def _require_configuration(self) -> None:
+        if self.configured:
+            return
+        if not self.model:
+            raise RuntimeError("Falta LLM_MODEL")
+        raise RuntimeError("Falta LLM_API_KEY/OPENAI_API_KEY para api.openai.com")
 
     async def chat(self, turns: list[dict[str, str]]) -> str:
-        if not self.configured:
-            raise RuntimeError("Faltan LLM_API_KEY/OPENAI_API_KEY y LLM_MODEL")
+        self._require_configuration()
         payload = {
             "model": self.model,
             "messages": conversation_messages(turns),
@@ -83,8 +95,7 @@ class LLMClient:
         return _message_content(data).strip()
 
     async def extract(self, turns: list[dict[str, str]]) -> list[dict[str, Any]]:
-        if not self.configured:
-            raise RuntimeError("Faltan LLM_API_KEY/OPENAI_API_KEY y LLM_MODEL")
+        self._require_configuration()
         transcript = "\n".join(f"{t['id']} | {t['role']} | {t['text']}" for t in turns)
         payload = {
             "model": self.model,
@@ -101,11 +112,19 @@ class LLMClient:
             raise RuntimeError("La extracción no devolvió una lista de elementos")
         return items
 
-    async def _post(self, payload: dict[str, Any], allow_response_format_fallback: bool = False) -> dict[str, Any]:
-        headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
+    async def _post(
+        self, payload: dict[str, Any], allow_response_format_fallback: bool = False
+    ) -> dict[str, Any]:
+        headers = {"Content-Type": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             response = await client.post(self.api_url, headers=headers, json=payload)
-            if response.status_code == 400 and allow_response_format_fallback and "response_format" in payload:
+            if (
+                response.status_code == 400
+                and allow_response_format_fallback
+                and "response_format" in payload
+            ):
                 fallback = dict(payload)
                 fallback.pop("response_format", None)
                 response = await client.post(self.api_url, headers=headers, json=fallback)
