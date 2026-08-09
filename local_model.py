@@ -10,8 +10,13 @@ from modelito import local_client
 from model import EXTRACTION_POLICY, URUGUAYAN_CONVERSATION_POLICY
 
 
-DEFAULT_OLLAMA_MODEL = "qwen3.5:9b-mlx"
-DEFAULT_OMLX_MODEL = "mlx-community/Qwen3.5-9B-MLX-4bit"
+# These are prototype defaults, chosen to make one reasonably capable model
+# available through each local runtime. They are deliberately overridable: the
+# important evaluation is natural Uruguayan Spanish and conversational latency
+# on the target machine, not allegiance to a model family.
+DEFAULT_BASERT_MODEL = "google/gemma-4-12B-it"
+DEFAULT_OMLX_MODEL = "mlx-community/gemma-4-12B-4bit"
+DEFAULT_OLLAMA_MODEL = "gemma4:12b-mlx"
 
 
 def conversation_messages(turns: list[dict[str, str]]) -> list[dict[str, str]]:
@@ -27,28 +32,52 @@ def _parse_prefer(value: str | None) -> list[str] | None:
     return values or None
 
 
+def _optional_mapping(**values: str | None) -> dict[str, str] | None:
+    result = {key: value for key, value in values.items() if value}
+    return result or None
+
+
 class LLMClient:
-    """Local conversational client using Modelito runtime selection."""
+    """Local conversational client using Modelito runtime selection.
+
+    On Apple Silicon the current Modelito ``mac-performance`` profile tries
+    BaseRT, then oMLX, then Ollama. ``portable`` uses Ollama. Provider-specific
+    model IDs and endpoints remain separate because they are not interchangeable.
+    """
 
     def __init__(self) -> None:
         self.profile = os.getenv("MODELITO_LOCAL_PROFILE", "auto")
         self.prefer = _parse_prefer(os.getenv("MODELITO_LOCAL_PREFER"))
         self.probe_timeout = float(os.getenv("MODELITO_PROBE_TIMEOUT", "1.5"))
         self.models = {
-            "ollama": os.getenv("LOCAL_MODEL_OLLAMA", DEFAULT_OLLAMA_MODEL),
+            "basert": os.getenv("LOCAL_MODEL_BASERT", DEFAULT_BASERT_MODEL),
             "omlx": os.getenv("LOCAL_MODEL_OMLX", DEFAULT_OMLX_MODEL),
+            "ollama": os.getenv("LOCAL_MODEL_OLLAMA", DEFAULT_OLLAMA_MODEL),
         }
+        self.base_urls = _optional_mapping(
+            basert=os.getenv("BASERT_BASE_URL"),
+            omlx=os.getenv("OMLX_BASE_URL"),
+        )
+        self.api_keys = _optional_mapping(
+            basert=os.getenv("BASERT_API_KEY"),
+            omlx=os.getenv("OMLX_API_KEY"),
+        )
         self._client = None
         self._provider: str | None = None
         self._model: str | None = None
 
     @property
     def configured(self) -> bool:
-        return bool(self.models.get("ollama") or self.models.get("omlx"))
+        return any(bool(value) for value in self.models.values())
 
     @property
     def model(self) -> str | None:
-        return self._model or self.models.get("omlx") or self.models.get("ollama")
+        return (
+            self._model
+            or self.models.get("basert")
+            or self.models.get("omlx")
+            or self.models.get("ollama")
+        )
 
     @property
     def provider(self) -> str | None:
@@ -67,11 +96,15 @@ class LLMClient:
             profile=self.profile,
             models=self.models,
             prefer=self.prefer,
+            base_urls=self.base_urls,
+            api_keys=self.api_keys,
             probe_timeout=self.probe_timeout,
         )
         self._client = client
         provider_name = client.provider_name.lower()
-        if "omlx" in provider_name:
+        if "basert" in provider_name:
+            self._provider = "basert"
+        elif "omlx" in provider_name:
             self._provider = "omlx"
         elif "ollama" in provider_name:
             self._provider = "ollama"
