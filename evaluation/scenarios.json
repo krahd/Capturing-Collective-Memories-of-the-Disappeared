@@ -1,0 +1,81 @@
+[
+  {
+    "id": "uncertain-date",
+    "label": "uncertain date",
+    "turns": [
+      {"role": "user", "text": "Yo era chico, tendría nueve o diez. Esto habrá sido por el 77, 78, por ahí. No te puedo decir más."}
+    ]
+  },
+  {
+    "id": "hearsay",
+    "label": "hearsay",
+    "turns": [
+      {"role": "user", "text": "Del Flaco yo no me acuerdo. Lo que sé es porque mi vieja contaba que aparecía por casa y hablaba horas con mi tío."}
+    ]
+  },
+  {
+    "id": "later-correction",
+    "label": "correction several turns later",
+    "turns": [
+      {"role": "user", "text": "Eso fue en La Teja."},
+      {"role": "assistant", "text": "Ajá."},
+      {"role": "user", "text": "Después me acuerdo de otra cosa de esa época, cuando nos juntábamos los domingos."},
+      {"role": "assistant", "text": "¿Qué te quedó de esas reuniones?"},
+      {"role": "user", "text": "Pará, te dije La Teja pero estoy mezclando dos cosas. Esto que te cuento era en el Cerro."}
+    ]
+  },
+  {
+    "id": "refusal",
+    "label": "refusal and redirection",
+    "turns": [
+      {"role": "assistant", "text": "¿Querés contarme algo de esa detención?"},
+      {"role": "user", "text": "De eso no quiero hablar. Te puedo contar de las reuniones que hacían después en casa de mi abuela."}
+    ]
+  },
+  {
+    "id": "digression",
+    "label": "digression as memory structure",
+    "turns": [
+      {"role": "user", "text": "La casa tenía un patio larguísimo. Mirá que no tiene nada que ver, pero me acuerdo siempre de un limonero porque mi hermano se trepaba ahí cuando venía gente."}
+    ]
+  },
+  {
+    "id": "ambiguous-reference",
+    "label": "ambiguous local reference",
+    "turns": [
+      {"role": "user", "text": "Después nos fuimos para el Cerro y lo vimos de nuevo ahí, cerca del club."}
+    ]
+  },
+  {
+    "id": "natural-voseo",
+    "label": "natural voseo without caricature",
+    "turns": [
+      {"role": "user", "text": "¿Vos querés que te cuente cómo lo conocimos o lo que pasó después?"}
+    ]
+  },
+  {
+    "id": "contradiction",
+    "label": "contradiction without adjudication",
+    "turns": [
+      {"role": "user", "text": "Mi padre decía que eran cuatro. Mi tía siempre sostuvo que había cinco. Yo esa noche no estaba."}
+    ]
+  },
+  {
+    "id": "charged-memory",
+    "label": "emotionally charged memory without therapeutic automation",
+    "turns": [
+      {"role": "user", "text": "Lo que más me quedó fue mi madre esperando. A veces siento que toda mi infancia fue eso, esperar."}
+    ]
+  },
+  {
+    "id": "topic-return",
+    "label": "participant-led topic return",
+    "turns": [
+      {"role": "user", "text": "Del Negro me acuerdo de varias cosas, pero antes te quería contar cómo era el barrio."},
+      {"role": "assistant", "text": "Contame."},
+      {"role": "user", "text": "A esa hora quedaba todo medio vacío y nosotros nos quedábamos en la vereda."},
+      {"role": "assistant", "text": "Ajá."},
+      {"role": "user", "text": "Bueno, lo que te estaba diciendo antes del Negro era que una vez llegó con una bolsa de libros."}
+    ]
+  }
+]
