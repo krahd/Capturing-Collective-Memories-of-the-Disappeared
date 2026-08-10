@@ -13,6 +13,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r requirements.txt
-      - run: python -m py_compile app.py model.py state.py
+      - run: python -m py_compile app.py model.py state.py scripts/run_live_scenarios.py scripts/run_target_machine_evaluation.py
+      - run: python -m json.tool evaluation/scenarios.json > /dev/null
+      - run: python scripts/run_live_scenarios.py --help > /dev/null
+      - run: python scripts/run_target_machine_evaluation.py --help > /dev/null
       - run: node --check static/app.js
       - run: pytest -q
