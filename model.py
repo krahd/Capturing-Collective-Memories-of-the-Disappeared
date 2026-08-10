@@ -60,6 +60,20 @@ def opening_message() -> str:
     return "Podés empezar por donde quieras. ¿Qué te gustaría contar?"
 
 
+def _optional_float(name: str) -> float | None:
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return None
+    return float(raw)
+
+
+def _optional_int(name: str) -> int | None:
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return None
+    return int(raw)
+
+
 class LLMClient:
     """Tiny OpenAI-compatible client for a disposable prototype."""
 
@@ -68,6 +82,9 @@ class LLMClient:
         self.api_key = os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
         self.model = os.getenv("LLM_MODEL")
         self.timeout = float(os.getenv("LLM_TIMEOUT", "60"))
+        self.temperature = _optional_float("LLM_TEMPERATURE")
+        self.top_p = _optional_float("LLM_TOP_P")
+        self.max_tokens = _optional_int("LLM_MAX_TOKENS")
 
     @property
     def configured(self) -> bool:
@@ -85,11 +102,22 @@ class LLMClient:
             raise RuntimeError("Falta LLM_MODEL")
         raise RuntimeError("Falta LLM_API_KEY/OPENAI_API_KEY para api.openai.com")
 
+    def _generation_options(self) -> dict[str, Any]:
+        options: dict[str, Any] = {}
+        if self.temperature is not None:
+            options["temperature"] = self.temperature
+        if self.top_p is not None:
+            options["top_p"] = self.top_p
+        if self.max_tokens is not None:
+            options["max_tokens"] = self.max_tokens
+        return options
+
     async def chat(self, turns: list[dict[str, str]]) -> str:
         self._require_configuration()
         payload = {
             "model": self.model,
             "messages": conversation_messages(turns),
+            **self._generation_options(),
         }
         data = await self._post(payload)
         return _message_content(data).strip()
@@ -104,6 +132,7 @@ class LLMClient:
                 {"role": "user", "content": transcript},
             ],
             "response_format": {"type": "json_object"},
+            **self._generation_options(),
         }
         data = await self._post(payload, allow_response_format_fallback=True)
         parsed = _parse_json_object(_message_content(data))
