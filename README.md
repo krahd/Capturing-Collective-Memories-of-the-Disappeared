@@ -70,7 +70,36 @@ modelito-benchmark-local --provider ollama --model 'YOUR_MODEL' --json
 Use provider-specific model identifiers when comparing runtimes; an Ollama tag
 should not be assumed to be identical to an MLX/Hugging Face model identifier.
 
-Start:
+### Target-machine evidence bundle
+
+With the current `krahd/modelito` installed and one local server already
+running, the complete non-participant evaluation can be recorded with one
+command. For example:
+
+```bash
+python scripts/run_target_machine_evaluation.py \
+  --provider ollama \
+  --model 'YOUR_EXACT_MODEL_ID' \
+  --chat-url 'http://127.0.0.1:11434/v1/chat/completions' \
+  --repetitions 3
+```
+
+For BaseRT, vllm-mlx, oMLX, MLX-LM or another OpenAI-compatible endpoint, pass
+the corresponding provider/model and, when necessary,
+`--benchmark-base-url 'http://127.0.0.1:PORT/v1'`.
+
+The command creates one ignored timestamped directory under
+`evaluation/results/` containing:
+
+- a manifest with machine/configuration metadata;
+- raw responses to all ten researcher-authored scenarios;
+- the independent Modelito conversational runtime benchmark.
+
+It does **not** score conversational quality automatically. Manual review remains
+separate and follows `docs/MANUAL-TESTS.md`. Full protocol and comparison rules
+are in `evaluation/RUNBOOK.md`.
+
+Start the web prototype:
 
 ```bash
 bash start.sh
@@ -92,13 +121,13 @@ Without a configured model, the workbench and session creation still run, but se
 pytest -q
 ```
 
-The deterministic tests cover transcript preservation, provenance, correction relations, editable derived material, exports, core interaction-policy invariants, and local unauthenticated model configuration. CI runs the same suite on every push and pull request.
+The deterministic tests cover transcript preservation, provenance, correction relations, editable derived material, exports, core interaction-policy invariants, local unauthenticated model configuration, and the target-machine evaluation tooling. CI runs the same suite on every push and pull request.
 
 Naturalness cannot be established by unit tests. `docs/MANUAL-TESTS.md` contains researcher-authored Uruguayan-Spanish scenarios and a scoring rubric. Record actual model behaviour in `docs/TEST-REPORT.md` before claiming the interaction is validated.
 
 ## Data
 
-Prototype sessions are written as local JSON under `data/sessions/` and ignored by git. Do not use real participant or sensitive testimony data in this disposable prototype without the appropriate research/governance route.
+Prototype sessions are written as local JSON under `data/sessions/` and ignored by git. Local evaluation evidence is written under `evaluation/results/` and ignored by git. Do not use real participant or sensitive testimony data in this disposable prototype without the appropriate research/governance route.
 
 ## Design boundary
 
