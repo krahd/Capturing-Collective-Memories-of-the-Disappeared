@@ -16,22 +16,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESULTS_DIR = ROOT / "evaluation" / "results"
 
 
-def _run_text(command: list[str]) -> dict[str, Any]:
-    result = subprocess.run(
-        command,
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    return {
-        "command": command,
-        "returncode": result.returncode,
-        "stdout": result.stdout.strip(),
-        "stderr": result.stderr.strip(),
-    }
-
-
 def _safe_system_text(command: list[str]) -> str | None:
     if shutil.which(command[0]) is None:
         return None
@@ -54,6 +38,13 @@ def machine_metadata() -> dict[str, Any]:
             ["sysctl", "-n", "machdep.cpu.brand_string"]
         ),
         "memory_bytes": _safe_system_text(["sysctl", "-n", "hw.memsize"]),
+        "modelito_version": _safe_system_text(
+            [
+                sys.executable,
+                "-c",
+                "import modelito; print(modelito.__version__)",
+            ]
+        ),
     }
 
 
@@ -91,6 +82,39 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repetitions", type=int, default=3)
     parser.add_argument("--pid", type=int, default=None)
     parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.7,
+        help="Conversation-scenario temperature; default matches Qwen3-Instruct-2507 guidance",
+    )
+    parser.add_argument(
+        "--top-p",
+        type=float,
+        default=0.8,
+        help="Conversation-scenario top_p; default matches Qwen3-Instruct-2507 guidance",
+    )
+    parser.add_argument(
+        "--max-tokens",
+        type=int,
+        default=256,
+        help="Maximum response tokens for each conversational scenario",
+    )
+    parser.add_argument(
+        "--runtime-version",
+        default=None,
+        help="Optional exact local inference runtime version/build",
+    )
+    parser.add_argument(
+        "--precision",
+        default=None,
+        help="Optional quantisation/precision description, e.g. Q4_K_M or MLX 4-bit",
+    )
+    parser.add_argument(
+        "--server-command",
+        default=None,
+        help="Optional server launch command/flags, recorded verbatim for reproducibility",
+    )
+    parser.add_argument(
         "--label",
         default=None,
         help="Optional human-readable configuration label for the evidence bundle",
@@ -103,6 +127,8 @@ def main() -> int:
     args = build_parser().parse_args()
     if args.repetitions < 1:
         raise SystemExit("--repetitions must be at least 1")
+    if args.max_tokens < 1:
+        raise SystemExit("--max-tokens must be at least 1")
 
     benchmark_cli = shutil.which("modelito-benchmark-local")
     if benchmark_cli is None:
@@ -122,6 +148,9 @@ def main() -> int:
     scenario_env = os.environ.copy()
     scenario_env["LLM_API_URL"] = args.chat_url
     scenario_env["LLM_MODEL"] = args.model
+    scenario_env["LLM_TEMPERATURE"] = str(args.temperature)
+    scenario_env["LLM_TOP_P"] = str(args.top_p)
+    scenario_env["LLM_MAX_TOKENS"] = str(args.max_tokens)
     if args.api_key:
         scenario_env["LLM_API_KEY"] = args.api_key
     else:
@@ -177,9 +206,22 @@ def main() -> int:
         "model": args.model,
         "chat_url": args.chat_url,
         "benchmark_base_url": args.benchmark_base_url,
+        "runtime_version": args.runtime_version,
+        "precision": args.precision,
+        "server_command": args.server_command,
         "repetitions": args.repetitions,
         "pid": args.pid,
         "machine": machine_metadata(),
+        "conversation_generation": {
+            "temperature": args.temperature,
+            "top_p": args.top_p,
+            "max_tokens": args.max_tokens,
+            "note": (
+                "Only portable OpenAI-compatible sampling fields are fixed here. "
+                "Runtime-specific defaults such as top_k must be recorded separately "
+                "when they cannot be standardised across servers."
+            ),
+        },
         "conversation": {
             "output": str(scenario_output),
             "returncode": scenario_result.returncode,
@@ -196,8 +238,9 @@ def main() -> int:
             "stdout": benchmark_result.stdout.strip(),
             "stderr": benchmark_result.stderr.strip(),
             "note": (
-                "Runtime measurements are independent of conversational scoring; follow "
-                "the caveats embedded by Modelito in the benchmark JSON."
+                "Modelito fixes benchmark temperature to 0 for timing comparability. "
+                "These runtime measurements are independent of conversational scoring; "
+                "follow the caveats embedded by Modelito in the benchmark JSON."
             ),
         },
     }
