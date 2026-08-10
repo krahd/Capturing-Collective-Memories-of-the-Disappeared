@@ -1,4 +1,9 @@
-from model import LLMClient, URUGUAYAN_CONVERSATION_POLICY, conversation_messages, opening_message
+from model import (
+    LLMClient,
+    URUGUAYAN_CONVERSATION_POLICY,
+    conversation_messages,
+    opening_message,
+)
 
 
 def test_opening_is_open_and_uses_uruguayan_voseo():
@@ -53,3 +58,27 @@ def test_default_openai_endpoint_still_requires_api_key(monkeypatch):
     client = LLMClient()
 
     assert client.configured is False
+
+
+def test_generation_options_are_absent_by_default(monkeypatch):
+    monkeypatch.delenv("LLM_TEMPERATURE", raising=False)
+    monkeypatch.delenv("LLM_TOP_P", raising=False)
+    monkeypatch.delenv("LLM_MAX_TOKENS", raising=False)
+
+    client = LLMClient()
+
+    assert client._generation_options() == {}
+
+
+def test_generation_options_can_be_fixed_for_comparable_runs(monkeypatch):
+    monkeypatch.setenv("LLM_TEMPERATURE", "0.7")
+    monkeypatch.setenv("LLM_TOP_P", "0.8")
+    monkeypatch.setenv("LLM_MAX_TOKENS", "256")
+
+    client = LLMClient()
+
+    assert client._generation_options() == {
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+    }
