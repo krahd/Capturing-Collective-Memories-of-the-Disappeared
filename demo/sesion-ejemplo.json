@@ -1,0 +1,697 @@
+{
+  "id": "session_d2a76b5369",
+  "title": "Conversación de ejemplo (grabada)",
+  "created_at": "2026-08-12T21:31:49.017930+00:00",
+  "updated_at": "2026-08-12T21:31:49.018826+00:00",
+  "turns": [
+    {
+      "id": "turn_b6b9535afd",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras. ¿Qué te gustaría contar?",
+      "created_at": "2026-08-12T21:31:49.018401+00:00"
+    },
+    {
+      "id": "turn_eb30517e99",
+      "role": "user",
+      "text": "Yo era chico, tendría nueve o diez. Esto habrá sido por el 77, 78, por ahí. No te puedo decir más.",
+      "created_at": "2026-08-12T21:31:49.018421+00:00"
+    },
+    {
+      "id": "turn_bf33ac9da8",
+      "role": "assistant",
+      "text": "¿Qué te hace ubicarlo por esos años?",
+      "created_at": "2026-08-12T21:31:49.018436+00:00"
+    },
+    {
+      "id": "turn_0151b4b6e7",
+      "role": "user",
+      "text": "Porque me acuerdo del uniforme de la escuela, y de que todavía vivíamos en lo de mi abuela. Después nos mudamos.",
+      "created_at": "2026-08-12T21:31:49.018449+00:00"
+    },
+    {
+      "id": "turn_95233bdad5",
+      "role": "assistant",
+      "text": "La casa de tu abuela aparece bastante en lo que contás.",
+      "created_at": "2026-08-12T21:31:49.018463+00:00"
+    },
+    {
+      "id": "turn_caedfafc18",
+      "role": "user",
+      "text": "Sí. Ahí se juntaban. Del Flaco yo no me acuerdo, ojo. Lo que sé es porque mi vieja contaba que aparecía por casa y hablaba horas con mi tío.",
+      "created_at": "2026-08-12T21:31:49.018476+00:00"
+    },
+    {
+      "id": "turn_1f107e639b",
+      "role": "assistant",
+      "text": "Entonces lo del Flaco te llega por tu madre.",
+      "created_at": "2026-08-12T21:31:49.018491+00:00"
+    },
+    {
+      "id": "turn_58d110428c",
+      "role": "user",
+      "text": "Claro. Yo no lo vi nunca, o no me acuerdo de haberlo visto. Eso fue en La Teja.",
+      "created_at": "2026-08-12T21:31:49.018504+00:00"
+    },
+    {
+      "id": "turn_dfe2830ae8",
+      "role": "assistant",
+      "text": "Ta.",
+      "created_at": "2026-08-12T21:31:49.018515+00:00"
+    },
+    {
+      "id": "turn_159e8e9a9d",
+      "role": "user",
+      "text": "Pará, te dije La Teja pero estoy mezclando dos cosas. Esto que te cuento era en el Cerro. La Teja fue después, cuando ya no estaba mi tío.",
+      "created_at": "2026-08-12T21:31:49.018524+00:00"
+    },
+    {
+      "id": "turn_ab79322888",
+      "role": "assistant",
+      "text": "Bien. ¿Querés seguir por ahí o preferís contarme otra cosa?",
+      "created_at": "2026-08-12T21:31:49.018535+00:00"
+    },
+    {
+      "id": "turn_890edd07cd",
+      "role": "user",
+      "text": "De lo de mi tío no quiero hablar. Te puedo contar de las reuniones que hacían después en casa de mi abuela.",
+      "created_at": "2026-08-12T21:31:49.018557+00:00"
+    },
+    {
+      "id": "turn_f7fd3cdd12",
+      "role": "assistant",
+      "text": "Contame de las reuniones.",
+      "created_at": "2026-08-12T21:31:49.018600+00:00"
+    },
+    {
+      "id": "turn_05872603b5",
+      "role": "user",
+      "text": "Eran los domingos. Venía gente que yo no conocía y a mí me mandaban al fondo a jugar. Pero se escuchaba igual. No entendía nada de lo que decían, pero me acuerdo del tono.",
+      "created_at": "2026-08-12T21:31:49.018612+00:00"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "ann_81b0c7b7af",
+      "source_turn_ids": [
+        "turn_eb30517e99"
+      ],
+      "label": "uncertain",
+      "note": "La persona da un rango, no una fecha.",
+      "created_at": "2026-08-12T21:31:49.018632+00:00"
+    },
+    {
+      "id": "ann_de70663863",
+      "source_turn_ids": [
+        "turn_caedfafc18"
+      ],
+      "label": "hearsay",
+      "note": "Fuente declarada: la madre.",
+      "created_at": "2026-08-12T21:31:49.018649+00:00"
+    },
+    {
+      "id": "ann_f56e5544ec",
+      "source_turn_ids": [
+        "turn_159e8e9a9d"
+      ],
+      "label": "correction",
+      "note": "Corrige el lugar dicho antes.",
+      "created_at": "2026-08-12T21:31:49.018661+00:00"
+    },
+    {
+      "id": "ann_4e0a8bc244",
+      "source_turn_ids": [
+        "turn_eb30517e99"
+      ],
+      "label": "significant",
+      "note": "Ancla temporal del relato.",
+      "created_at": "2026-08-12T21:31:49.018821+00:00"
+    }
+  ],
+  "derived_items": [
+    {
+      "id": "item_d7a434e255",
+      "kind": "time",
+      "text": "Período recordado de manera aproximada: «por el 77, 78»",
+      "source_turn_ids": [
+        "turn_eb30517e99"
+      ],
+      "status": "provisional",
+      "note": "No convertir en fecha establecida.",
+      "created_at": "2026-08-12T21:31:49.018674+00:00",
+      "origin": "investigador",
+      "origin_detail": {},
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_7502542e30",
+      "kind": "place",
+      "text": "La Teja, mencionada primero y después corregida",
+      "source_turn_ids": [
+        "turn_58d110428c"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-12T21:31:49.018690+00:00",
+      "origin": "investigador",
+      "origin_detail": {},
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_e6e6554c25",
+      "kind": "place",
+      "text": "el Cerro, lugar corregido por la persona",
+      "source_turn_ids": [
+        "turn_159e8e9a9d"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-12T21:31:49.018703+00:00",
+      "origin": "investigador",
+      "origin_detail": {},
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_833c79d3fd",
+      "kind": "entity",
+      "text": "Persona referida como «el Flaco». Identidad no establecida.",
+      "source_turn_ids": [
+        "turn_caedfafc18"
+      ],
+      "status": "provisional",
+      "note": "La persona no afirma haberlo visto.",
+      "created_at": "2026-08-12T21:31:49.018719+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      },
+      "revisions": [
+        {
+          "at": "2026-08-12T21:31:49.018765+00:00",
+          "field": "text",
+          "before": "Persona referida como «el Flaco»",
+          "after": "Persona referida como «el Flaco». Identidad no establecida."
+        },
+        {
+          "at": "2026-08-12T21:31:49.018770+00:00",
+          "field": "note",
+          "before": "",
+          "after": "La persona no afirma haberlo visto."
+        }
+      ],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_197a4d276f",
+      "kind": "hearsay",
+      "text": "Lo relativo al Flaco proviene del relato de la madre, no de memoria propia de la persona",
+      "source_turn_ids": [
+        "turn_caedfafc18"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-12T21:31:49.018731+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_9d2af1e650",
+      "kind": "theme",
+      "text": "Reuniones de los domingos en casa de la abuela",
+      "source_turn_ids": [
+        "turn_05872603b5"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-12T21:31:49.018743+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_89a51ccd77",
+      "kind": "event",
+      "text": "Detención del tío de la persona",
+      "source_turn_ids": [
+        "turn_890edd07cd"
+      ],
+      "status": "withdrawn",
+      "note": "",
+      "created_at": "2026-08-12T21:31:49.018754+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      },
+      "revisions": [],
+      "withdrawn": true,
+      "withdrawn_at": "2026-08-12T21:31:49.018808+00:00",
+      "withdrawn_reason": "La persona no dijo esto. El modelo lo infirió de un tema que ella explícitamente no quiso tratar."
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel_40ff0943c5",
+      "relation_type": "corrects",
+      "source_id": "item_e6e6554c25",
+      "target_id": "item_7502542e30",
+      "note": "La persona corrige el lugar.",
+      "created_at": "2026-08-12T21:31:49.018800+00:00"
+    }
+  ],
+  "events": [
+    {
+      "id": "ev_cf8d48c059",
+      "at": "2026-08-12T21:31:49.018386+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión de ejemplo redactada por el investigador",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_251208f5f9",
+      "at": "2026-08-12T21:31:49.018410+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras. ¿Qué te gustaría contar?»",
+      "target_id": "turn_b6b9535afd",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_78f262353c",
+      "at": "2026-08-12T21:31:49.018429+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Yo era chico, tendría nueve o diez. Esto habrá sido por el 77, 78, por…»",
+      "target_id": "turn_eb30517e99",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_9627b9df7a",
+      "at": "2026-08-12T21:31:49.018441+00:00",
+      "actor": "modelo",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Qué te hace ubicarlo por esos años?»",
+      "target_id": "turn_bf33ac9da8",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_587f39e167",
+      "at": "2026-08-12T21:31:49.018456+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Porque me acuerdo del uniforme de la escuela, y de que todavía vivíamo…»",
+      "target_id": "turn_0151b4b6e7",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_9d35814e71",
+      "at": "2026-08-12T21:31:49.018469+00:00",
+      "actor": "modelo",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «La casa de tu abuela aparece bastante en lo que contás.»",
+      "target_id": "turn_95233bdad5",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_b3554b7699",
+      "at": "2026-08-12T21:31:49.018484+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Sí. Ahí se juntaban. Del Flaco yo no me acuerdo, ojo. Lo que sé es por…»",
+      "target_id": "turn_caedfafc18",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_3e49edc574",
+      "at": "2026-08-12T21:31:49.018495+00:00",
+      "actor": "modelo",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Entonces lo del Flaco te llega por tu madre.»",
+      "target_id": "turn_1f107e639b",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_5bc108425f",
+      "at": "2026-08-12T21:31:49.018509+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Claro. Yo no lo vi nunca, o no me acuerdo de haberlo visto. Eso fue en…»",
+      "target_id": "turn_58d110428c",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_54b170adc2",
+      "at": "2026-08-12T21:31:49.018519+00:00",
+      "actor": "modelo",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Ta.»",
+      "target_id": "turn_dfe2830ae8",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_e0b0fb757b",
+      "at": "2026-08-12T21:31:49.018530+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Pará, te dije La Teja pero estoy mezclando dos cosas. Esto que te cuen…»",
+      "target_id": "turn_159e8e9a9d",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_b4de33df0b",
+      "at": "2026-08-12T21:31:49.018539+00:00",
+      "actor": "modelo",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Bien. ¿Querés seguir por ahí o preferís contarme otra cosa?»",
+      "target_id": "turn_ab79322888",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_d468cf6c91",
+      "at": "2026-08-12T21:31:49.018588+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «De lo de mi tío no quiero hablar. Te puedo contar de las reuniones que…»",
+      "target_id": "turn_890edd07cd",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_e21c0ccc38",
+      "at": "2026-08-12T21:31:49.018606+00:00",
+      "actor": "modelo",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Contame de las reuniones.»",
+      "target_id": "turn_f7fd3cdd12",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_e178a3f7c9",
+      "at": "2026-08-12T21:31:49.018619+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Eran los domingos. Venía gente que yo no conocía y a mí me mandaban al…»",
+      "target_id": "turn_05872603b5",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_500710a06e",
+      "at": "2026-08-12T21:31:49.018639+00:00",
+      "actor": "investigador",
+      "action": "anotacion_agregada",
+      "summary": "Anotación «uncertain» sobre 1 turno(s)",
+      "target_id": "ann_81b0c7b7af",
+      "target_kind": "annotation",
+      "detail": {
+        "source_turn_ids": [
+          "turn_eb30517e99"
+        ],
+        "note": "La persona da un rango, no una fecha."
+      }
+    },
+    {
+      "id": "ev_5c1d045be8",
+      "at": "2026-08-12T21:31:49.018654+00:00",
+      "actor": "investigador",
+      "action": "anotacion_agregada",
+      "summary": "Anotación «hearsay» sobre 1 turno(s)",
+      "target_id": "ann_de70663863",
+      "target_kind": "annotation",
+      "detail": {
+        "source_turn_ids": [
+          "turn_caedfafc18"
+        ],
+        "note": "Fuente declarada: la madre."
+      }
+    },
+    {
+      "id": "ev_b34a373cfb",
+      "at": "2026-08-12T21:31:49.018665+00:00",
+      "actor": "investigador",
+      "action": "anotacion_agregada",
+      "summary": "Anotación «correction» sobre 1 turno(s)",
+      "target_id": "ann_f56e5544ec",
+      "target_kind": "annotation",
+      "detail": {
+        "source_turn_ids": [
+          "turn_159e8e9a9d"
+        ],
+        "note": "Corrige el lugar dicho antes."
+      }
+    },
+    {
+      "id": "ev_7388393de7",
+      "at": "2026-08-12T21:31:49.018681+00:00",
+      "actor": "investigador",
+      "action": "interpretacion_creada",
+      "summary": "El investigador creó una interpretación provisional (time): «Período recordado de manera aproximada: «por el 77, 78»»",
+      "target_id": "item_d7a434e255",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_eb30517e99"
+        ]
+      }
+    },
+    {
+      "id": "ev_f82be28e19",
+      "at": "2026-08-12T21:31:49.018696+00:00",
+      "actor": "investigador",
+      "action": "interpretacion_creada",
+      "summary": "El investigador creó una interpretación provisional (place): «La Teja, mencionada primero y después corregida»",
+      "target_id": "item_7502542e30",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_58d110428c"
+        ]
+      }
+    },
+    {
+      "id": "ev_a6b7e56264",
+      "at": "2026-08-12T21:31:49.018712+00:00",
+      "actor": "investigador",
+      "action": "interpretacion_creada",
+      "summary": "El investigador creó una interpretación provisional (place): «el Cerro, lugar corregido por la persona»",
+      "target_id": "item_e6e6554c25",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_159e8e9a9d"
+        ]
+      }
+    },
+    {
+      "id": "ev_b4e372e08c",
+      "at": "2026-08-12T21:31:49.018724+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (entity): «Persona referida como «el Flaco»»",
+      "target_id": "item_833c79d3fd",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_caedfafc18"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      }
+    },
+    {
+      "id": "ev_b8d82a0899",
+      "at": "2026-08-12T21:31:49.018737+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (hearsay): «Lo relativo al Flaco proviene del relato de la madre, no de memoria pr…»",
+      "target_id": "item_197a4d276f",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_caedfafc18"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      }
+    },
+    {
+      "id": "ev_d97589208b",
+      "at": "2026-08-12T21:31:49.018747+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «Reuniones de los domingos en casa de la abuela»",
+      "target_id": "item_9d2af1e650",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_05872603b5"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      }
+    },
+    {
+      "id": "ev_5800e7eb52",
+      "at": "2026-08-12T21:31:49.018758+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (event): «Detención del tío de la persona»",
+      "target_id": "item_89a51ccd77",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_890edd07cd"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 256,
+        "run_id": "run_ejemplo01"
+      }
+    },
+    {
+      "id": "ev_ec239dbf07",
+      "at": "2026-08-12T21:31:49.018788+00:00",
+      "actor": "investigador",
+      "action": "interpretacion_editada",
+      "summary": "El investigador editó una interpretación (text, note)",
+      "target_id": "item_833c79d3fd",
+      "target_kind": "derived",
+      "detail": {
+        "cambios": [
+          {
+            "at": "2026-08-12T21:31:49.018765+00:00",
+            "field": "text",
+            "before": "Persona referida como «el Flaco»",
+            "after": "Persona referida como «el Flaco». Identidad no establecida."
+          },
+          {
+            "at": "2026-08-12T21:31:49.018770+00:00",
+            "field": "note",
+            "before": "",
+            "after": "La persona no afirma haberlo visto."
+          }
+        ]
+      }
+    },
+    {
+      "id": "ev_f62b2f4a4e",
+      "at": "2026-08-12T21:31:49.018804+00:00",
+      "actor": "investigador",
+      "action": "relacion_agregada",
+      "summary": "Relación «corrects» entre dos elementos",
+      "target_id": "rel_40ff0943c5",
+      "target_kind": "relation",
+      "detail": {
+        "source_id": "item_e6e6554c25",
+        "target_id": "item_7502542e30",
+        "note": "La persona corrige el lugar."
+      }
+    },
+    {
+      "id": "ev_80e0a739e0",
+      "at": "2026-08-12T21:31:49.018814+00:00",
+      "actor": "investigador",
+      "action": "interpretacion_retirada",
+      "summary": "Interpretación retirada, no eliminada: «Detención del tío de la persona» — motivo: La persona no dijo esto. El modelo lo infirió de un tema que ella explícitamente no quiso tratar.",
+      "target_id": "item_89a51ccd77",
+      "target_kind": "derived",
+      "detail": {
+        "motivo": "La persona no dijo esto. El modelo lo infirió de un tema que ella explícitamente no quiso tratar.",
+        "texto_retenido": "Detención del tío de la persona"
+      }
+    },
+    {
+      "id": "ev_97c45db93f",
+      "at": "2026-08-12T21:31:49.018824+00:00",
+      "actor": "investigador",
+      "action": "anotacion_agregada",
+      "summary": "Anotación «significant» sobre 1 turno(s)",
+      "target_id": "ann_4e0a8bc244",
+      "target_kind": "annotation",
+      "detail": {
+        "source_turn_ids": [
+          "turn_eb30517e99"
+        ],
+        "note": "Ancla temporal del relato."
+      }
+    }
+  ],
+  "is_recorded": true
+}

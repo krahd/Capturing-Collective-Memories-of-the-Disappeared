@@ -15,6 +15,7 @@
     <div class="toolbar">
       <span id="model-status" class="status">modelo…</span>
       <button id="new-session">Nueva conversación</button>
+      <button id="load-demo" class="ghost">Sesión de ejemplo</button>
       <button id="export-json" disabled>JSON</button>
       <button id="export-md" disabled>Markdown</button>
     </div>
@@ -27,6 +28,10 @@
           <h1>Conversación</h1>
           <p>Contá por donde quieras. Seleccioná turnos para trabajarlos a la derecha.</p>
         </div>
+      </div>
+      <div id="recorded-banner" class="recorded-banner" hidden>
+        <strong>Transcripción grabada.</strong>
+        Texto redactado por el investigador. No es una conversación en vivo ni testimonio de un participante.
       </div>
       <div id="conversation" class="conversation" aria-live="polite"></div>
       <form id="composer" class="composer">
@@ -50,6 +55,7 @@
         <button class="tab active" data-tab="annotate">Anotar</button>
         <button class="tab" data-tab="derived">Material derivado</button>
         <button class="tab" data-tab="relations">Relaciones</button>
+        <button class="tab" data-tab="audit">Auditoría</button>
       </div>
 
       <section class="tab-panel active" id="tab-annotate">
@@ -74,6 +80,7 @@
         <div class="row-actions">
           <button id="auto-extract" disabled>Extraer provisionalmente con el modelo</button>
         </div>
+        <div id="derived-filter" class="filter-note" hidden></div>
         <label>Tipo
           <select id="derived-kind">
             <option value="entity">persona / entidad</option>
@@ -117,6 +124,15 @@
         </label>
         <button id="add-relation" disabled>Agregar relación</button>
         <div id="relations" class="cards"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-audit">
+        <p class="muted">
+          La transcripción no se reescribe. Cada interpretación indica quién la produjo.
+          Lo retirado se conserva marcado, no se borra.
+        </p>
+        <div id="audit-summary" class="audit-summary"></div>
+        <div id="audit-log" class="audit-log"></div>
       </section>
     </aside>
   </main>

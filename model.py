@@ -23,6 +23,9 @@ Reglas de interacción:
 - No preguntes fecha, lugar, parentesco o identidad por rutina. Preguntá sólo si el dato se volvió importante para entender lo que la persona está diciendo.
 - Permití digresiones. Si la persona cambia de tema, acompañá el cambio. Podés volver después sólo si hay una razón conversacional clara.
 - Si la persona dice que no sabe, no se acuerda, duda o conoce algo de oídas, preservá esa incertidumbre. No la conviertas en certeza.
+- Si la persona aclara que algo lo sabe de oídas o que no se acuerda de alguien, no le preguntes por detalles que sólo tendría si lo hubiera vivido o presenciado. Preguntarle cómo era, cómo sonaba o qué sintió sobre alguien que dijo no recordar es dar por sentado algo que no dijo.
+- No repitas la misma fórmula de pregunta varios turnos seguidos. Si ya preguntaste "¿cómo era...?", buscá otra manera de seguir o no preguntes nada.
+- Cuando la persona pone un límite o cambia de tema, seguí el tema nuevo directamente. No contestes con acuses formales tipo "acepto", "entendido" o "de acuerdo": suenan a trámite y no a conversación.
 - Si corrige algo que dijo antes, reconocé la corrección sin borrar ni dramatizar el error.
 - Si hay una referencia ambigua que realmente impide seguir, pedí aclaración con palabras simples.
 - Nunca sugieras que una persona hizo algo, estuvo en un lugar o tenía una relación que el participante no mencionó.
@@ -85,6 +88,11 @@ class LLMClient:
         self.temperature = _optional_float("LLM_TEMPERATURE")
         self.top_p = _optional_float("LLM_TOP_P")
         self.max_tokens = _optional_int("LLM_MAX_TOKENS")
+        # Conversation and analysis are different operations with different
+        # budgets. The conversational cap is deliberately small because the
+        # policy asks for short turns; reusing it for extraction truncates the
+        # JSON mid-string.
+        self.extraction_max_tokens = _optional_int("LLM_EXTRACTION_MAX_TOKENS") or 1024
 
     @property
     def configured(self) -> bool:
@@ -102,14 +110,30 @@ class LLMClient:
             raise RuntimeError("Falta LLM_MODEL")
         raise RuntimeError("Falta LLM_API_KEY/OPENAI_API_KEY para api.openai.com")
 
-    def _generation_options(self) -> dict[str, Any]:
+    def provenance(self, for_extraction: bool = False) -> dict[str, Any]:
+        """Exactly which model, on which endpoint, under which sampling settings.
+
+        Stamped onto every model-derived item so an interpretation can never be
+        read as if a person had made it. `for_extraction` reports the settings
+        actually used by `extract`, which are not the conversational ones.
+        """
+        parsed = urlparse(self.api_url)
+        return {
+            "model": self.model,
+            "endpoint": f"{parsed.scheme}://{parsed.netloc}",
+            "local": (parsed.hostname or "").lower() in {"127.0.0.1", "localhost", "::1"},
+            **self._generation_options(self.extraction_max_tokens if for_extraction else None),
+        }
+
+    def _generation_options(self, max_tokens_override: int | None = None) -> dict[str, Any]:
         options: dict[str, Any] = {}
         if self.temperature is not None:
             options["temperature"] = self.temperature
         if self.top_p is not None:
             options["top_p"] = self.top_p
-        if self.max_tokens is not None:
-            options["max_tokens"] = self.max_tokens
+        max_tokens = max_tokens_override if max_tokens_override is not None else self.max_tokens
+        if max_tokens is not None:
+            options["max_tokens"] = max_tokens
         return options
 
     async def chat(self, turns: list[dict[str, str]]) -> str:
@@ -132,7 +156,7 @@ class LLMClient:
                 {"role": "user", "content": transcript},
             ],
             "response_format": {"type": "json_object"},
-            **self._generation_options(),
+            **self._generation_options(self.extraction_max_tokens),
         }
         data = await self._post(payload, allow_response_format_fallback=True)
         parsed = _parse_json_object(_message_content(data))
@@ -180,7 +204,14 @@ def _parse_json_object(content: str) -> dict[str, Any]:
         if lines and lines[-1].strip() == "```":
             lines = lines[:-1]
         text = "\n".join(lines).strip()
-    parsed = json.loads(text)
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError as exc:
+        # Usually a truncated response. Say so instead of surfacing a raw parser error.
+        raise RuntimeError(
+            "La extracción devolvió JSON incompleto o inválido; "
+            "probablemente se cortó por el límite de tokens (LLM_EXTRACTION_MAX_TOKENS)"
+        ) from exc
     if not isinstance(parsed, dict):
         raise RuntimeError("La extracción no devolvió un objeto JSON")
     return parsed

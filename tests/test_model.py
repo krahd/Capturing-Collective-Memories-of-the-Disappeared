@@ -82,3 +82,42 @@ def test_generation_options_can_be_fixed_for_comparable_runs(monkeypatch):
         "top_p": 0.8,
         "max_tokens": 256,
     }
+
+
+def test_extraction_does_not_inherit_the_short_conversational_token_cap(monkeypatch):
+    # The conversational cap is deliberately small; reusing it for extraction
+    # truncates the JSON mid-string.
+    monkeypatch.setenv("LLM_MAX_TOKENS", "256")
+    monkeypatch.delenv("LLM_EXTRACTION_MAX_TOKENS", raising=False)
+
+    client = LLMClient()
+
+    assert client._generation_options()["max_tokens"] == 256
+    assert client._generation_options(client.extraction_max_tokens)["max_tokens"] == 1024
+
+
+def test_provenance_reports_the_settings_actually_used(monkeypatch):
+    monkeypatch.setenv("LLM_API_URL", "http://127.0.0.1:11434/v1/chat/completions")
+    monkeypatch.setenv("LLM_MODEL", "qwen3:30b-a3b-instruct-2507-q4_K_M")
+    monkeypatch.setenv("LLM_TEMPERATURE", "0.7")
+    monkeypatch.setenv("LLM_TOP_P", "0.8")
+    monkeypatch.setenv("LLM_MAX_TOKENS", "256")
+
+    client = LLMClient()
+
+    conversation = client.provenance()
+    extraction = client.provenance(for_extraction=True)
+
+    assert conversation["model"] == "qwen3:30b-a3b-instruct-2507-q4_K_M"
+    assert conversation["local"] is True
+    assert conversation["endpoint"] == "http://127.0.0.1:11434"
+    assert conversation["max_tokens"] == 256
+    assert extraction["max_tokens"] == 1024
+
+
+def test_policy_addresses_observed_hearsay_and_register_failures():
+    policy = URUGUAYAN_CONVERSATION_POLICY.lower()
+    # Added after a live run in which the model asked what someone sounded like
+    # right after the participant said they did not remember them.
+    assert "no le preguntes por detalles que sólo tendría si lo hubiera vivido" in policy
+    assert "no repitas la misma fórmula de pregunta" in policy

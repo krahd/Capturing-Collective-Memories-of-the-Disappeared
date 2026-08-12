@@ -15,9 +15,40 @@ The current goal is defined in `GOAL.md`; interaction rationale and non-goals ar
 It has two coordinated views:
 
 - **Conversation**: participant-led text conversation, driven by a compact policy for natural Uruguayan Spanish, non-leading follow-up, digression, uncertainty, correction and refusal.
-- **Mesa de trabajo**: select transcript turns, annotate them, create or model-extract provisional entities/events/themes, edit derived material, connect corrections/qualifications, and export the whole session.
+- **Mesa de trabajo**: select transcript turns, annotate them, create or model-extract provisional entities/events/themes, edit derived material, connect corrections/qualifications, audit the whole session, and export it.
 
 The raw transcript is never silently rewritten when derived material changes.
+
+### Capture and audit
+
+The workbench holds three commitments that the interface makes visible:
+
+- **No interpretation is anonymous.** Every derived item records whether a
+  researcher or the model produced it. Model-produced material carries the exact
+  model id, endpoint and sampling settings that produced it.
+- **Editing does not overwrite.** Changes append a revision recording the previous
+  and new value.
+- **Withdrawal is not deletion.** *Retirar* keeps the material, marks it withdrawn
+  and stores the stated reason. *Eliminar* genuinely destroys the text and also
+  redacts the quotations of it the session record itself had retained — and records
+  that a redaction happened. The two are deliberately different operations.
+
+The **Auditoría** tab shows the append-only session record, attributing every
+action to `participante`, `investigador`, `modelo` or `sistema`. Both exports
+carry it.
+
+Clicking an interpretation highlights the exact turns it came from; each turn
+shows how many interpretations cite it.
+
+### Recorded example session
+
+**Sesión de ejemplo** loads a researcher-authored transcript for showing capture
+and audit without a live model. It is written by the researcher, is not
+participant testimony, and was never generated live. The interface labels it and
+refuses new turns. Rebuild it with `python scripts/build_demo_session.py`.
+
+Appending `?session=<id>` or `?tab=audit` to the URL opens a specific session or
+panel directly.
 
 ## Run locally
 

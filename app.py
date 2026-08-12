@@ -9,7 +9,15 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from model import LLMClient, opening_message
-from state import SessionStore, export_markdown
+from state import (
+    ACTOR_MODEL,
+    ACTOR_SYSTEM,
+    ORIGIN_MODEL,
+    SessionStore,
+    export_markdown,
+    load_recorded_session,
+    new_id,
+)
 
 ROOT = Path(__file__).resolve().parent
 store = SessionStore(ROOT / "data" / "sessions")
@@ -54,6 +62,10 @@ class RelationCreate(BaseModel):
     note: str = ""
 
 
+class WithdrawRequest(BaseModel):
+    reason: str = ""
+
+
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(ROOT / "static" / "index.html")
@@ -61,7 +73,11 @@ def index() -> FileResponse:
 
 @app.get("/api/config")
 def config() -> dict[str, Any]:
-    return {"llm_configured": llm.configured, "model": llm.model if llm.configured else None}
+    return {
+        "llm_configured": llm.configured,
+        "model": llm.model if llm.configured else None,
+        "provenance": llm.provenance() if llm.configured else None,
+    }
 
 
 @app.get("/api/sessions")
@@ -72,9 +88,20 @@ def sessions() -> list[dict[str, Any]]:
 @app.post("/api/sessions")
 def create_session(body: SessionCreate) -> dict[str, Any]:
     session = store.create(body.title)
-    session.add_turn("assistant", opening_message())
+    # The opening line is scripted, not generated. The record says so.
+    session.add_turn("assistant", opening_message(), actor=ACTOR_SYSTEM)
     store.save(session)
     return session.to_dict()
+
+
+@app.post("/api/sessions/demo")
+def create_demo_session() -> dict[str, Any]:
+    """Load the researcher-authored example transcript. Never a live conversation."""
+    try:
+        session = load_recorded_session(ROOT / "demo" / "sesion-ejemplo.json")
+    except FileNotFoundError as exc:
+        raise HTTPException(404, "No hay sesión de ejemplo disponible") from exc
+    return store.adopt(session).to_dict()
 
 
 def get_session_or_404(session_id: str):
@@ -92,6 +119,8 @@ def get_session(session_id: str) -> dict[str, Any]:
 @app.post("/api/sessions/{session_id}/turns")
 async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
     session = get_session_or_404(session_id)
+    if session.is_recorded:
+        raise HTTPException(409, "Esta es una transcripción grabada; no admite turnos nuevos")
     user_turn = session.add_turn("user", body.text)
     store.save(session)
 
@@ -108,7 +137,7 @@ async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
             },
         )
 
-    assistant_turn = session.add_turn("assistant", assistant_text)
+    assistant_turn = session.add_turn("assistant", assistant_text, actor=ACTOR_MODEL)
     store.save(session)
     return {"user_turn": user_turn.__dict__, "assistant_turn": assistant_turn.__dict__, "session": session.to_dict()}
 
@@ -144,6 +173,27 @@ def update_derived(session_id: str, item_id: str, body: DerivedUpdate) -> dict[s
         raise HTTPException(400, str(exc)) from exc
     store.save(session)
     return item.__dict__
+
+
+@app.post("/api/sessions/{session_id}/derived/{item_id}/withdraw")
+def withdraw_derived(session_id: str, item_id: str, body: WithdrawRequest) -> dict[str, Any]:
+    """Retire an interpretation while keeping it, and its reason, on the record."""
+    session = get_session_or_404(session_id)
+    try:
+        item = session.withdraw_derived_item(item_id, body.reason)
+    except ValueError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    store.save(session)
+    return item.__dict__
+
+
+@app.get("/api/sessions/{session_id}/audit")
+def audit(session_id: str) -> dict[str, Any]:
+    session = get_session_or_404(session_id)
+    return {
+        "summary": session.summary(),
+        "events": [event.__dict__ for event in session.events],
+    }
 
 
 @app.delete("/api/sessions/{session_id}/derived/{item_id}")
@@ -182,16 +232,31 @@ async def extract(session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     except Exception as exc:
         raise HTTPException(503, str(exc)) from exc
 
+    # Every item from this run carries the same model identity and settings, so
+    # a model-produced interpretation can never be mistaken for a human one.
+    provenance = {**llm.provenance(for_extraction=True), "run_id": new_id("run")}
     created = []
     for raw in extracted:
         refs = [x for x in raw.get("source_turn_ids", []) if x in known]
         if not refs or not raw.get("text"):
             continue
         try:
-            item = session.add_derived_item(raw.get("kind", "other"), raw["text"], refs)
+            item = session.add_derived_item(
+                raw.get("kind", "other"),
+                raw["text"],
+                refs,
+                origin=ORIGIN_MODEL,
+                origin_detail=provenance,
+            )
             created.append(item.__dict__)
         except ValueError:
             continue
+    session.record(
+        ACTOR_MODEL,
+        "extraccion_ejecutada",
+        f"Extracción automática sobre {len(turns)} turno(s): {len(created)} interpretación(es) provisional(es)",
+        detail={**provenance, "source_turn_ids": source_turn_ids},
+    )
     store.save(session)
     return {"items": created}
 

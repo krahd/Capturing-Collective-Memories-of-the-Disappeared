@@ -61,3 +61,63 @@ def test_two_view_api_flow(tmp_path, monkeypatch):
             )
 
     asyncio.run(run_flow())
+
+
+def test_withdraw_and_audit_endpoints(tmp_path, monkeypatch):
+    app_module.store = SessionStore(tmp_path)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            session_id = (await client.post("/api/sessions", json={})).json()["id"]
+            session = (await client.get(f"/api/sessions/{session_id}")).json()
+            turn_id = session["turns"][0]["id"]
+
+            item = (
+                await client.post(
+                    f"/api/sessions/{session_id}/derived",
+                    json={"source_turn_ids": [turn_id], "kind": "event", "text": "Una inferencia de más"},
+                )
+            ).json()
+
+            withdrawn = await client.post(
+                f"/api/sessions/{session_id}/derived/{item['id']}/withdraw",
+                json={"reason": "La persona no dijo esto."},
+            )
+            assert withdrawn.status_code == 200
+            assert withdrawn.json()["withdrawn"] is True
+            # Retained, not deleted.
+            assert withdrawn.json()["text"] == "Una inferencia de más"
+
+            audit = (await client.get(f"/api/sessions/{session_id}/audit")).json()
+            assert audit["summary"]["retiradas"] == 1
+            assert audit["summary"]["interpretaciones"] == 0
+            actions = [e["action"] for e in audit["events"]]
+            assert "interpretacion_retirada" in actions
+            assert "sesion_creada" in actions
+
+    asyncio.run(run_flow())
+
+
+def test_recorded_example_session_loads_and_refuses_new_turns(tmp_path):
+    app_module.store = SessionStore(tmp_path)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            created = await client.post("/api/sessions/demo")
+            assert created.status_code == 200
+            session = created.json()
+            assert session["is_recorded"] is True
+            assert len(session["turns"]) > 1
+            # Both origins are present, which is the point of the example.
+            origins = {i["origin"] for i in session["derived_items"]}
+            assert origins == {"investigador", "modelo"}
+            assert any(i["withdrawn"] for i in session["derived_items"])
+
+            blocked = await client.post(
+                f"/api/sessions/{session['id']}/turns", json={"text": "Hola"}
+            )
+            assert blocked.status_code == 409
+
+    asyncio.run(run_flow())
