@@ -1,0 +1,80 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Prototype: Setup",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/start.sh",
+        "--setup-only"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Prototype: Run",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/start.sh"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "prototype",
+        "pattern": {
+          "regexp": "^(?!)$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*Will watch for changes.*",
+          "endsPattern": ".*Uvicorn running on.*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Prototype: Test",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Prototype: Setup",
+      "dependsOrder": "sequence",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}

@@ -115,6 +115,14 @@ Open `http://127.0.0.1:8765`.
 
 Without a configured model, the workbench and session creation still run, but sending conversational turns and automatic extraction are disabled. This is deliberate: the prototype does not fake conversational quality with canned replies.
 
+### VS Code
+
+1. Copy `.env.example` to `.env` and fill in the endpoint and model you want to use. You can skip this step to run the workbench without model-backed conversation.
+2. Run **Tasks: Run Build Task** (`Cmd+Shift+B` on macOS) and choose **Prototype: Run**. The first run creates `.venv` and installs the dependencies.
+3. Open `http://127.0.0.1:8765`.
+
+The task reads `.env` automatically. Stop it with **Tasks: Terminate Task**. The additional **Prototype: Setup** and **Prototype: Test** tasks are available through **Tasks: Run Task**; setup prepares the environment and exits without keeping a server running.
+
 ## Tests
 
 ```bash
