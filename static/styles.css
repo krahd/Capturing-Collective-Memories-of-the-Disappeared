@@ -76,6 +76,12 @@ p { margin: .15rem 0; line-height: 1.45; }
   border: 1px solid var(--rule-soft); transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 .turn.user .turn-body { background: var(--participant); border-color: var(--participant-edge); }
+.turn.non-testimony .turn-body { border-style: dashed; opacity: .82; }
+.turn-kind {
+  font-size: .64rem; padding: .08rem .36rem; border: 1px solid var(--rule);
+  border-radius: 999px; color: var(--ink-soft); background: rgba(255,255,255,.6);
+}
+.turn-kind.control { border-color: #d7b878; color: #6f4c10; background: #fbf3d9; }
 /* Provenance made visible: the exact turns an interpretation came from. */
 .turn.lit .turn-body { background: var(--lit); border-color: #d9bf62; box-shadow: 0 0 0 3px rgba(217,191,98,.28); }
 .turn.filtered .turn-body { border-color: var(--researcher); }
@@ -92,6 +98,9 @@ p { margin: .15rem 0; line-height: 1.45; }
 
 .composer { border-top: 1px solid var(--rule); padding: .75rem 1rem; background: var(--paper-2); }
 .composer-row { display: flex; justify-content: space-between; align-items: center; margin-top: .45rem; gap: .5rem; }
+.voice-row { display: flex; align-items: center; gap: .55rem; margin-top: .45rem; }
+.voice-row button { min-width: 6rem; }
+.voice-row button.listening { background: #f6dddd; border-color: var(--danger); color: var(--danger); }
 
 .workbench-panel { overflow: hidden; background: var(--paper-3); }
 .tabs { display: flex; border-bottom: 1px solid var(--rule); }

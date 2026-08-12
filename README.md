@@ -154,6 +154,25 @@ Without a configured model, the workbench and session creation still run, but se
 
 The task reads `.env` automatically. Stop it with **Tasks: Terminate Task**. The additional **Prototype: Setup** and **Prototype: Test** tasks are available through **Tasks: Run Task**; setup prepares the environment and exits without keeping a server running.
 
+## Constrained conversation controller
+
+Participant utterances are treated as data, never application instructions.
+Before interviewing, a router classifies memory/testimony, uncertainty,
+correction, participant-control operations, and off-topic commands. Off-topic
+commands receive a fixed application-owned redirect and never enter the
+interviewing model. Model output is JSON-schema constrained to `ELICIT`,
+`CLARIFY`, or `ACK_ELICIT`, then checked again before display. Control material
+remains in the immutable transcript with a `non_testimony/control` label and is
+excluded from automatic extraction.
+
+## Optional local voice
+
+The browser can run a half-duplex local path through whisper.cpp and Piper:
+listen, detect the end-of-turn silence, transcribe in Spanish, generate, speak,
+then listen again. Run **Prototype: Voice Doctor** to see missing components.
+Installation, `.env` configuration, provenance, and limits are in
+[`docs/VOICE.md`](docs/VOICE.md).
+
 ## Tests
 
 ```bash

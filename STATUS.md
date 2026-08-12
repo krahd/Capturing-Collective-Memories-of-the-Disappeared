@@ -2,8 +2,8 @@
 
 **Date:** 12 August 2026  
 **Phase:** disposable interaction prototype  
-**Implementation:** complete for the current interaction-discovery goal, plus a capture/audit layer  
-**Mechanical verification:** passing (31 deterministic tests)  
+**Implementation:** complete for the current interaction-discovery goal, plus capture/audit and constrained-controller layers
+**Mechanical verification:** passing (40 deterministic tests)
 **Live-model Uruguayan-Spanish evaluation:** first informal check run on the target machine; the scored ten-scenario protocol is still pending
 
 ## Implemented
@@ -38,7 +38,19 @@
   card;
 - a researcher-authored recorded example session, labelled as such in the
   interface and refusing new turns, so capture and audit can be shown without a
-  live model.
+  live model;
+- **structural scope control:** a JSON-schema router separates testimony,
+  uncertainty, correction, participant controls and off-topic commands;
+  explicit controls are recognized before any model call, off-topic turns get a
+  fixed redirect, and only `ELICIT`, `CLARIFY` and `ACK_ELICIT` can pass the
+  post-generation guard;
+- control/off-topic turns remain preserved as `non_testimony/control` while
+  being excluded from interviewer context and automatic/manual derived memory;
+- deterministic `STOP`, `PAUSE`, `WITHDRAW` and `REVOKE_DELETE` protocol
+  responses, including an explicit resume path for a paused session;
+- an optional half-duplex browser voice path through local whisper.cpp and
+  Piper, with original audio and ASR text stored as separate attributable
+  layers. Voice binaries/models are not installed or configured by default.
 
 ## Local-model evaluation path
 
@@ -71,6 +83,14 @@ Complete HTTP round-trip latency from the prototype is not TTFT and does not est
 ## Verification
 
 GitHub Actions is green on the current main branch. The suite verifies Python/browser syntax and deterministic tests covering transcript preservation, source traceability, derived editing/deletion, correction relations, export, policy invariants, local model configuration, explicit generation settings, scenario-corpus integrity, both evaluation runners and the end-to-end API flow.
+
+The constrained controller was also smoke-tested locally against the selected
+Qwen/Ollama deployment on 12 August 2026. An on-topic uncertain memory produced
+the guarded `ACK_ELICIT` response `Te sigo. ¿Qué hacían juntos en esas tardes?`;
+both an explicit prompt injection and the semantic off-topic request `Escribime
+un poema sobre el océano` produced the application-owned redirect and were
+labelled non-testimonial. This is an engineering smoke check, not interaction
+validation.
 
 ## Remaining goal gate
 

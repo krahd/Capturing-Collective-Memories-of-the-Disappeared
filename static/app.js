@@ -6,6 +6,19 @@ const state = {
   // and the turn whose interpretations are being isolated.
   focusedItem: null,
   turnFilter: null,
+  voicePhase: "idle",
+};
+
+const voiceRuntime = {
+  recorder: null,
+  stream: null,
+  context: null,
+  analyser: null,
+  chunks: [],
+  frame: null,
+  heardSpeech: false,
+  silentSince: 0,
+  startedAt: 0,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -20,6 +33,11 @@ const ACTION_LABELS = {
   interpretacion_eliminada: "Eliminación",
   relacion_agregada: "Relación",
   extraccion_ejecutada: "Extracción automática",
+  entrada_clasificada: "Clasificación de entrada",
+  operacion_protocolo: "Operación de protocolo",
+  estado_sesion_cambiado: "Estado de la sesión",
+  audio_preservado: "Audio preservado",
+  transcripcion_asr_creada: "Transcripción ASR",
 };
 
 const KIND_LABELS = {
@@ -76,11 +94,21 @@ function render() {
   renderWorkbench();
   renderAudit();
   const ready = Boolean(state.session);
-  const live = ready && !isRecorded();
+  const sessionStatus = state.session?.status || "active";
+  const live = ready && !isRecorded() && sessionStatus === "active";
   $("recorded-banner").hidden = !isRecorded();
   $("message").disabled = !live;
-  $("message").placeholder = isRecorded() ? "Transcripción grabada: no admite turnos nuevos." : "Escribí acá…";
+  $("message").placeholder = isRecorded()
+    ? "Transcripción grabada: no admite turnos nuevos."
+    : sessionStatus === "paused"
+      ? "La conversación está pausada."
+      : sessionStatus !== "active"
+        ? "La conversación está detenida."
+        : "Escribí acá…";
   $("send").disabled = !live || !state.config.llm_configured;
+  $("resume-session").hidden = sessionStatus !== "paused";
+  $("voice-toggle").disabled = !live || !state.config.llm_configured || !state.config.voice?.asr_configured || state.voicePhase !== "idle";
+  if (state.voicePhase === "idle") renderVoiceAvailability();
   $("export-json").disabled = !ready;
   $("export-md").disabled = !ready;
   const hasSelection = selectedTurnIds().length > 0;
@@ -122,6 +150,18 @@ function renderConversation() {
 
     const meta = node.querySelector(".turn-meta");
     meta.textContent = `${turn.role === "user" ? "Participante" : "Sistema"} · ${turn.id}`;
+    if (turn.record_kind === "non_testimony/control") {
+      node.classList.add("non-testimony");
+      const badge = document.createElement("span");
+      badge.className = "turn-kind control";
+      badge.textContent = `${turn.intent || "control"} · no testimonial`;
+      meta.appendChild(badge);
+    } else if (turn.input_mode === "voice_asr") {
+      const badge = document.createElement("span");
+      badge.className = "turn-kind";
+      badge.textContent = "voz · transcripción ASR";
+      meta.appendChild(badge);
+    }
 
     const attached = derivedForTurn(turn.id);
     if (attached.length) {
@@ -356,6 +396,7 @@ function renderAudit() {
     modelo: active.filter((i) => i.origin === "modelo").length,
     retiradas: derived.filter((i) => i.withdrawn).length,
     ediciones: derived.reduce((n, i) => n + (i.revisions || []).length, 0),
+    audios: (state.session.audio_records || []).length,
   };
 
   $("audit-summary").innerHTML = `
@@ -365,6 +406,7 @@ function renderAudit() {
     <div class="stat"><span class="stat-n">${counts.modelo}</span><span class="stat-l">del modelo</span></div>
     <div class="stat"><span class="stat-n">${counts.retiradas}</span><span class="stat-l">retiradas</span></div>
     <div class="stat"><span class="stat-n">${counts.ediciones}</span><span class="stat-l">ediciones</span></div>
+    <div class="stat"><span class="stat-n">${counts.audios}</span><span class="stat-l">audios originales</span></div>
   `;
 
   $("audit-log").innerHTML = [...events]
@@ -419,6 +461,163 @@ async function mutate(url, options) {
   }
 }
 
+function renderVoiceAvailability() {
+  const config = state.config.voice || {};
+  const status = $("voice-status");
+  if (!config.asr_configured) {
+    const missing = config.missing?.asr?.join(", ") || "componentes locales";
+    status.textContent = `voz local no configurada: ${missing}`;
+    return;
+  }
+  status.textContent = config.tts_configured
+    ? `voz local · ${config.language || "es"} · entrada y salida`
+    : `voz local · ${config.language || "es"} · sólo entrada`;
+}
+
+function setVoicePhase(phase, label) {
+  state.voicePhase = phase;
+  $("voice-status").textContent = label;
+  const button = $("voice-toggle");
+  button.classList.toggle("listening", phase === "listening");
+  button.textContent = phase === "listening" ? "Detener" : "Hablar";
+  const active = state.session?.status === "active" && !isRecorded();
+  button.disabled = phase !== "idle" && phase !== "listening";
+  if (phase === "idle") {
+    button.disabled = !active || !state.config.llm_configured || !state.config.voice?.asr_configured;
+    renderVoiceAvailability();
+  }
+}
+
+async function startListening() {
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    $("voice-status").textContent = "Este navegador no ofrece grabación de micrófono.";
+    return;
+  }
+  try {
+    voiceRuntime.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    voiceRuntime.context = new AudioContext();
+    const source = voiceRuntime.context.createMediaStreamSource(voiceRuntime.stream);
+    voiceRuntime.analyser = voiceRuntime.context.createAnalyser();
+    voiceRuntime.analyser.fftSize = 1024;
+    source.connect(voiceRuntime.analyser);
+
+    const preferred = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"]
+      .find((type) => MediaRecorder.isTypeSupported(type));
+    voiceRuntime.recorder = preferred
+      ? new MediaRecorder(voiceRuntime.stream, { mimeType: preferred })
+      : new MediaRecorder(voiceRuntime.stream);
+    voiceRuntime.chunks = [];
+    voiceRuntime.heardSpeech = false;
+    voiceRuntime.silentSince = 0;
+    voiceRuntime.startedAt = performance.now();
+    voiceRuntime.recorder.addEventListener("dataavailable", (event) => {
+      if (event.data.size) voiceRuntime.chunks.push(event.data);
+    });
+    voiceRuntime.recorder.addEventListener("stop", processRecording, { once: true });
+    voiceRuntime.recorder.start(250);
+    setVoicePhase("listening", "Escuchando… hablá y dejá un breve silencio al terminar.");
+    monitorSilence();
+  } catch (error) {
+    cleanupMicrophone();
+    setVoicePhase("idle", "");
+    $("voice-status").textContent = `No se pudo abrir el micrófono: ${error.message}`;
+  }
+}
+
+function monitorSilence() {
+  if (state.voicePhase !== "listening" || !voiceRuntime.analyser) return;
+  const samples = new Uint8Array(voiceRuntime.analyser.fftSize);
+  voiceRuntime.analyser.getByteTimeDomainData(samples);
+  let sum = 0;
+  for (const sample of samples) {
+    const value = (sample - 128) / 128;
+    sum += value * value;
+  }
+  const rms = Math.sqrt(sum / samples.length);
+  const now = performance.now();
+  if (rms > 0.025) {
+    voiceRuntime.heardSpeech = true;
+    voiceRuntime.silentSince = 0;
+  } else if (voiceRuntime.heardSpeech) {
+    if (!voiceRuntime.silentSince) voiceRuntime.silentSince = now;
+    if (now - voiceRuntime.silentSince > 1250) return stopListening();
+  }
+  if (now - voiceRuntime.startedAt > 90000) return stopListening();
+  voiceRuntime.frame = requestAnimationFrame(monitorSilence);
+}
+
+function stopListening() {
+  if (voiceRuntime.recorder?.state === "recording") voiceRuntime.recorder.stop();
+  if (voiceRuntime.frame) cancelAnimationFrame(voiceRuntime.frame);
+}
+
+function cleanupMicrophone() {
+  if (voiceRuntime.frame) cancelAnimationFrame(voiceRuntime.frame);
+  voiceRuntime.stream?.getTracks().forEach((track) => track.stop());
+  if (voiceRuntime.context && voiceRuntime.context.state !== "closed") voiceRuntime.context.close();
+  voiceRuntime.frame = null;
+  voiceRuntime.stream = null;
+  voiceRuntime.context = null;
+  voiceRuntime.analyser = null;
+  voiceRuntime.recorder = null;
+}
+
+async function processRecording() {
+  const heardSpeech = voiceRuntime.heardSpeech;
+  const mimeType = voiceRuntime.recorder?.mimeType || "audio/webm";
+  const blob = new Blob(voiceRuntime.chunks, { type: mimeType });
+  cleanupMicrophone();
+  if (!heardSpeech || blob.size < 1000) {
+    setVoicePhase("idle", "");
+    $("voice-status").textContent = "No se detectó voz. Probá de nuevo.";
+    return;
+  }
+
+  setVoicePhase("transcribing", "Transcribiendo localmente…");
+  try {
+    const response = await fetch(`/api/sessions/${state.session.id}/voice/transcribe`, {
+      method: "POST",
+      headers: { "Content-Type": mimeType },
+      body: blob,
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
+    $("message").value = result.text;
+    setVoicePhase("thinking", "Pensando…");
+    await submitTurn(result.text, result.audio_id, true);
+    $("message").value = "";
+  } catch (error) {
+    $("voice-status").textContent = `No se pudo procesar la voz: ${error.message}`;
+  } finally {
+    if (state.voicePhase !== "speaking") setVoicePhase("idle", "");
+  }
+}
+
+async function speakText(text) {
+  setVoicePhase("speaking", "Hablando… el micrófono está apagado.");
+  const response = await fetch("/api/voice/speak", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.detail || `HTTP ${response.status}`);
+  }
+  const url = URL.createObjectURL(await response.blob());
+  try {
+    const audio = new Audio(url);
+    await audio.play();
+    await new Promise((resolve, reject) => {
+      audio.addEventListener("ended", resolve, { once: true });
+      audio.addEventListener("error", reject, { once: true });
+    });
+  } finally {
+    URL.revokeObjectURL(url);
+    setVoicePhase("idle", "");
+  }
+}
+
 function showTab(name) {
   document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x.dataset.tab === name));
   document.querySelectorAll(".tab-panel").forEach((x) => x.classList.toggle("active", x.id === `tab-${name}`));
@@ -443,25 +642,38 @@ $("load-demo").addEventListener("click", async () => {
   }
 });
 
-$("composer").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!state.session || !state.config.llm_configured || isRecorded()) return;
-  const text = $("message").value;
-  if (!text.trim()) return;
-  $("message").value = "";
+async function submitTurn(text, audioId = "", speakReply = false) {
+  if (!state.session || !state.config.llm_configured || isRecorded() || state.session.status !== "active") return null;
+  if (!text.trim()) return null;
   $("send").disabled = true;
   $("send-status").textContent = "Pensando…";
   try {
-    const result = await api(`/api/sessions/${state.session.id}/turns`, { method: "POST", body: JSON.stringify({ text }) });
+    const result = await api(`/api/sessions/${state.session.id}/turns`, {
+      method: "POST",
+      body: JSON.stringify({ text, audio_id: audioId }),
+    });
     setSession(result.session);
     $("send-status").textContent = "";
+    if (speakReply && result.assistant_turn && state.config.voice?.tts_configured) {
+      await speakText(result.assistant_turn.text);
+    }
+    return result;
   } catch (error) {
     if (error.payload?.session) setSession(error.payload.session);
     $("send-status").textContent = `No se pudo generar respuesta: ${error.message}`;
+    return null;
   } finally {
-    $("send").disabled = !state.config.llm_configured || isRecorded();
+    $("send").disabled = !state.config.llm_configured || isRecorded() || state.session?.status !== "active";
     $("message").focus();
   }
+}
+
+$("composer").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const text = $("message").value;
+  if (!text.trim()) return;
+  $("message").value = "";
+  await submitTurn(text);
 });
 
 $("message").addEventListener("keydown", (event) => {
@@ -532,6 +744,20 @@ $("add-relation").addEventListener("click", async () => {
 
 $("export-json").addEventListener("click", () => window.location.assign(`/api/sessions/${state.session.id}/export.json`));
 $("export-md").addEventListener("click", () => window.location.assign(`/api/sessions/${state.session.id}/export.md`));
+
+$("resume-session").addEventListener("click", async () => {
+  try {
+    setSession(await api(`/api/sessions/${state.session.id}/resume`, { method: "POST" }));
+    $("message").focus();
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+$("voice-toggle").addEventListener("click", () => {
+  if (state.voicePhase === "listening") stopListening();
+  else startListening();
+});
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => showTab(tab.dataset.tab));

@@ -53,6 +53,11 @@ ACTION_TITLES = {
     "interpretacion_eliminada": "Eliminación",
     "relacion_agregada": "Relación",
     "extraccion_ejecutada": "Extracción automática",
+    "entrada_clasificada": "Clasificación de entrada",
+    "operacion_protocolo": "Operación de protocolo",
+    "estado_sesion_cambiado": "Estado de la sesión",
+    "audio_preservado": "Audio preservado",
+    "transcripcion_asr_creada": "Transcripción ASR",
 }
 
 
@@ -61,6 +66,26 @@ class Turn:
     id: str
     role: str
     text: str
+    created_at: str = field(default_factory=now_iso)
+    # A participant utterance can remain in the immutable transcript without
+    # being treated as testimony by extraction or the interviewing model.
+    record_kind: str = "testimony"
+    intent: str = ""
+    input_mode: str = "text"
+    audio_id: str = ""
+    transcription_detail: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class AudioRecord:
+    """Participant-produced audio and its machine-derived transcript."""
+
+    id: str
+    storage_path: str
+    mime_type: str
+    byte_length: int
+    transcript: str
+    asr_detail: dict[str, Any] = field(default_factory=dict)
     created_at: str = field(default_factory=now_iso)
 
 
@@ -137,6 +162,8 @@ class Session:
     derived_items: list[DerivedItem] = field(default_factory=list)
     relations: list[Relation] = field(default_factory=list)
     events: list[Event] = field(default_factory=list)
+    audio_records: list[AudioRecord] = field(default_factory=list)
+    status: str = "active"
     # True only for the researcher-authored example transcript. It is never a
     # live conversation and the interface must say so.
     is_recorded: bool = False
@@ -167,12 +194,33 @@ class Session:
         self.events.append(event)
         return event
 
-    def add_turn(self, role: str, text: str, actor: str | None = None) -> Turn:
+    def add_turn(
+        self,
+        role: str,
+        text: str,
+        actor: str | None = None,
+        *,
+        record_kind: str | None = None,
+        intent: str = "",
+        input_mode: str = "text",
+        audio_id: str = "",
+        transcription_detail: dict[str, Any] | None = None,
+    ) -> Turn:
         if not text.strip():
             raise ValueError("El turno no puede estar vacío")
         # Preserve the submitted turn byte-for-byte at the string level;
         # normalisation belongs only in derived/editable layers.
-        turn = Turn(id=new_id("turn"), role=role, text=text)
+        kind = record_kind or ("testimony" if role == "user" else "system_intervention")
+        turn = Turn(
+            id=new_id("turn"),
+            role=role,
+            text=text,
+            record_kind=kind,
+            intent=intent,
+            input_mode=input_mode,
+            audio_id=audio_id,
+            transcription_detail=dict(transcription_detail or {}),
+        )
         self.turns.append(turn)
         speaker = actor or (ACTOR_PARTICIPANT if role == "user" else ACTOR_MODEL)
         self.record(
@@ -185,7 +233,82 @@ class Session:
         self.touch()
         return turn
 
-    def add_annotation(self, source_turn_ids: list[str], label: str, note: str = "") -> Annotation:
+    def classify_turn(self, turn_id: str, intent: str, record_kind: str) -> Turn:
+        turn = next((candidate for candidate in self.turns if candidate.id == turn_id), None)
+        if turn is None:
+            raise ValueError(f"Turno desconocido: {turn_id}")
+        turn.intent = intent
+        turn.record_kind = record_kind
+        self.record(
+            ACTOR_SYSTEM,
+            "entrada_clasificada",
+            f"Entrada clasificada como {intent}; capa: {record_kind}",
+            target_id=turn.id,
+            target_kind="turn",
+            detail={"intent": intent, "record_kind": record_kind},
+        )
+        self.touch()
+        return turn
+
+    def add_audio_record(
+        self,
+        storage_path: str,
+        mime_type: str,
+        byte_length: int,
+        transcript: str,
+        asr_detail: dict[str, Any],
+        record_id: str | None = None,
+    ) -> AudioRecord:
+        record = AudioRecord(
+            id=record_id or new_id("audio"),
+            storage_path=storage_path,
+            mime_type=mime_type,
+            byte_length=byte_length,
+            transcript=transcript,
+            asr_detail=dict(asr_detail),
+        )
+        self.audio_records.append(record)
+        self.record(
+            ACTOR_PARTICIPANT,
+            "audio_preservado",
+            f"Audio original preservado ({byte_length} bytes)",
+            target_id=record.id,
+            target_kind="audio",
+            detail={"mime_type": mime_type, "storage_path": storage_path},
+        )
+        self.record(
+            ACTOR_MODEL,
+            "transcripcion_asr_creada",
+            f"Transcripción automática creada: «{preview(transcript)}»",
+            target_id=record.id,
+            target_kind="audio",
+            detail=dict(asr_detail),
+        )
+        self.touch()
+        return record
+
+    def set_status(self, status: str, operation: str = "") -> None:
+        if status not in {"active", "paused", "stopped", "revocation_requested"}:
+            raise ValueError(f"Estado de sesión desconocido: {status}")
+        before = self.status
+        self.status = status
+        self.record(
+            ACTOR_SYSTEM,
+            "estado_sesion_cambiado",
+            f"Estado de la sesión: {before} → {status}",
+            target_id=self.id,
+            target_kind="session",
+            detail={"before": before, "after": status, "operation": operation},
+        )
+        self.touch()
+
+    def add_annotation(
+        self,
+        source_turn_ids: list[str],
+        label: str,
+        note: str = "",
+        actor: str = ACTOR_RESEARCHER,
+    ) -> Annotation:
         self._validate_turn_ids(source_turn_ids)
         annotation = Annotation(
             id=new_id("ann"),
@@ -195,7 +318,7 @@ class Session:
         )
         self.annotations.append(annotation)
         self.record(
-            ACTOR_RESEARCHER,
+            actor,
             "anotacion_agregada",
             f"Anotación «{annotation.label}» sobre {len(annotation.source_turn_ids)} turno(s)",
             target_id=annotation.id,
@@ -215,6 +338,16 @@ class Session:
         origin_detail: dict[str, Any] | None = None,
     ) -> DerivedItem:
         self._validate_turn_ids(source_turn_ids)
+        blocked = [
+            turn.id
+            for turn in self.turns
+            if turn.id in source_turn_ids and turn.record_kind == "non_testimony/control"
+        ]
+        if blocked:
+            raise ValueError(
+                "Una entrada de control/no testimonial no puede entrar al material derivado: "
+                + ", ".join(blocked)
+            )
         item = DerivedItem(
             id=new_id("item"),
             kind=kind.strip(),
@@ -372,6 +505,8 @@ class Session:
             "anotaciones": len(self.annotations),
             "relaciones": len(self.relations),
             "eventos": len(self.events),
+            "audios": len(self.audio_records),
+            "estado": self.status,
         }
 
     def _validate_turn_ids(self, ids: list[str]) -> None:
@@ -403,6 +538,8 @@ class Session:
             derived_items=[_derived_from_dict(x) for x in data.get("derived_items", [])],
             relations=[Relation(**x) for x in data.get("relations", [])],
             events=[Event(**x) for x in data.get("events", [])],
+            audio_records=[AudioRecord(**x) for x in data.get("audio_records", [])],
+            status=data.get("status", "active"),
             is_recorded=bool(data.get("is_recorded", False)),
         )
 
@@ -505,8 +642,31 @@ def export_markdown(session: Session) -> str:
         "",
     ])
     for turn in session.turns:
-        speaker = "Participante" if turn.role == "user" else "Conversación"
+        if turn.role == "user" and turn.record_kind == "non_testimony/control":
+            speaker = f"Participante · control/no testimonial · {turn.intent or 'sin clasificar'}"
+        else:
+            speaker = "Participante" if turn.role == "user" else "Conversación"
         lines.extend([f"### {speaker} · `{turn.id}`", "", turn.text, ""])
+        if turn.audio_id:
+            lines.extend(
+                [
+                    f"> Entrada por voz. Audio original: `{turn.audio_id}`; el texto es una transcripción ASR derivada.",
+                    "",
+                ]
+            )
+
+    if session.audio_records:
+        lines.extend(["## Capas de audio y transcripción", ""])
+        for audio in session.audio_records:
+            model = audio.asr_detail.get("model", "whisper.cpp")
+            language = audio.asr_detail.get("language", "")
+            lines.append(
+                f"- `{audio.id}` — audio original `{audio.storage_path}` "
+                f"({audio.mime_type}, {audio.byte_length} bytes); "
+                f"transcripción derivada por {model}{f' · {language}' if language else ''}: "
+                f"«{audio.transcript}»"
+            )
+        lines.append("")
 
     if session.annotations:
         lines.extend(["## Anotaciones", ""])

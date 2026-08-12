@@ -1,3 +1,5 @@
+import json
+
 from model import (
     LLMClient,
     URUGUAYAN_CONVERSATION_POLICY,
@@ -27,13 +29,14 @@ def test_policy_encodes_non_questionnaire_and_uncertainty_requirements():
         assert phrase in policy
 
 
-def test_conversation_messages_keep_turn_text_exactly():
+def test_conversation_messages_treat_participant_text_as_data_without_changing_it():
     turns = [
         {"role": "user", "text": "Bo, no; dije 'capaz que', no que estaba seguro."},
         {"role": "assistant", "text": "Sí, te entendí: lo dejás como una posibilidad."},
     ]
     messages = conversation_messages(turns)
-    assert messages[1]["content"] == turns[0]["text"]
+    payload = json.loads(messages[1]["content"])
+    assert payload["participant_utterance"] == turns[0]["text"]
     assert messages[2]["content"] == turns[1]["text"]
 
 

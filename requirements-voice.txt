@@ -1,0 +1,3 @@
+# Optional local text-to-speech layer. Whisper.cpp and ffmpeg are native tools
+# configured separately; see docs/VOICE.md.
+piper-tts

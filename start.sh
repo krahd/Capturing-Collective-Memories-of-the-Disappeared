@@ -20,4 +20,8 @@ if [[ "${1:-}" == "--setup-only" ]]; then
   exit 0
 fi
 
+if [[ "${1:-}" == "--voice-doctor" ]]; then
+  exec python scripts/voice_doctor.py
+fi
+
 exec uvicorn app:app --reload --host 127.0.0.1 --port "${PORT:-8765}"

@@ -1,13 +1,24 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from controller import (
+    CORRECTION,
+    FIXED_PROTOCOL_RESPONSES,
+    FIXED_REDIRECT,
+    OFF_TOPIC,
+    deterministic_intent,
+    guard_interview_action,
+    protocol_status,
+    record_kind_for_intent,
+)
 from model import LLMClient, opening_message
 from state import (
     ACTOR_MODEL,
@@ -17,11 +28,14 @@ from state import (
     export_markdown,
     load_recorded_session,
     new_id,
+    safe_filename,
 )
+from voice import VoiceService, audio_suffix
 
 ROOT = Path(__file__).resolve().parent
 store = SessionStore(ROOT / "data" / "sessions")
 llm = LLMClient()
+voice = VoiceService()
 app = FastAPI(title="Collective Memories Prototype", version="0.1.0")
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 
@@ -32,6 +46,7 @@ class SessionCreate(BaseModel):
 
 class TurnCreate(BaseModel):
     text: str = Field(min_length=1)
+    audio_id: str = ""
 
 
 class AnnotationCreate(BaseModel):
@@ -66,6 +81,10 @@ class WithdrawRequest(BaseModel):
     reason: str = ""
 
 
+class SpeechCreate(BaseModel):
+    text: str = Field(min_length=1, max_length=1000)
+
+
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(ROOT / "static" / "index.html")
@@ -77,6 +96,7 @@ def config() -> dict[str, Any]:
         "llm_configured": llm.configured,
         "model": llm.model if llm.configured else None,
         "provenance": llm.provenance() if llm.configured else None,
+        "voice": voice.config(),
     }
 
 
@@ -121,13 +141,35 @@ async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
     session = get_session_or_404(session_id)
     if session.is_recorded:
         raise HTTPException(409, "Esta es una transcripción grabada; no admite turnos nuevos")
-    user_turn = session.add_turn("user", body.text)
+    if session.status != "active":
+        raise HTTPException(409, f"La sesión está {session.status}; reanudala o iniciá otra")
+
+    audio_record = next((record for record in session.audio_records if record.id == body.audio_id), None)
+    if body.audio_id and audio_record is None:
+        raise HTTPException(400, "El audio no pertenece a esta sesión")
+    transcription_detail = {}
+    if audio_record:
+        transcription_detail = {
+            **audio_record.asr_detail,
+            "original_transcript": audio_record.transcript,
+            "participant_edited": body.text != audio_record.transcript,
+        }
+    user_turn = session.add_turn(
+        "user",
+        body.text,
+        input_mode="voice_asr" if audio_record else "text",
+        audio_id=body.audio_id,
+        transcription_detail=transcription_detail,
+    )
     store.save(session)
 
     try:
-        assistant_text = await llm.chat([{"role": t.role, "text": t.text} for t in session.turns])
+        history = _interview_history(session)
+        intent = deterministic_intent(body.text) or await llm.classify(history)
     except Exception as exc:
-        # Preserve the participant turn even if generation fails.
+        # Preserve the participant turn even if classification fails.
+        session.classify_turn(user_turn.id, "UNCLASSIFIED", "non_testimony/control")
+        store.save(session)
         return JSONResponse(
             status_code=503,
             content={
@@ -137,9 +179,172 @@ async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
             },
         )
 
-    assistant_turn = session.add_turn("assistant", assistant_text, actor=ACTOR_MODEL)
+    session.classify_turn(user_turn.id, intent, record_kind_for_intent(intent))
+
+    if intent == CORRECTION:
+        session.add_annotation(
+            [user_turn.id],
+            "correction",
+            "Operación de corrección reconocida por el controlador; requiere vinculación investigadora.",
+            actor=ACTOR_SYSTEM,
+        )
+
+    if intent == OFF_TOPIC or intent in FIXED_PROTOCOL_RESPONSES:
+        assistant_text = FIXED_REDIRECT if intent == OFF_TOPIC else FIXED_PROTOCOL_RESPONSES[intent]
+        status = protocol_status(intent)
+        if status:
+            session.set_status(status, intent)
+        session.record(
+            ACTOR_SYSTEM,
+            "operacion_protocolo",
+            f"El controlador aplicó {intent} sin delegar la respuesta al entrevistador",
+            target_id=user_turn.id,
+            target_kind="turn",
+            detail={"intent": intent},
+        )
+        assistant_turn = session.add_turn(
+            "assistant",
+            assistant_text,
+            actor=ACTOR_SYSTEM,
+            record_kind="protocol_response" if intent != OFF_TOPIC else "redirect",
+            intent=intent,
+        )
+        store.save(session)
+        return {
+            "intent": intent,
+            "action": "REDIRECT" if intent == OFF_TOPIC else intent,
+            "user_turn": user_turn.__dict__,
+            "assistant_turn": assistant_turn.__dict__,
+            "session": session.to_dict(),
+        }
+
+    try:
+        action = await llm.interview(_interview_history(session))
+    except Exception as exc:
+        store.save(session)
+        return JSONResponse(
+            status_code=503,
+            content={
+                "error": str(exc),
+                "user_turn": user_turn.__dict__,
+                "session": session.to_dict(),
+            },
+        )
+
+    known_turns = {
+        turn.id: turn.text
+        for turn in session.turns
+        if turn.role == "user" and turn.record_kind == "testimony"
+    }
+    guarded = guard_interview_action(action, known_turns)
+    if guarded:
+        action_name, assistant_text = guarded
+        actor = ACTOR_MODEL
+        turn_kind = "interview_action"
+    else:
+        action_name, assistant_text = "REDIRECT", FIXED_REDIRECT
+        actor = ACTOR_SYSTEM
+        turn_kind = "redirect"
+        session.record(
+            ACTOR_SYSTEM,
+            "operacion_protocolo",
+            "La salida del entrevistador fue rechazada por el guard y sustituida por un redirect fijo",
+            target_id=user_turn.id,
+            target_kind="turn",
+            detail={
+                "intent": intent,
+                "guard": "rejected",
+                "candidate": {
+                    "action": action.action,
+                    "acknowledgement": action.acknowledgement,
+                    "question": action.question,
+                    "references_to_previous_turns": list(action.references_to_previous_turns),
+                },
+            },
+        )
+
+    assistant_turn = session.add_turn(
+        "assistant",
+        assistant_text,
+        actor=actor,
+        record_kind=turn_kind,
+        intent=action_name,
+    )
     store.save(session)
-    return {"user_turn": user_turn.__dict__, "assistant_turn": assistant_turn.__dict__, "session": session.to_dict()}
+    return {
+        "intent": intent,
+        "action": action_name,
+        "user_turn": user_turn.__dict__,
+        "assistant_turn": assistant_turn.__dict__,
+        "session": session.to_dict(),
+    }
+
+
+def _interview_history(session) -> list[dict[str, str]]:
+    """Exclude control/off-topic material from the interviewing model's context."""
+    return [
+        {"id": turn.id, "role": turn.role, "text": turn.text}
+        for turn in session.turns
+        if (
+            turn.role == "user" and turn.record_kind == "testimony"
+        )
+        or (
+            turn.role == "assistant"
+            and turn.record_kind in {"system_intervention", "interview_action"}
+        )
+    ]
+
+
+@app.post("/api/sessions/{session_id}/resume")
+def resume_session(session_id: str) -> dict[str, Any]:
+    session = get_session_or_404(session_id)
+    if session.status != "paused":
+        raise HTTPException(409, "Sólo una sesión pausada puede reanudarse")
+    session.set_status("active", "RESUME")
+    store.save(session)
+    return session.to_dict()
+
+
+@app.post("/api/sessions/{session_id}/voice/transcribe")
+async def transcribe_voice(session_id: str, request: Request) -> dict[str, Any]:
+    session = get_session_or_404(session_id)
+    if session.is_recorded or session.status != "active":
+        raise HTTPException(409, "La sesión no admite una nueva entrada de voz")
+    if not voice.asr_configured:
+        raise HTTPException(503, "Entrada de voz no configurada; revisá /api/config")
+    audio = await request.body()
+    if not audio:
+        raise HTTPException(400, "El audio está vacío")
+    if len(audio) > 25 * 1024 * 1024:
+        raise HTTPException(413, "El audio supera el límite de 25 MB")
+    mime_type = request.headers.get("content-type", "audio/webm").split(";", 1)[0]
+    suffix = audio_suffix(mime_type)
+    try:
+        transcript, asr_detail = await asyncio.to_thread(voice.transcribe, audio, suffix)
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+    audio_id = new_id("audio")
+    relative = Path("data") / "audio" / safe_filename(session.id) / f"{audio_id}{suffix}"
+    absolute = ROOT / relative
+    absolute.parent.mkdir(parents=True, exist_ok=True)
+    absolute.write_bytes(audio)
+    record = session.add_audio_record(
+        str(relative), mime_type, len(audio), transcript, asr_detail, record_id=audio_id
+    )
+    store.save(session)
+    return {"audio_id": record.id, "text": transcript, "asr": asr_detail}
+
+
+@app.post("/api/voice/speak")
+async def speak_voice(body: SpeechCreate) -> Response:
+    if not voice.tts_configured:
+        raise HTTPException(503, "Salida de voz no configurada; revisá /api/config")
+    try:
+        audio = await asyncio.to_thread(voice.synthesize, body.text)
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc)) from exc
+    return Response(content=audio, media_type="audio/wav")
 
 
 @app.post("/api/sessions/{session_id}/annotations")
@@ -221,12 +426,17 @@ def add_relation(session_id: str, body: RelationCreate) -> dict[str, Any]:
 @app.post("/api/sessions/{session_id}/extract")
 async def extract(session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     session = get_session_or_404(session_id)
-    source_turn_ids = payload.get("source_turn_ids") or [t.id for t in session.turns if t.role == "user"]
+    source_turn_ids = payload.get("source_turn_ids") or [
+        t.id for t in session.turns if t.role == "user" and t.record_kind == "testimony"
+    ]
     known = {t.id: t for t in session.turns}
     try:
         turns = [known[x] for x in source_turn_ids]
     except KeyError as exc:
         raise HTTPException(400, f"Turno fuente desconocido: {exc.args[0]}") from exc
+    blocked = [turn.id for turn in turns if turn.record_kind == "non_testimony/control"]
+    if blocked:
+        raise HTTPException(400, "Las entradas de control/no testimoniales no se extraen")
     try:
         extracted = await llm.extract([t.__dict__ for t in turns])
     except Exception as exc:

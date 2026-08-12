@@ -36,6 +36,11 @@
       <div id="conversation" class="conversation" aria-live="polite"></div>
       <form id="composer" class="composer">
         <textarea id="message" rows="3" placeholder="Escribí acá…" disabled></textarea>
+        <div class="voice-row">
+          <button id="voice-toggle" type="button" disabled>Hablar</button>
+          <button id="resume-session" type="button" hidden>Reanudar</button>
+          <span id="voice-status" class="muted">voz local no configurada</span>
+        </div>
         <div class="composer-row">
           <span id="send-status" class="muted"></span>
           <button id="send" type="submit" disabled>Enviar</button>

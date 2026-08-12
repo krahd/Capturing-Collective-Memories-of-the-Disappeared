@@ -52,6 +52,47 @@
       }
     },
     {
+      "label": "Prototype: Install Piper",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "-m",
+        "pip",
+        "install",
+        "-r",
+        "${workspaceFolder}/requirements-voice.txt"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Prototype: Setup",
+      "dependsOrder": "sequence",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Prototype: Voice Doctor",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/start.sh",
+        "--voice-doctor"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
       "label": "Prototype: Test",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python",
