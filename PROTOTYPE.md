@@ -8,7 +8,7 @@
 > Two things were wrong with it. It made the interface communicate curation
 > labour, so the prototype read as an annotation tool that happened to have a
 > chatbot attached. And working one conversation at a time made the project's
-> actual claim invisible: that separate, partial, personally-held recollections
+> actual object invisible: separate, partial, personally held recollections can
 > accumulate into a structure none of them contains alone.
 >
 > The second view is now the **campo de memoria** — one graph over every stored
@@ -18,6 +18,8 @@
 > simply not surfaced. Sections below that describe the workbench as a *screen*
 > are superseded; the same list read as *operations the data model must support*
 > still holds. See `README.md` for what the interface actually does.
+
+This is a disposable implementation specification, not the long-lived production architecture. The latter is documented under [`docs/README.md`](docs/README.md). In particular, the production direction is mobile-first and full duplex; the prototype remains a desktop/browser research instrument with continuous half-duplex local voice.
 
 ## Goal
 
@@ -36,7 +38,7 @@ The goal is complete only when all of the following are true:
 5. The system does not silently turn uncertainty, hearsay, contradiction, speculation, or correction into fact.
 6. The participant can decline, redirect, correct, qualify, or stop a line of conversation without conversational friction.
 7. The exact transcript is preserved turn by turn.
-8. The session model can select turns or passages, add editable annotations and statuses, connect later corrections to earlier statements, and create provisional entities/events/themes linked to exact source turns — through the API and the exports, without any of it occupying the screen.
+8. The session model can select turns or passages, add editable annotations and statuses, connect later corrections to earlier statements, and create provisional entities/events/themes linked to exact source turns through the API and exports, without requiring these operations to occupy the participant-facing screen.
 9. Automatically derived material is visibly distinct from participant speech, attributed to the model that produced it, and remains editable and traceable.
 9b. The memory field grows without curation, holds contradictory datings simultaneously, and asserts no more than the extraction supports.
 9c. At least one view the accumulated material can produce is built rather than only named.
@@ -51,10 +53,13 @@ Build the smallest working system that lets us experience and critique the inten
 The prototype should answer:
 
 - Can the conversational interaction sustain a natural memory-oriented exchange rather than behave like an interview form?
-- Which kinds of follow-up feel useful, intrusive, leading, repetitive, or flattening?
+- Which kinds of follow-up feel useful, intrusive, leading, repetitive, flattening, or unnecessarily selective?
+- Can small, uncertain or apparently peripheral fragments survive without being forced into immediately useful propositions?
 - Which operations are needed to inspect, annotate, revise, connect, and export the conversation?
 - What information must remain traceable to exact source turns?
 - Which interaction failures should become explicit design requirements for the final system?
+
+The prototype should not attempt to establish whether the system successfully captures collective memory in real participants. That is a later empirical question.
 
 ## Proposed first prototype
 
@@ -93,11 +98,7 @@ Naturalness is an interaction requirement, not merely a localisation setting.
 
 ### Conversation workbench
 
-**Superseded as a screen; retained as a specification of the data model.** These
-are the operations the stored session must support and the exports must carry.
-They are reachable through the API and the session record, and none of them
-appears in the interface — see the note at the top of this document, and the
-*campo de memoria* section below for what replaced them.
+**Superseded as a screen; retained as a specification of the data model.** These are the operations the stored session must support and the exports must carry. They are reachable through the API and the session record, and none of them appears in the interface. See the note at the top of this document and the *campo de memoria* section below for what replaced them.
 
 Initial functions:
 
@@ -113,55 +114,35 @@ Initial functions:
 
 Automatic extraction may use the same LLM as the conversation for prototype speed, but generated structures must remain visibly provisional and editable, and must be attributed to the model that produced them.
 
-On one local server, though, sharing a model is not only a speed shortcut: an
-analysis call and the next conversational call contend for the same weights, and
-it is the participant who waits. Extraction therefore runs behind the reply
-**and** waits for a quiet conversational model, or uses a separate smaller one.
+On one local server, though, sharing a model is not only a speed shortcut: an analysis call and the next conversational call contend for the same weights, and it is the participant who waits. Extraction therefore runs behind the reply **and** waits for a quiet conversational model, or uses a separate smaller one.
 
 ### Campo de memoria
 
-What replaced the workbench screen. One graph across every stored conversation,
-grown by itself as people speak.
+What replaced the workbench screen. One graph across every stored conversation, grown by itself as people speak.
 
 Its shape carries the argument:
 
-- **Recollections are first-class nodes.** A conventional knowledge graph reads
-  `Person → Event → Place` and thereby presents testimony as resolved fact. Here
-  entities hang off the recollection that mentioned them, and every recollection
-  belongs to a conversation.
-- **Edges claim only mention.** `menciona`, `menciona lugar`, `menciona fecha`.
-  Extraction establishes that a recollection referred to something, not that the
-  remembered episode occurred there or happened then.
-- **A person is a person only when extraction said so.** Generic entities stay
-  generic rather than being drawn as people.
-- **Entities are shared across conversations**, so separate accounts meet at one
-  node and the field densifies as more people speak.
-- **Disagreement is kept.** Two recollections may date the same thing
-  differently; both edges remain and nothing adjudicates.
-- **Uncertainty, hearsay and correction mark the recollection** that carries
-  them rather than becoming entities, because they describe how something was
-  said, not a thing in the world.
-- **Growth is legible in two stages.** The recollection appears as soon as the
-  words are preserved — before the reply is composed. What was read out of it
-  arrives afterwards, and whatever the corpus already held lights up as the new
-  conversation reaches it.
+- **Recollections are first-class nodes.** A conventional knowledge graph reads `Person → Event → Place` and thereby presents testimony as resolved fact. Here entities hang off the recollection that mentioned them, and every recollection belongs to a conversation.
+- **Edges claim only mention.** `menciona`, `menciona lugar`, `menciona fecha`. Extraction establishes that a recollection referred to something, not that the remembered episode occurred there or happened then.
+- **A person is a person only when extraction said so.** Generic entities stay generic rather than being drawn as people.
+- **The prototype shares nodes with the same conservatively normalised extracted label across conversations.** This is a visual heuristic for demonstrating possible convergence, not historical identity resolution. Same label does not guarantee same referent; future architecture must represent mention-level evidence and provisional coreference explicitly.
+- **Disagreement is kept.** Two recollections may date the same thing differently; both edges remain and nothing adjudicates.
+- **Uncertainty, hearsay and correction mark the recollection** that carries them rather than becoming entities, because they describe how something was said, not a thing in the world.
+- **Growth is legible in two stages.** The recollection appears as soon as the words are preserved, before the reply is composed. What was read out of it arrives afterwards, and possible label-level convergence with what the corpus already held becomes visible later.
 
-Clicking any node shows the exact words it came from, across every conversation
-that produced it. That is the only inspection affordance.
+Clicking any node shows the exact words it came from, across every conversation that produced it. That is the only inspection affordance.
+
+The `campo de memoria` is not claimed to be collective memory itself. It is a prototype apparatus for exposing relations among stored recollections.
 
 ### Views the material can produce
 
-Naming what an archive could support is cheap. At least one has to be built, or
-the claim is unfalsifiable.
+Naming what an archive could support is cheap. At least one has to be built, or the claim is unfalsifiable.
 
-**Cronología** is built: years read out of the phrases people used, each year
-holding the recollections that named it, and subjects dated more than one way
-sitting at both years with both sources reachable. Time material that names no
-locatable year — "después", "los domingos" — is kept and shown as such rather
-than dropped or given an invented date.
+**Cronología** is built: years read out of the phrases people used, each year holding the recollections that named it, and subjects dated more than one way sitting at both years with both sources reachable. Time material that names no locatable year — "después", "los domingos" — is kept and shown as such rather than dropped or given an invented date.
 
-Map, search, themes and connections remain deliberately unbuilt and are marked
-as such in the interface.
+Two-digit year normalisation is a prototype heuristic, not a production temporal model. The future system must preserve the exact phrase and treat normalised dates as provisional interpretations.
+
+Map, search, themes and connections remain deliberately unbuilt and are marked as such in the interface.
 
 ## Deliberate non-goals
 
@@ -175,6 +156,8 @@ The prototype does not need:
 - final consent workflow;
 - final security design;
 - final model/provider choice;
+- full-duplex production speech;
+- mobile deployment;
 - backward compatibility;
 - migration path to the production system;
 - real participant data.
@@ -200,7 +183,7 @@ The first prototype is successful when:
 2. the conversation reads as plausible, natural Uruguayan Spanish to a native speaker rather than generic international Spanish or translated chatbot prose;
 3. the system can make contextually relevant follow-ups while avoiding unsupported factual assertions;
 4. the full conversation is preserved exactly;
-5. the user can inspect and manually work on individual turns and passages;
+5. the stored session and API support inspection, editing and withdrawal of provisional derived material without making curation labour the participant-facing interaction;
 6. provisional extraction remains linked to exact source turns;
 7. corrections and uncertainty can be represented without overwriting the earlier record;
 8. a complete session can be exported and inspected independently of the application;
@@ -213,12 +196,12 @@ Use synthetic or researcher-authored scenarios. Do not use real participant test
 
 Scenarios should deliberately include:
 
-- reported speech that resembles an instruction to the system, since memories are
-  full of other people telling somebody to stop talking or to destroy something;
+- reported speech that resembles an instruction to the system, since memories are full of other people telling somebody to stop talking or to destroy something;
 - uncertain dates;
 - aliases and pronouns;
 - contradictory recollections;
 - corrections several turns later;
+- participant correction of an interviewer misunderstanding;
 - refusal to answer;
 - topic shifts;
 - hearsay;
@@ -226,7 +209,12 @@ Scenarios should deliberately include:
 - voseo and shifts between informal and more formal registers;
 - references to local places or institutions that should not trigger unnecessary explanation;
 - emotionally neutral but structurally realistic memory narratives;
-- incomplete events and unresolved relationships.
+- incomplete events and unresolved relationships;
+- unsupported but tempting details that test suggestion resistance;
+- uncertain material that tests affirmation resistance;
+- short/hesitant answers that test premature closure;
+- cross-session material that must not leak into the live interviewer;
+- fragments whose significance becomes visible only in later researcher-authored conversations.
 
 Manual conversational review should explicitly score or note:
 
@@ -234,11 +222,12 @@ Manual conversational review should explicitly score or note:
 - whether the next turn follows from the participant's previous turn;
 - leading or presuppositional questions;
 - repetitive questioning;
+- multiple-question packing;
 - unnecessary summaries;
-- inappropriate certainty;
+- inappropriate certainty or social ratification;
 - generic chatbot language;
 - foreign or unnatural Spanish usage;
 - loss of participant vocabulary;
-- handling of correction, uncertainty, refusal, and digression.
+- handling of correction, uncertainty, refusal, digression and delayed relevance.
 
-Evaluate interaction quality manually before adding formal metrics. The purpose of this phase is discovery rather than validation.
+Evaluate interaction quality manually before adding formal metrics. The purpose of this phase is discovery rather than validation. The broader evaluation structure is in [`docs/EVALUATION-FRAMEWORK.md`](docs/EVALUATION-FRAMEWORK.md).
