@@ -26,7 +26,7 @@
       <div class="panel-heading">
         <div>
           <h1>Conversación</h1>
-          <p>Contá por donde quieras. Seleccioná turnos para trabajarlos a la derecha.</p>
+          <p>Contá por donde quieras. La estructura de la derecha se arma sola.</p>
         </div>
       </div>
       <div id="recorded-banner" class="recorded-banner" hidden>
@@ -48,103 +48,55 @@
       </form>
     </section>
 
-    <aside class="workbench-panel">
-      <div class="panel-heading">
-        <div>
-          <h1>Mesa de trabajo</h1>
-          <p id="selection-summary">No hay turnos seleccionados.</p>
+    <aside class="field-panel">
+      <div class="field-counters" id="field-counters"></div>
+
+      <div class="field-graph-wrap">
+        <svg id="field-graph" class="field-graph" role="img"
+             aria-label="Estructura de memoria acumulada entre conversaciones"></svg>
+        <div id="field-empty" class="field-empty" hidden>
+          La estructura aparece a medida que se conversa.
         </div>
+        <div id="node-detail" class="node-detail" hidden></div>
       </div>
 
-      <div class="tabs" role="tablist">
-        <button class="tab active" data-tab="annotate">Anotar</button>
-        <button class="tab" data-tab="derived">Material derivado</button>
-        <button class="tab" data-tab="relations">Relaciones</button>
-        <button class="tab" data-tab="audit">Auditoría</button>
-      </div>
-
-      <section class="tab-panel active" id="tab-annotate">
-        <label>Estado / etiqueta
-          <select id="annotation-label">
-            <option value="uncertain">incierto</option>
-            <option value="hearsay">de oídas</option>
-            <option value="correction">corrección</option>
-            <option value="withdrawn">retirado</option>
-            <option value="significant">significativo</option>
-            <option value="other">otro</option>
-          </select>
-        </label>
-        <label>Nota
-          <textarea id="annotation-note" rows="4" placeholder="Nota de trabajo…"></textarea>
-        </label>
-        <button id="add-annotation" disabled>Agregar anotación</button>
-        <div id="annotations" class="cards"></div>
-      </section>
-
-      <section class="tab-panel" id="tab-derived">
-        <div class="row-actions">
-          <button id="auto-extract" disabled>Extraer provisionalmente con el modelo</button>
+      <div class="field-strips">
+        <div class="strip">
+          <span class="strip-label">Extraído</span>
+          <span id="extracted-chips" class="chips"></span>
         </div>
-        <div id="derived-filter" class="filter-note" hidden></div>
-        <label>Tipo
-          <select id="derived-kind">
-            <option value="entity">persona / entidad</option>
-            <option value="event">evento</option>
-            <option value="place">lugar</option>
-            <option value="time">tiempo</option>
-            <option value="theme">tema</option>
-            <option value="uncertainty">incertidumbre</option>
-            <option value="hearsay">de oídas</option>
-            <option value="correction">corrección</option>
-            <option value="relation">relación</option>
-            <option value="other">otro</option>
-          </select>
-        </label>
-        <label>Texto provisional
-          <textarea id="derived-text" rows="4" placeholder="Descripción breve, sin convertirla en hecho…"></textarea>
-        </label>
-        <button id="add-derived" disabled>Agregar</button>
-        <div id="derived-items" class="cards"></div>
-      </section>
-
-      <section class="tab-panel" id="tab-relations">
-        <p class="muted">Relacioná material derivado con otro elemento. Por ejemplo, una corrección con aquello que modifica.</p>
-        <label>Origen
-          <select id="relation-source"></select>
-        </label>
-        <label>Relación
-          <select id="relation-type">
-            <option value="corrects">corrige</option>
-            <option value="qualifies">califica</option>
-            <option value="contradicts">contradice</option>
-            <option value="refers-to">se refiere a</option>
-            <option value="related-to">relacionado con</option>
-          </select>
-        </label>
-        <label>Destino
-          <select id="relation-target"></select>
-        </label>
-        <label>Nota
-          <input id="relation-note" type="text" />
-        </label>
-        <button id="add-relation" disabled>Agregar relación</button>
-        <div id="relations" class="cards"></div>
-      </section>
-
-      <section class="tab-panel" id="tab-audit">
-        <p class="muted">
-          La transcripción no se reescribe. Cada interpretación indica quién la produjo.
-          Lo retirado se conserva marcado, no se borra.
-        </p>
-        <div id="audit-summary" class="audit-summary"></div>
-        <div id="audit-log" class="audit-log"></div>
-      </section>
+        <div class="strip">
+          <span class="strip-label">Puede producir</span>
+          <span class="chips">
+            <span class="chip chip-future">Cronología</span>
+            <span class="chip chip-future">Mapa</span>
+            <span class="chip chip-future">Búsqueda</span>
+            <span class="chip chip-future">Temas</span>
+            <span class="chip chip-future">Conexiones</span>
+          </span>
+        </div>
+        <button id="open-record" class="record-link" type="button">registro de la sesión</button>
+      </div>
     </aside>
   </main>
 
+  <div id="record-overlay" class="record-overlay" hidden>
+    <div class="record-sheet">
+      <div class="record-head">
+        <strong>Registro de la sesión</strong>
+        <button id="close-record" type="button">cerrar</button>
+      </div>
+      <p class="muted">
+        La transcripción no se reescribe. Cada interpretación indica quién la produjo.
+        Lo retirado se conserva marcado, no se borra.
+      </p>
+      <div id="audit-summary" class="audit-summary"></div>
+      <div id="audit-log" class="audit-log"></div>
+    </div>
+  </div>
+
   <template id="turn-template">
     <article class="turn">
-      <label class="turn-select"><input type="checkbox" /><span></span></label>
       <div class="turn-body">
         <div class="turn-meta"></div>
         <div class="turn-text"></div>

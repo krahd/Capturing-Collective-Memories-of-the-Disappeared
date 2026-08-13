@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -19,6 +19,7 @@ from controller import (
     protocol_status,
     record_kind_for_intent,
 )
+from memory_field import build_memory_field
 from model import LLMClient, opening_message
 from state import (
     ACTOR_MODEL,
@@ -137,7 +138,7 @@ def get_session(session_id: str) -> dict[str, Any]:
 
 
 @app.post("/api/sessions/{session_id}/turns")
-async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
+async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTasks) -> dict[str, Any]:
     session = get_session_or_404(session_id)
     if session.is_recorded:
         raise HTTPException(409, "Esta es una transcripción grabada; no admite turnos nuevos")
@@ -180,6 +181,11 @@ async def add_turn(session_id: str, body: TurnCreate) -> dict[str, Any]:
         )
 
     session.classify_turn(user_turn.id, intent, record_kind_for_intent(intent))
+
+    # The memory field grows on its own. Nobody selects turns or presses extract:
+    # the structure is a by-product of speaking, not a curation task.
+    if record_kind_for_intent(intent) == "testimony":
+        background.add_task(extract_in_background, session.id, user_turn.id)
 
     if intent == CORRECTION:
         session.add_annotation(
@@ -423,24 +429,10 @@ def add_relation(session_id: str, body: RelationCreate) -> dict[str, Any]:
     return rel.__dict__
 
 
-@app.post("/api/sessions/{session_id}/extract")
-async def extract(session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
-    session = get_session_or_404(session_id)
-    source_turn_ids = payload.get("source_turn_ids") or [
-        t.id for t in session.turns if t.role == "user" and t.record_kind == "testimony"
-    ]
+async def run_extraction(session, turns: list) -> list[dict[str, Any]]:
+    """Extract from the given turns and attach the result with full provenance."""
     known = {t.id: t for t in session.turns}
-    try:
-        turns = [known[x] for x in source_turn_ids]
-    except KeyError as exc:
-        raise HTTPException(400, f"Turno fuente desconocido: {exc.args[0]}") from exc
-    blocked = [turn.id for turn in turns if turn.record_kind == "non_testimony/control"]
-    if blocked:
-        raise HTTPException(400, "Las entradas de control/no testimoniales no se extraen")
-    try:
-        extracted = await llm.extract([t.__dict__ for t in turns])
-    except Exception as exc:
-        raise HTTPException(503, str(exc)) from exc
+    extracted = await llm.extract([t.__dict__ for t in turns])
 
     # Every item from this run carries the same model identity and settings, so
     # a model-produced interpretation can never be mistaken for a human one.
@@ -465,9 +457,65 @@ async def extract(session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         ACTOR_MODEL,
         "extraccion_ejecutada",
         f"Extracción automática sobre {len(turns)} turno(s): {len(created)} interpretación(es) provisional(es)",
-        detail={**provenance, "source_turn_ids": source_turn_ids},
+        detail={**provenance, "source_turn_ids": [t.id for t in turns]},
     )
     store.save(session)
+    return created
+
+
+async def extract_in_background(session_id: str, turn_id: str) -> None:
+    """Grow the memory field from one recollection without delaying the reply.
+
+    The participant is talking; extraction must never sit between what they said
+    and what the system says back. Failure here is recorded and otherwise
+    ignored — the transcript is the archive, the field is a working surface.
+    """
+    try:
+        session = store.get(session_id)
+    except KeyError:
+        return
+    turn = next((t for t in session.turns if t.id == turn_id), None)
+    if turn is None or turn.record_kind != "testimony":
+        return
+    try:
+        await run_extraction(session, [turn])
+    except Exception as exc:  # noqa: BLE001 - a failed extraction must not surface mid-conversation
+        session.record(
+            ACTOR_MODEL,
+            "extraccion_fallida",
+            f"La extracción automática falló para un turno: {exc}",
+            target_id=turn_id,
+            target_kind="turn",
+        )
+        store.save(session)
+
+
+@app.get("/api/memory-field")
+def memory_field(focus: str = "") -> dict[str, Any]:
+    """The accumulated graph across every stored conversation."""
+    field = build_memory_field(store.list())
+    field["focus"] = focus
+    return field
+
+
+@app.post("/api/sessions/{session_id}/extract")
+async def extract(session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+    session = get_session_or_404(session_id)
+    source_turn_ids = payload.get("source_turn_ids") or [
+        t.id for t in session.turns if t.role == "user" and t.record_kind == "testimony"
+    ]
+    known = {t.id: t for t in session.turns}
+    try:
+        turns = [known[x] for x in source_turn_ids]
+    except KeyError as exc:
+        raise HTTPException(400, f"Turno fuente desconocido: {exc.args[0]}") from exc
+    blocked = [turn.id for turn in turns if turn.record_kind == "non_testimony/control"]
+    if blocked:
+        raise HTTPException(400, "Las entradas de control/no testimoniales no se extraen")
+    try:
+        created = await run_extraction(session, turns)
+    except Exception as exc:
+        raise HTTPException(503, str(exc)) from exc
     return {"items": created}
 
 

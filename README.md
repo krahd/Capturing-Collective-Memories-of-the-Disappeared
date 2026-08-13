@@ -15,13 +15,50 @@ The current goal is defined in `GOAL.md`; interaction rationale and non-goals ar
 It has two coordinated views:
 
 - **Conversation**: participant-led text conversation, driven by a compact policy for natural Uruguayan Spanish, non-leading follow-up, digression, uncertainty, correction and refusal.
-- **Mesa de trabajo**: select transcript turns, annotate them, create or model-extract provisional entities/events/themes, edit derived material, connect corrections/qualifications, audit the whole session, and export it.
+- **Campo de memoria**: the structure that many conversations accumulate into, drawn as one graph and grown automatically as people speak.
 
 The raw transcript is never silently rewritten when derived material changes.
 
+### The memory field
+
+The right-hand pane is not a workbench and has no annotation controls. Extraction
+runs by itself behind each testimony turn, so the structure is a by-product of
+speaking rather than a curation task. Nothing is selected, tagged or approved.
+
+Its shape encodes a claim. A conventional knowledge graph reads
+`Person → Event → Place` and thereby presents testimony as resolved fact. Here
+**recollections are first-class nodes**:
+
+```text
+Conversación 07
+    ├── recuerdo r1 ── menciona ──→ Julio
+    │                └─ ocurre en ─→ la facultad
+    └── recuerdo r2 ── fecha ─────→ 1976
+```
+
+Entities are shared across conversations, so separate accounts meet at the same
+node and the graph densifies as more people speak. Nodes several conversations
+reach are drawn larger and ringed. Two recollections may date the same event
+differently; both edges are kept and nothing resolves them into a canonical
+value. Uncertainty, hearsay and correction mark the recollection that carries
+them rather than becoming entities of their own, because they describe how
+something was said, not a thing in the world.
+
+Clicking any node shows the exact words it came from, across every conversation
+that produced it. That is the only inspection affordance, and it reads as
+exploration rather than labour.
+
+Below the graph, **Extraído** counts what exists and **Puede producir** names
+what the material could support — timeline, map, search, themes, connections.
+Those are deliberately not built yet; they are there to show the archive is
+computationally productive.
+
+Control and off-topic turns never become recollections, and withdrawn
+interpretation leaves the field while remaining in the transcript and the record.
+
 ### Capture and audit
 
-The workbench holds three commitments that the interface makes visible:
+Underneath, three commitments hold, reachable through *registro de la sesión*:
 
 - **No interpretation is anonymous.** Every derived item records whether a
   researcher or the model produced it. Model-produced material carries the exact
@@ -33,22 +70,30 @@ The workbench holds three commitments that the interface makes visible:
   redacts the quotations of it the session record itself had retained — and records
   that a redaction happened. The two are deliberately different operations.
 
-The **Auditoría** tab shows the append-only session record, attributing every
-action to `participante`, `investigador`, `modelo` or `sistema`. Both exports
-carry it.
+*registro de la sesión* opens the append-only record, attributing every action to
+`participante`, `investigador`, `modelo` or `sistema`. Both exports carry it.
 
-Clicking an interpretation highlights the exact turns it came from; each turn
-shows how many interpretations cite it.
+The manual annotation, derived-material and relation operations still exist in
+the API, the data model and the exports; they are simply not surfaced in the
+interface, because putting them on screen communicates bureaucracy rather than
+accumulation.
 
-### Recorded example session
+### Example material
 
-**Sesión de ejemplo** loads a researcher-authored transcript for showing capture
-and audit without a live model. It is written by the researcher, is not
+**Sesión de ejemplo** loads a single researcher-authored transcript that shows
+capture and audit without a live model. It is written by the researcher, is not
 participant testimony, and was never generated live. The interface labels it and
 refuses new turns. Rebuild it with `python scripts/build_demo_session.py`.
 
-Appending `?session=<id>` or `?tab=audit` to the URL opens a specific session or
-panel directly.
+`python scripts/build_demo_corpus.py` writes seven overlapping conversations into
+`data/sessions/` so the field has something to accumulate. The transcripts are
+authored; the **extractions are real**, produced by running the configured model
+exactly as the application does, so model provenance in the graph is genuine
+rather than fabricated. It therefore needs a configured model and takes a few
+minutes.
+
+Appending `?session=<id>` or `?node=place:cerro` to the URL opens a specific
+session or entity directly.
 
 ## Run locally
 

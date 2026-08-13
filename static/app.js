@@ -1,12 +1,9 @@
 const state = {
   session: null,
-  selected: new Set(),
   config: { llm_configured: false },
-  // Provenance made visible: the derived item whose source turns are lit up,
-  // and the turn whose interpretations are being isolated.
-  focusedItem: null,
-  turnFilter: null,
   voicePhase: "idle",
+  field: null,
+  selectedNode: null,
 };
 
 const voiceRuntime = {
@@ -33,6 +30,7 @@ const ACTION_LABELS = {
   interpretacion_eliminada: "Eliminación",
   relacion_agregada: "Relación",
   extraccion_ejecutada: "Extracción automática",
+  extraccion_fallida: "Extracción fallida",
   entrada_clasificada: "Clasificación de entrada",
   operacion_protocolo: "Operación de protocolo",
   estado_sesion_cambiado: "Estado de la sesión",
@@ -40,17 +38,20 @@ const ACTION_LABELS = {
   transcripcion_asr_creada: "Transcripción ASR",
 };
 
-const KIND_LABELS = {
-  entity: "personas y entidades",
-  event: "eventos",
-  place: "lugares",
-  time: "tiempo",
-  theme: "temas",
-  uncertainty: "incertidumbre",
+const TYPE_LABELS = {
+  conversation: "conversación",
+  recollection: "recuerdo",
+  person: "persona",
+  place: "lugar",
+  event: "evento",
+  time: "fecha",
+  theme: "tema",
+};
+
+const MARK_LABELS = {
+  uncertainty: "incierto",
   hearsay: "de oídas",
-  correction: "correcciones",
-  relation: "relaciones",
-  other: "otros",
+  correction: "corrección",
 };
 
 async function api(url, options = {}) {
@@ -68,30 +69,18 @@ async function api(url, options = {}) {
   return data;
 }
 
-function selectedTurnIds() {
-  return [...state.selected];
-}
-
 function isRecorded() {
   return Boolean(state.session?.is_recorded);
-}
-
-function turnById(id) {
-  return state.session?.turns.find((t) => t.id === id) || null;
 }
 
 function setSession(session) {
   state.session = session;
   if (session?.id) localStorage.setItem("ccm-current-session", session.id);
-  const existing = new Set(session.turns.map((t) => t.id));
-  state.selected = new Set([...state.selected].filter((id) => existing.has(id)));
-  if (state.turnFilter && !existing.has(state.turnFilter)) state.turnFilter = null;
   render();
 }
 
 function render() {
   renderConversation();
-  renderWorkbench();
   renderAudit();
   const ready = Boolean(state.session);
   const sessionStatus = state.session?.status || "active";
@@ -111,14 +100,6 @@ function render() {
   if (state.voicePhase === "idle") renderVoiceAvailability();
   $("export-json").disabled = !ready;
   $("export-md").disabled = !ready;
-  const hasSelection = selectedTurnIds().length > 0;
-  $("add-annotation").disabled = !hasSelection;
-  $("add-derived").disabled = !hasSelection;
-  $("auto-extract").disabled = !hasSelection || !state.config.llm_configured;
-}
-
-function derivedForTurn(turnId) {
-  return (state.session?.derived_items || []).filter((i) => i.source_turn_ids.includes(turnId));
 }
 
 function renderConversation() {
@@ -128,28 +109,17 @@ function renderConversation() {
     root.innerHTML = '<p class="muted">Creá una conversación para empezar.</p>';
     return;
   }
-  const focused = state.focusedItem
-    ? state.session.derived_items.find((i) => i.id === state.focusedItem)
-    : null;
-  const lit = new Set(focused ? focused.source_turn_ids : []);
 
   const template = $("turn-template");
   state.session.turns.forEach((turn) => {
     const node = template.content.firstElementChild.cloneNode(true);
     node.classList.add(turn.role);
     node.dataset.turnId = turn.id;
-    if (lit.has(turn.id)) node.classList.add("lit");
-    if (state.turnFilter === turn.id) node.classList.add("filtered");
-
-    const checkbox = node.querySelector("input");
-    checkbox.checked = state.selected.has(turn.id);
-    checkbox.addEventListener("change", () => {
-      checkbox.checked ? state.selected.add(turn.id) : state.selected.delete(turn.id);
-      render();
-    });
+    // A recollection selected in the field lights up in the transcript.
+    if (state.selectedNode?.turn_id === turn.id) node.classList.add("lit");
 
     const meta = node.querySelector(".turn-meta");
-    meta.textContent = `${turn.role === "user" ? "Participante" : "Sistema"} · ${turn.id}`;
+    meta.textContent = turn.role === "user" ? "Participante" : "Sistema";
     if (turn.record_kind === "non_testimony/control") {
       node.classList.add("non-testimony");
       const badge = document.createElement("span");
@@ -163,226 +133,357 @@ function renderConversation() {
       meta.appendChild(badge);
     }
 
-    const attached = derivedForTurn(turn.id);
-    if (attached.length) {
-      const trace = document.createElement("button");
-      trace.type = "button";
-      trace.className = "trace-button";
-      trace.textContent = `${attached.length} interpretación${attached.length === 1 ? "" : "es"}`;
-      trace.title = "Ver el material derivado que cita este turno";
-      trace.addEventListener("click", () => {
-        state.turnFilter = state.turnFilter === turn.id ? null : turn.id;
-        state.focusedItem = null;
-        showTab("derived");
-        render();
-      });
-      meta.appendChild(trace);
-    }
-
     node.querySelector(".turn-text").textContent = turn.text;
     root.appendChild(node);
   });
 
-  const target = focused ? root.querySelector(".turn.lit") : null;
-  if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+  const lit = root.querySelector(".turn.lit");
+  if (lit) lit.scrollIntoView({ behavior: "smooth", block: "center" });
   else root.scrollTop = root.scrollHeight;
 }
 
-function originBadge(item) {
-  const isModel = item.origin === "modelo";
-  const model = item.origin_detail?.model;
-  const label = isModel ? `modelo${model ? ` · ${model}` : ""}` : "investigador";
-  const title = isModel
-    ? `Producido por el modelo ${model || "(sin identificar)"}` +
-      (item.origin_detail?.temperature !== undefined
-        ? ` · temperature ${item.origin_detail.temperature}, top_p ${item.origin_detail.top_p}, max_tokens ${item.origin_detail.max_tokens}`
-        : "")
-    : "Escrito por el investigador";
-  return `<span class="badge ${isModel ? "badge-model" : "badge-researcher"}" title="${escapeHtml(title)}">${escapeHtml(label)}</span>`;
+/* ------------------------------------------------------------------ *
+ * The memory field.
+ *
+ * Nothing here is a curation control. The graph is a by-product of
+ * conversations having happened, and it is drawn across all of them, so the
+ * visible proposition is accumulation rather than annotation.
+ * ------------------------------------------------------------------ */
+
+const sim = { nodes: [], edges: [], byId: new Map(), alpha: 0, frame: null };
+
+const NODE_RADIUS = { conversation: 8.5, recollection: 5 };
+
+function radiusFor(node) {
+  if (NODE_RADIUS[node.type]) return NODE_RADIUS[node.type];
+  // Entities carried by several conversations are drawn larger. That growth is
+  // the collective structure becoming visible.
+  const reach = Math.max(1, (node.conversations || []).length);
+  return 3.6 + 2.4 * Math.sqrt(reach - 1);
 }
 
-function sourceRefs(item) {
-  return item.source_turn_ids
-    .map((id) => {
-      const turn = turnById(id);
-      const text = turn ? `«${short(turn.text, 38)}»` : id;
-      return `<button type="button" class="ref-chip" data-goto="${escapeHtml(id)}" title="${escapeHtml(id)}">${escapeHtml(text)}</button>`;
-    })
-    .join(" ");
+async function loadField() {
+  try {
+    const field = await api(`/api/memory-field?focus=${state.session?.id || ""}`);
+    state.field = field;
+    syncSimulation(field);
+    renderCounters(field);
+    renderChips(field);
+    kick();
+  } catch (error) {
+    console.error("memory field", error);
+  }
 }
 
-function renderWorkbench() {
-  const ids = selectedTurnIds();
-  $("selection-summary").textContent = ids.length
-    ? `${ids.length} turno${ids.length === 1 ? "" : "s"} seleccionado${ids.length === 1 ? "" : "s"}.`
-    : "No hay turnos seleccionados.";
-  if (!state.session) return;
+function syncSimulation(field) {
+  const svg = $("field-graph");
+  const width = svg.clientWidth || 460;
+  const height = svg.clientHeight || 460;
+  const next = [];
+  const byId = new Map();
 
-  $("annotations").innerHTML = state.session.annotations
-    .map(
-      (a) => `
-    <div class="card"><strong>${escapeHtml(a.label)}</strong><div>${escapeHtml(a.note || "—")}</div><div class="refs">${sourceRefs(a)}</div></div>
-  `
-    )
-    .join("");
-
-  renderDerived();
-
-  const relationOptions = [
-    ...state.session.turns.map((t) => ({ id: t.id, label: `${t.role === "user" ? "turno participante" : "turno sistema"}: ${short(t.text)}` })),
-    ...state.session.derived_items.map((i) => ({ id: i.id, label: `${i.kind}: ${short(i.text)}` })),
-  ];
-  [$("relation-source"), $("relation-target")].forEach((select) => {
-    select.innerHTML = relationOptions.map((o) => `<option value="${o.id}">${escapeHtml(o.label)}</option>`).join("");
+  const firstLoad = sim.nodes.length === 0;
+  field.nodes.forEach((raw, index) => {
+    const existing = sim.byId.get(raw.id);
+    let node;
+    if (existing) {
+      node = Object.assign(existing, raw);
+    } else if (firstLoad) {
+      // Seed an existing corpus spread out. Starting everything at one point
+      // makes the repulsion term explode and flings the graph into the walls;
+      // seeding on a ring leaves a permanent hole in the middle. Uniform over
+      // the area avoids both.
+      const angle = Math.random() * Math.PI * 2;
+      const spread = Math.sqrt(Math.random()) * Math.min(width, height) * 0.46;
+      node = {
+        ...raw,
+        x: width / 2 + Math.cos(angle) * spread,
+        y: height / 2 + Math.sin(angle) * spread,
+        vx: 0,
+        vy: 0,
+        born: performance.now() - 900,
+      };
+    } else {
+      // Something new said just now: it arrives near the middle and settles
+      // outward, so growth during a conversation is legible as movement.
+      node = {
+        ...raw,
+        x: width / 2 + (Math.random() - 0.5) * 60,
+        y: height / 2 + (Math.random() - 0.5) * 60,
+        vx: 0,
+        vy: 0,
+        born: performance.now(),
+      };
+    }
+    next.push(node);
+    byId.set(node.id, node);
   });
-  $("add-relation").disabled = relationOptions.length < 2;
-  $("relations").innerHTML = state.session.relations
-    .map(
-      (r) => `
-    <div class="card"><strong>${escapeHtml(r.relation_type)}</strong><div class="refs">${escapeHtml(r.source_id)} → ${escapeHtml(r.target_id)}</div><div>${escapeHtml(r.note || "")}</div></div>
-  `
-    )
-    .join("");
-}
 
-function renderDerived() {
-  const filterNote = $("derived-filter");
-  let items = state.session.derived_items;
-  if (state.turnFilter) {
-    const turn = turnById(state.turnFilter);
-    items = derivedForTurn(state.turnFilter);
-    filterNote.hidden = false;
-    filterNote.innerHTML = `Mostrando sólo lo que cita «${escapeHtml(short(turn?.text || "", 50))}» <button type="button" id="clear-filter">ver todo</button>`;
-  } else {
-    filterNote.hidden = true;
-    filterNote.innerHTML = "";
+  sim.nodes = next;
+  sim.byId = byId;
+  sim.edges = field.edges
+    .map((edge) => ({ ...edge, a: byId.get(edge.source), b: byId.get(edge.target) }))
+    .filter((edge) => edge.a && edge.b);
+
+  if (firstLoad && sim.nodes.length) {
+    // An existing corpus should already be readable when the pane appears,
+    // rather than visibly untangling itself for several seconds. Only material
+    // that arrives later is worth animating.
+    sim.alpha = 1;
+    for (let i = 0; i < 400; i += 1) step();
   }
 
-  // Grouped by kind so a session reads as a small constellation of people,
-  // places, times and themes rather than an undifferentiated list.
-  const groups = new Map();
-  items.forEach((item) => {
-    if (!groups.has(item.kind)) groups.set(item.kind, []);
-    groups.get(item.kind).push(item);
-  });
-
-  const html = [...groups.entries()]
-    .map(([kind, group]) => {
-      const cards = group.map((i) => derivedCard(i)).join("");
-      return `<div class="group"><h2 class="group-title">${escapeHtml(KIND_LABELS[kind] || kind)} <span class="group-count">${group.length}</span></h2>${cards}</div>`;
-    })
-    .join("");
-  $("derived-items").innerHTML = html || '<p class="muted">Todavía no hay material derivado.</p>';
-
-  attachDerivedHandlers();
+  $("field-empty").hidden = sim.nodes.length > 0;
 }
 
-function derivedCard(i) {
-  const withdrawn = i.withdrawn;
-  const revisions = (i.revisions || []).length;
-  return `
-    <div class="card derived ${withdrawn ? "withdrawn" : ""} ${state.focusedItem === i.id ? "focused" : ""}" data-derived-id="${i.id}">
-      <div class="card-head" data-trace="${i.id}" title="Ver los turnos exactos que originaron esto">
-        <strong>${escapeHtml(i.kind)}</strong>
-        ${originBadge(i)}
-        ${withdrawn ? '<span class="badge badge-withdrawn">retirada</span>' : ""}
-        ${revisions ? `<span class="badge badge-revised" title="${revisions} cambio(s) registrado(s)">${revisions} revisión${revisions === 1 ? "" : "es"}</span>` : ""}
-      </div>
-      ${
-        withdrawn
-          ? `<div class="withdrawn-text">${escapeHtml(i.text)}</div>
-             <div class="withdrawn-reason">Retirada, no eliminada${i.withdrawn_reason ? `: ${escapeHtml(i.withdrawn_reason)}` : "."}</div>`
-          : `<textarea class="derived-edit-text" rows="3">${escapeHtml(i.text)}</textarea>
-             <select class="derived-edit-status">
-               ${["provisional", "reviewed", "disputed"].map((s) => `<option value="${s}" ${s === i.status ? "selected" : ""}>${s}</option>`).join("")}
-             </select>
-             <input class="derived-edit-note" value="${escapeHtml(i.note || "")}" placeholder="Nota" />
-             <div class="row-actions">
-               <button class="save-derived">Guardar</button>
-               <button class="withdraw-derived">Retirar</button>
-               <button class="delete-derived subtle">Eliminar</button>
-             </div>`
-      }
-      ${revisions ? renderRevisions(i) : ""}
-      <div class="refs">fuentes: ${sourceRefs(i)}</div>
-    </div>
+function kick() {
+  sim.alpha = 1;
+  if (!sim.frame) sim.frame = requestAnimationFrame(tick);
+}
+
+function tick() {
+  step();
+  drawField();
+  sim.alpha *= 0.992;
+  if (sim.alpha > 0.02) {
+    sim.frame = requestAnimationFrame(tick);
+  } else {
+    sim.frame = null;
+  }
+}
+
+function step() {
+  const svg = $("field-graph");
+  const width = svg.clientWidth || 460;
+  const height = svg.clientHeight || 460;
+  const nodes = sim.nodes;
+
+  // Repulsion. O(n²) is fine at this scale and keeps the code readable.
+  for (let i = 0; i < nodes.length; i += 1) {
+    for (let j = i + 1; j < nodes.length; j += 1) {
+      const a = nodes[i];
+      const b = nodes[j];
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      let dist = Math.hypot(dx, dy) || 0.01;
+      // Conversations hold each other at arm's length over a long range, so
+      // each becomes a legible cluster instead of one central knot. Everything
+      // else repels locally.
+      const bothConversations = a.type === "conversation" && b.type === "conversation";
+      const range = bothConversations ? 520 : 210;
+      if (dist > range) continue;
+      // Capped: an uncapped inverse-square term at near-zero distance throws
+      // nodes across the canvas and they never recover.
+      const push = bothConversations
+        ? Math.min(5.5, 24000 / (dist * dist))
+        : Math.min(3.2, 620 / (dist * dist));
+      dx /= dist;
+      dy /= dist;
+      a.vx -= dx * push;
+      a.vy -= dy * push;
+      b.vx += dx * push;
+      b.vy += dy * push;
+    }
+  }
+
+  // Springs along edges.
+  sim.edges.forEach((edge) => {
+    const dx = edge.b.x - edge.a.x;
+    const dy = edge.b.y - edge.a.y;
+    const dist = Math.hypot(dx, dy) || 0.01;
+    const rest = edge.a.type === "conversation" || edge.b.type === "conversation" ? 80 : 52;
+    // Springs have to dominate repulsion, otherwise the field never clusters
+    // and reads as noise rather than as conversations sharing material.
+    const force = (dist - rest) * 0.045;
+    const ux = (dx / dist) * force;
+    const uy = (dy / dist) * force;
+    edge.a.vx += ux;
+    edge.a.vy += uy;
+    edge.b.vx -= ux;
+    edge.b.vy -= uy;
+  });
+
+  // Gentle centring so the field does not drift off-canvas.
+  nodes.forEach((node) => {
+    node.vx += (width / 2 - node.x) * 0.0038;
+    node.vy += (height / 2 - node.y) * 0.0038;
+    node.vx *= 0.82;
+    node.vy *= 0.82;
+    node.x += node.vx * Math.max(0.35, sim.alpha);
+    node.y += node.vy * Math.max(0.35, sim.alpha);
+    const r = radiusFor(node) + 14;
+    node.x = Math.min(width - r, Math.max(r, node.x));
+    node.y = Math.min(height - r, Math.max(r, node.y));
+  });
+}
+
+function drawField() {
+  const svg = $("field-graph");
+  const now = performance.now();
+  const parts = [];
+
+  sim.edges.forEach((edge) => {
+    const dim = state.selectedNode && !touches(edge, state.selectedNode);
+    parts.push(
+      `<line class="edge${dim ? " dim" : ""}" x1="${edge.a.x.toFixed(1)}" y1="${edge.a.y.toFixed(1)}" x2="${edge.b.x.toFixed(1)}" y2="${edge.b.y.toFixed(1)}" />`
+    );
+  });
+
+  sim.nodes.forEach((node) => {
+    const age = now - node.born;
+    const grow = Math.min(1, age / 700);
+    const r = radiusFor(node) * (0.2 + 0.8 * grow);
+    const selected = state.selectedNode?.id === node.id;
+    const dim = state.selectedNode && !selected && !connected(node, state.selectedNode);
+    const shared = (node.conversations || []).length > 1 && !NODE_RADIUS[node.type];
+    const classes = [
+      "node",
+      `node-${node.type}`,
+      selected ? "selected" : "",
+      dim ? "dim" : "",
+      shared ? "shared" : "",
+      node.marks?.length ? "marked" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    if (age < 900) {
+      const pulse = 1 - age / 900;
+      parts.push(
+        `<circle class="pulse" cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${(r + 14 * pulse).toFixed(1)}" opacity="${(pulse * 0.35).toFixed(2)}" />`
+      );
+    }
+    parts.push(
+      `<circle class="${classes}" data-node="${escapeHtml(node.id)}" cx="${node.x.toFixed(1)}" cy="${node.y.toFixed(1)}" r="${r.toFixed(1)}"><title>${escapeHtml(`${TYPE_LABELS[node.type] || node.type}: ${short(node.label, 90)}`)}</title></circle>`
+    );
+  });
+
+  // Labels only where they carry the argument: the conversations themselves,
+  // whatever several conversations share, and the current selection. Shared
+  // entities win collisions, since they are the point being made.
+  const placed = [];
+  const candidates = sim.nodes
+    .map((node) => ({
+      node,
+      shared: (node.conversations || []).length > 1 && !NODE_RADIUS[node.type],
+      selected: state.selectedNode?.id === node.id,
+    }))
+    .filter(({ node, shared, selected }) => {
+      if (!shared && !selected && node.type !== "conversation") return false;
+      return !(state.selectedNode && !selected && !connected(node, state.selectedNode));
+    })
+    .sort((a, b) => Number(b.selected) - Number(a.selected) || Number(b.shared) - Number(a.shared));
+
+  const width = svg.clientWidth || 460;
+  candidates.forEach(({ node }) => {
+    const x = node.x;
+    const y = node.y - radiusFor(node) - 5;
+    if (placed.some((p) => Math.abs(p.x - x) < 74 && Math.abs(p.y - y) < 12)) return;
+    placed.push({ x, y });
+    const text = node.type === "recollection" ? short(node.label, 26) : short(node.label, 22);
+    // Anchor away from the panel edges so labels are never clipped.
+    const anchor = x < 80 ? "start" : x > width - 80 ? "end" : "middle";
+    parts.push(
+      `<text class="node-label label-${node.type}" text-anchor="${anchor}" x="${x.toFixed(1)}" y="${y.toFixed(1)}">${escapeHtml(text)}</text>`
+    );
+  });
+
+  svg.innerHTML = parts.join("");
+}
+
+function touches(edge, node) {
+  return edge.source === node.id || edge.target === node.id;
+}
+
+function connected(node, other) {
+  return sim.edges.some(
+    (edge) =>
+      (edge.source === node.id && edge.target === other.id) ||
+      (edge.target === node.id && edge.source === other.id)
+  );
+}
+
+function renderCounters(field) {
+  const c = field.counts;
+  $("field-counters").innerHTML = `
+    <span><b>${c.conversaciones}</b> conversaciones</span>
+    <span><b>${c.recuerdos}</b> recuerdos</span>
+    <span><b>${c.entidades}</b> entidades</span>
+    <span><b>${c.relaciones}</b> relaciones</span>
+    ${c.compartidas ? `<span class="shared-count"><b>${c.compartidas}</b> compartidas entre conversaciones</span>` : ""}
   `;
 }
 
-function renderRevisions(item) {
-  const rows = item.revisions
-    .map(
-      (r) => `<li><span class="rev-field">${escapeHtml(r.field)}</span> «${escapeHtml(short(r.before, 40))}» → «${escapeHtml(short(r.after, 40))}»</li>`
-    )
+function renderChips(field) {
+  $("extracted-chips").innerHTML = field.extracted
+    .map((x) => `<span class="chip chip-${x.type}">${escapeHtml(x.label)} <b>${x.count}</b></span>`)
     .join("");
-  return `<details class="revisions"><summary>historial de cambios</summary><ul>${rows}</ul></details>`;
 }
 
-function attachDerivedHandlers() {
-  const clear = $("clear-filter");
-  if (clear) {
-    clear.addEventListener("click", () => {
-      state.turnFilter = null;
-      render();
-    });
+function selectNode(nodeId) {
+  const node = sim.byId.get(nodeId);
+  state.selectedNode = state.selectedNode?.id === nodeId ? null : node || null;
+  renderNodeDetail();
+  renderConversation();
+  drawField();
+}
+
+function renderNodeDetail() {
+  const panel = $("node-detail");
+  const node = state.selectedNode;
+  if (!node) {
+    panel.hidden = true;
+    panel.innerHTML = "";
+    return;
   }
 
-  document.querySelectorAll("[data-trace]").forEach((head) => {
-    head.addEventListener("click", () => {
-      const id = head.dataset.trace;
-      state.focusedItem = state.focusedItem === id ? null : id;
-      render();
-    });
-  });
+  // Every node can be traced back to the words somebody actually said.
+  const sources = (state.field?.nodes || []).filter(
+    (candidate) =>
+      candidate.type === "recollection" &&
+      (node.type === "recollection"
+        ? candidate.id === node.id
+        : (node.recollections || []).includes(candidate.turn_id))
+  );
+  const conversations = new Set(sources.map((s) => s.session_id));
+  const marks = node.marks?.length
+    ? `<div class="detail-marks">${node.marks.map((m) => `<span class="mark">${escapeHtml(MARK_LABELS[m] || m)}</span>`).join("")}</div>`
+    : "";
 
-  document.querySelectorAll("[data-goto]").forEach((chip) => {
-    chip.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const node = document.querySelector(`.turn[data-turn-id="${chip.dataset.goto}"]`);
-      if (node) {
-        node.classList.add("lit");
-        node.scrollIntoView({ behavior: "smooth", block: "center" });
+  panel.hidden = false;
+  panel.innerHTML = `
+    <div class="detail-head">
+      <span class="detail-type type-${node.type}">${escapeHtml(TYPE_LABELS[node.type] || node.type)}</span>
+      <button type="button" id="close-detail">cerrar</button>
+    </div>
+    <div class="detail-label">${escapeHtml(short(node.label, 140))}</div>
+    ${marks}
+    ${
+      node.type !== "recollection" && conversations.size > 1
+        ? `<div class="detail-reach">Aparece en ${conversations.size} conversaciones.</div>`
+        : ""
+    }
+    <div class="detail-sources">
+      ${
+        sources.length
+          ? sources
+              .map(
+                (s) => `<blockquote class="detail-quote${s.session_id === state.session?.id ? " current" : ""}">${escapeHtml(short(s.label, 190))}</blockquote>`
+              )
+              .join("")
+          : '<p class="muted">Sin recuerdos asociados.</p>'
       }
-    });
-  });
-
-  document.querySelectorAll(".save-derived").forEach((button) => {
-    button.addEventListener("click", async () => {
-      const card = button.closest(".card");
-      const id = card.dataset.derivedId;
-      await mutate(`/api/sessions/${state.session.id}/derived/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          text: card.querySelector(".derived-edit-text").value,
-          status: card.querySelector(".derived-edit-status").value,
-          note: card.querySelector(".derived-edit-note").value,
-        }),
-      });
-    });
-  });
-
-  document.querySelectorAll(".withdraw-derived").forEach((button) => {
-    button.addEventListener("click", async () => {
-      const card = button.closest(".card");
-      const id = card.dataset.derivedId;
-      const reason = prompt("¿Por qué se retira? Queda registrado junto al material.", "");
-      if (reason === null) return;
-      await mutate(`/api/sessions/${state.session.id}/derived/${id}/withdraw`, {
-        method: "POST",
-        body: JSON.stringify({ reason }),
-      });
-    });
-  });
-
-  document.querySelectorAll(".delete-derived").forEach((button) => {
-    button.addEventListener("click", async () => {
-      const card = button.closest(".card");
-      const id = card.dataset.derivedId;
-      if (!confirm("Eliminar definitivamente. El texto no se conserva; sólo queda constancia de que hubo una eliminación.\n\nPara conservar el material marcado, usá «Retirar».")) return;
-      await mutate(`/api/sessions/${state.session.id}/derived/${id}`, { method: "DELETE" });
-    });
-  });
+    </div>
+  `;
+  $("close-detail").addEventListener("click", () => selectNode(node.id));
 }
+
+$("field-graph").addEventListener("click", (event) => {
+  const target = event.target.closest("[data-node]");
+  if (target) selectNode(target.dataset.node);
+  else if (state.selectedNode) selectNode(state.selectedNode.id);
+});
+
+window.addEventListener("resize", () => kick());
 
 function renderAudit() {
   if (!state.session) return;
@@ -396,7 +497,6 @@ function renderAudit() {
     modelo: active.filter((i) => i.origin === "modelo").length,
     retiradas: derived.filter((i) => i.withdrawn).length,
     ediciones: derived.reduce((n, i) => n + (i.revisions || []).length, 0),
-    audios: (state.session.audio_records || []).length,
   };
 
   $("audit-summary").innerHTML = `
@@ -406,7 +506,6 @@ function renderAudit() {
     <div class="stat"><span class="stat-n">${counts.modelo}</span><span class="stat-l">del modelo</span></div>
     <div class="stat"><span class="stat-n">${counts.retiradas}</span><span class="stat-l">retiradas</span></div>
     <div class="stat"><span class="stat-n">${counts.ediciones}</span><span class="stat-l">ediciones</span></div>
-    <div class="stat"><span class="stat-n">${counts.audios}</span><span class="stat-l">audios originales</span></div>
   `;
 
   $("audit-log").innerHTML = [...events]
@@ -445,20 +544,6 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
-
-async function refreshSession() {
-  if (!state.session) return;
-  setSession(await api(`/api/sessions/${state.session.id}`));
-}
-
-async function mutate(url, options) {
-  try {
-    await api(url, options);
-    await refreshSession();
-  } catch (error) {
-    alert(error.message);
-  }
 }
 
 function renderVoiceAvailability() {
@@ -618,25 +703,18 @@ async function speakText(text) {
   }
 }
 
-function showTab(name) {
-  document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x.dataset.tab === name));
-  document.querySelectorAll(".tab-panel").forEach((x) => x.classList.toggle("active", x.id === `tab-${name}`));
-}
-
 $("new-session").addEventListener("click", async () => {
-  state.selected.clear();
-  state.focusedItem = null;
-  state.turnFilter = null;
+  state.selectedNode = null;
   setSession(await api("/api/sessions", { method: "POST", body: JSON.stringify({}) }));
+  loadField();
   $("message").focus();
 });
 
 $("load-demo").addEventListener("click", async () => {
-  state.selected.clear();
-  state.focusedItem = null;
-  state.turnFilter = null;
+  state.selectedNode = null;
   try {
     setSession(await api("/api/sessions/demo", { method: "POST" }));
+    loadField();
   } catch (error) {
     alert(error.message);
   }
@@ -654,6 +732,8 @@ async function submitTurn(text, audioId = "", speakReply = false) {
     });
     setSession(result.session);
     $("send-status").textContent = "";
+    // Extraction runs behind the reply, so the field fills in shortly after.
+    watchField();
     if (speakReply && result.assistant_turn && state.config.voice?.tts_configured) {
       await speakText(result.assistant_turn.text);
     }
@@ -666,6 +746,14 @@ async function submitTurn(text, audioId = "", speakReply = false) {
     $("send").disabled = !state.config.llm_configured || isRecorded() || state.session?.status !== "active";
     $("message").focus();
   }
+}
+
+let watchTimers = [];
+function watchField() {
+  watchTimers.forEach(clearTimeout);
+  // Extraction takes a few seconds on a local model; look a few times rather
+  // than polling forever.
+  watchTimers = [2000, 5000, 9000, 14000, 22000].map((delay) => setTimeout(loadField, delay));
 }
 
 $("composer").addEventListener("submit", async (event) => {
@@ -681,65 +769,6 @@ $("message").addEventListener("keydown", (event) => {
     event.preventDefault();
     $("composer").requestSubmit();
   }
-});
-
-$("add-annotation").addEventListener("click", async () => {
-  await mutate(`/api/sessions/${state.session.id}/annotations`, {
-    method: "POST",
-    body: JSON.stringify({
-      source_turn_ids: selectedTurnIds(),
-      label: $("annotation-label").value,
-      note: $("annotation-note").value,
-    }),
-  });
-  $("annotation-note").value = "";
-});
-
-$("add-derived").addEventListener("click", async () => {
-  const text = $("derived-text").value.trim();
-  if (!text) return;
-  await mutate(`/api/sessions/${state.session.id}/derived`, {
-    method: "POST",
-    body: JSON.stringify({
-      source_turn_ids: selectedTurnIds(),
-      kind: $("derived-kind").value,
-      text,
-    }),
-  });
-  $("derived-text").value = "";
-});
-
-$("auto-extract").addEventListener("click", async () => {
-  $("auto-extract").disabled = true;
-  $("auto-extract").textContent = "Extrayendo…";
-  try {
-    await api(`/api/sessions/${state.session.id}/extract`, {
-      method: "POST",
-      body: JSON.stringify({ source_turn_ids: selectedTurnIds() }),
-    });
-    await refreshSession();
-  } catch (error) {
-    alert(error.message);
-  } finally {
-    $("auto-extract").textContent = "Extraer provisionalmente con el modelo";
-    $("auto-extract").disabled = !state.config.llm_configured || selectedTurnIds().length === 0;
-  }
-});
-
-$("add-relation").addEventListener("click", async () => {
-  const source = $("relation-source").value;
-  const target = $("relation-target").value;
-  if (!source || !target || source === target) return alert("Elegí dos elementos distintos.");
-  await mutate(`/api/sessions/${state.session.id}/relations`, {
-    method: "POST",
-    body: JSON.stringify({
-      relation_type: $("relation-type").value,
-      source_id: source,
-      target_id: target,
-      note: $("relation-note").value,
-    }),
-  });
-  $("relation-note").value = "";
 });
 
 $("export-json").addEventListener("click", () => window.location.assign(`/api/sessions/${state.session.id}/export.json`));
@@ -759,8 +788,14 @@ $("voice-toggle").addEventListener("click", () => {
   else startListening();
 });
 
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => showTab(tab.dataset.tab));
+$("open-record").addEventListener("click", () => {
+  $("record-overlay").hidden = false;
+});
+$("close-record").addEventListener("click", () => {
+  $("record-overlay").hidden = true;
+});
+$("record-overlay").addEventListener("click", (event) => {
+  if (event.target === $("record-overlay")) $("record-overlay").hidden = true;
 });
 
 async function init() {
@@ -776,18 +811,21 @@ async function init() {
   // ?session=ID opens a specific session directly, which is convenient when
   // showing a prepared session without clicking through to find it.
   const params = new URLSearchParams(location.search);
-  const requested = params.get("session");
-  if (params.get("tab")) showTab(params.get("tab"));
-  const previous = requested || localStorage.getItem("ccm-current-session");
+  const previous = params.get("session") || localStorage.getItem("ccm-current-session");
   if (previous) {
     try {
       setSession(await api(`/api/sessions/${previous}`));
-      return;
     } catch (_) {
       localStorage.removeItem("ccm-current-session");
+      render();
     }
+  } else {
+    render();
   }
-  render();
+  await loadField();
+  // ?node=place:cerro opens straight to one entity and its recollections.
+  const node = params.get("node");
+  if (node && sim.byId.has(node)) selectNode(node);
 }
 
 init().catch((error) => {

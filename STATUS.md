@@ -2,13 +2,13 @@
 
 **Date:** 12 August 2026  
 **Phase:** disposable interaction prototype  
-**Implementation:** complete for the current interaction-discovery goal, plus capture/audit and constrained-controller layers
-**Mechanical verification:** passing (40 deterministic tests)
+**Implementation:** complete for the current interaction-discovery goal, plus capture/audit, constrained-controller and memory-field layers
+**Mechanical verification:** passing (47 deterministic tests)
 **Live-model Uruguayan-Spanish evaluation:** first informal check run on the target machine; the scored ten-scenario protocol is still pending
 
 ## Implemented
 
-- two coordinated views: Conversation and Mesa de trabajo;
+- two coordinated views: Conversation and Campo de memoria;
 - provider-neutral OpenAI-compatible conversational model integration;
 - authenticated hosted endpoints and unauthenticated local OpenAI-compatible endpoints;
 - interaction policy targeting natural adult Uruguayan/Rioplatense Spanish without caricature or questionnaire behaviour;
@@ -32,10 +32,21 @@
   destroys the text and redacts the record's own quotations of it, recording that
   redaction; an append-only session record attributes every action to
   participante/investigador/modelo/sistema;
-- **provenance made visible:** clicking an interpretation lights up the exact
-  source turns, turns show how many interpretations cite them, source references
-  read as quoted fragments rather than opaque ids, and origin is a badge on every
-  card;
+- **memory field:** one graph across all stored conversations, which replaced the
+  annotation workbench in the interface. Extraction now runs automatically behind
+  each testimony turn, so structure accumulates as a by-product of speaking rather
+  than as curation; no selection, tagging or approval affordance remains on screen.
+  Recollections are first-class nodes between a conversation and the entities it
+  mentions, so the display does not present testimony as resolved fact. Entities
+  are shared across conversations, so separate accounts meet at one node and the
+  graph densifies. Contradictory dates coexist unresolved. Uncertainty, hearsay and
+  correction mark the recollection that carries them rather than becoming entities.
+  Clicking a node shows the exact words, across every conversation, that produced
+  it. Manual annotation/derived/relation operations remain in the API, data model
+  and exports, but are no longer surfaced;
+- a seven-conversation researcher-authored demo corpus with deliberately
+  overlapping people, places and years, whose extractions are produced by the real
+  model rather than fabricated;
 - a researcher-authored recorded example session, labelled as such in the
   interface and refusing new turns, so capture and audit can be shown without a
   live model;
