@@ -66,6 +66,82 @@ def test_wav_input_is_converted_to_a_distinct_file(tmp_path, monkeypatch):
     assert transcript == "Una prueba de voz."
 
 
+def test_configuring_the_server_address_does_not_disable_the_resident_server(monkeypatch):
+    # Uncommenting a whole voice block used to switch the resident server off,
+    # because the presence of an address was read as "somebody else runs this".
+    # The result was a silent fall back to reloading a multi-gigabyte model per
+    # turn — the exact latency the resident path removes, and invisible from the
+    # interface.
+    monkeypatch.setenv("WHISPER_SERVER_URL", "http://127.0.0.1:8178/inference")
+    monkeypatch.delenv("WHISPER_SERVER_EXTERNAL", raising=False)
+
+    assert VoiceService()._external_server is False
+
+    monkeypatch.setenv("WHISPER_SERVER_EXTERNAL", "1")
+    assert VoiceService()._external_server is True
+
+
+def test_an_unrelated_service_on_the_port_is_not_adopted_as_the_recogniser(monkeypatch):
+    # Reachability is not identity. A 404 from something else holding port 8178
+    # used to count as proof of Whisper, and the mistake only surfaced as a
+    # failed first turn.
+    monkeypatch.delenv("WHISPER_SERVER_EXTERNAL", raising=False)
+    service = VoiceService()
+
+    def impostor(request):
+        if request.url.path == "/":
+            return httpx.Response(404, text="Not Found")
+        return httpx.Response(200, json={"error": "unknown route"})
+
+    service._server_client = httpx.Client(transport=httpx.MockTransport(impostor))
+    assert service._wait_for_server(0.2) is False
+
+    def whisper(request):
+        if request.url.path == "/":
+            return httpx.Response(200, text="<html>whisper.cpp</html>")
+        return httpx.Response(200, json={"text": ""})
+
+    service._server_client = httpx.Client(transport=httpx.MockTransport(whisper))
+    assert service._wait_for_server(0.2) is True
+    service.close()
+
+
+def test_speech_voice_is_loaded_at_startup_rather_than_on_the_first_reply(tmp_path, monkeypatch):
+    # Everything else is made resident at startup. Leaving synthesis lazy meant
+    # the first spoken reply — the only first impression there is — still paid a
+    # model load.
+    model = tmp_path / "voice.onnx"
+    model.write_text("", encoding="utf-8")
+    monkeypatch.setenv("PIPER_MODEL", str(model))
+    loads = []
+
+    class FakeVoice:
+        @staticmethod
+        def load(path):
+            loads.append(path)
+            return FakeVoice()
+
+        def synthesize_wav(self, text, wav_file):
+            wav_file.setnchannels(1)
+            wav_file.setsampwidth(2)
+            wav_file.setframerate(22050)
+            wav_file.writeframes(b"\x00\x00" * 64)
+
+    service = VoiceService()
+    service._piper_voice_class = FakeVoice
+
+    assert service.config()["tts_mode"] == "lazy"
+    service.warm()
+
+    assert loads == [str(model)]
+    assert service.warm_status["tts"]["ready"] is True
+    assert service.config()["tts_mode"] == "resident"
+
+    # A real reply now reuses the loaded voice instead of loading another.
+    service.synthesize("Contame.")
+    assert len(loads) == 1
+
+
 def test_resident_whisper_receives_each_turn_without_launching_whisper_cli(tmp_path, monkeypatch):
     service = VoiceService()
     service.ffmpeg = "/fake/ffmpeg"

@@ -24,4 +24,17 @@ if [[ "${1:-}" == "--voice-doctor" ]]; then
   exec python scripts/voice_doctor.py
 fi
 
-exec uvicorn app:app --reload --host 127.0.0.1 --port "${PORT:-8765}"
+if [[ "${1:-}" == "--routing-check" ]]; then
+  shift
+  exec python scripts/check_routing.py "$@"
+fi
+
+# Startup deliberately loads the conversational model, the router, the resident
+# recogniser and the speech voice before serving anything. `--reload` pays that
+# orchestration again on every saved file and can drop the resident processes
+# under someone who is mid-conversation, so it is opt-in rather than default.
+if [[ "${1:-}" == "--dev" ]]; then
+  exec uvicorn app:app --reload --host 127.0.0.1 --port "${PORT:-8765}"
+fi
+
+exec uvicorn app:app --host 127.0.0.1 --port "${PORT:-8765}"

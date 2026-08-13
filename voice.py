@@ -30,6 +30,29 @@ def _resolved_file(env_name: str) -> str | None:
     return str(path) if path.is_file() else None
 
 
+def _flag(env_name: str) -> bool:
+    return (os.getenv(env_name) or "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _is_local(url: str) -> bool:
+    return (urlparse(url).hostname or "").lower() in {"127.0.0.1", "localhost", "::1", ""}
+
+
+# A 40 ms silent 16 kHz mono WAV. Small enough to cost nothing, real enough that
+# only something that actually transcribes audio will answer it correctly.
+_SILENT_WAV = (
+    b"RIFF" + (36 + 1280).to_bytes(4, "little") + b"WAVEfmt "
+    + (16).to_bytes(4, "little")
+    + (1).to_bytes(2, "little")
+    + (1).to_bytes(2, "little")
+    + (16000).to_bytes(4, "little")
+    + (32000).to_bytes(4, "little")
+    + (2).to_bytes(2, "little")
+    + (16).to_bytes(2, "little")
+    + b"data" + (1280).to_bytes(4, "little") + b"\x00" * 1280
+)
+
+
 class VoiceService:
     """Resident local speech services with CLI fallbacks."""
 
@@ -41,7 +64,16 @@ class VoiceService:
         self.whisper_language = os.getenv("WHISPER_LANGUAGE", "es")
         configured_server_url = os.getenv("WHISPER_SERVER_URL")
         self.whisper_server_url = configured_server_url or "http://127.0.0.1:8178/inference"
-        self._external_server = bool(configured_server_url)
+        # `WHISPER_SERVER_URL` is an address, not an instruction. Reading its mere
+        # presence as "somebody else supervises this" made the natural act of
+        # uncommenting a whole configuration block silently disable the resident
+        # server and fall back to per-turn CLI loads of a multi-gigabyte model —
+        # exactly the latency this path exists to remove, and invisible from the
+        # interface. Not launching is now either explicit, or forced by an
+        # address this process could not have started anyway.
+        self._external_server = _flag("WHISPER_SERVER_EXTERNAL") or not _is_local(
+            self.whisper_server_url
+        )
         self._whisper_process: subprocess.Popen[str] | None = None
         self._server_client: httpx.Client | None = None
         self._server_ready = False
@@ -55,6 +87,7 @@ class VoiceService:
         self._piper_voice = None
         self.command_timeout = float(os.getenv("VOICE_COMMAND_TIMEOUT", "180"))
         self.startup_timeout = float(os.getenv("WHISPER_STARTUP_TIMEOUT", "180"))
+        self.warm_status: dict[str, Any] = {"attempted": False}
 
     @property
     def asr_configured(self) -> bool:
@@ -73,6 +106,8 @@ class VoiceService:
             "half_duplex": True,
             "language": self.whisper_language,
             "asr_mode": "resident" if self._server_ready else "cli_fallback",
+            "tts_mode": "resident" if self._piper_voice is not None else "lazy",
+            "warmup": self.warm_status,
             "missing": {
                 "asr": [
                     name
@@ -109,10 +144,8 @@ class VoiceService:
         if self._wait_for_server(0.25):
             self._server_ready = True
             return
-        if self._external_server:
+        if self._external_server or not self.whisper_server:
             self._server_ready = self._wait_for_server(2.0)
-            return
-        if not self.whisper_server:
             return
         parsed = urlparse(self.whisper_server_url)
         try:
@@ -139,6 +172,30 @@ class VoiceService:
         if not self._server_ready:
             self._stop_server_process()
 
+    def warm(self) -> None:
+        """Load the speech-synthesis voice before anybody is waiting on it.
+
+        Recognition and the conversational weights are made resident at startup;
+        leaving synthesis lazy meant the first spoken reply — the one moment a
+        first impression is actually formed — still paid a model load. One
+        discarded sentence moves that cost into startup where it belongs.
+        """
+        self.warm_status = {"attempted": True, "tts": {"ready": False}}
+        if not self.tts_configured:
+            self.warm_status["tts"] = {"ready": False, "reason": "no configurado"}
+            return
+        started = time.perf_counter()
+        try:
+            audio = self.synthesize("Listo.")
+        except Exception as exc:  # a cold voice must not make the archive unavailable
+            self.warm_status["tts"] = {"ready": False, "error": str(exc)}
+            return
+        self.warm_status["tts"] = {
+            "ready": bool(audio),
+            "engine": "piper-python" if self._piper_voice is not None else "piper-cli",
+            "ms": round((time.perf_counter() - started) * 1000),
+        }
+
     def close(self) -> None:
         self._stop_server_process()
         if self._server_client is not None:
@@ -147,22 +204,56 @@ class VoiceService:
         self._server_ready = False
 
     def _wait_for_server(self, timeout: float) -> bool:
+        """Wait until something at the address actually transcribes audio.
+
+        Reachability is not identity. Accepting any response under 500 from `/`
+        meant an unrelated application holding port 8178 could be adopted as the
+        resident recogniser, and the mistake would only surface as a failed first
+        turn. One silent-WAV inference settles it, and doubles as the first real
+        pass through the model.
+        """
         if self._server_client is None:
             return False
         parsed = urlparse(self.whisper_server_url)
         health_url = f"{parsed.scheme}://{parsed.netloc}/"
         deadline = time.monotonic() + timeout
+        reachable = False
         while time.monotonic() < deadline:
             if self._whisper_process is not None and self._whisper_process.poll() is not None:
                 return False
             try:
                 response = self._server_client.get(health_url, timeout=1.0)
                 if response.status_code < 500:
-                    return True
+                    reachable = True
+                    break
             except httpx.HTTPError:
                 pass
             time.sleep(0.1)
-        return False
+        if not reachable:
+            return False
+        return self._inference_answers(max(2.0, deadline - time.monotonic()))
+
+    def _inference_answers(self, timeout: float) -> bool:
+        """Confirm the endpoint speaks whisper.cpp's inference protocol."""
+        if self._server_client is None:
+            return False
+        try:
+            response = self._server_client.post(
+                self.whisper_server_url,
+                files={"file": ("probe.wav", _SILENT_WAV, "audio/wav")},
+                data={
+                    "language": self.whisper_language,
+                    "response_format": "json",
+                    "no_timestamps": "true",
+                },
+                timeout=timeout,
+            )
+            response.raise_for_status()
+            # Silence legitimately transcribes to an empty or near-empty string;
+            # what matters is that the shape of the answer is the right one.
+            return isinstance(response.json().get("text"), str)
+        except (httpx.HTTPError, ValueError, AttributeError):
+            return False
 
     def _stop_server_process(self) -> None:
         process = self._whisper_process
@@ -253,9 +344,9 @@ class VoiceService:
                 "resident": resident,
                 "derived_from": "participant_audio",
                 "timings_ms": {
-                    "conversion": conversion_ms,
-                    "asr": asr_ms,
-                    "total": round((time.perf_counter() - total_started) * 1000),
+                    "audio_conversion_ms": conversion_ms,
+                    "asr_ms": asr_ms,
+                    "asr_total_ms": round((time.perf_counter() - total_started) * 1000),
                 },
             }
 

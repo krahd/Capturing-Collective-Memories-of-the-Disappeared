@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 
 import httpx
 
@@ -273,6 +274,45 @@ def test_memory_field_is_cached_until_the_store_revision_changes(tmp_path, monke
     assert len(builds) == 2
 
 
+def test_memory_field_event_stream_is_framed_exactly_as_sse(tmp_path):
+    """The graph is now refreshed by notification, so the framing is load-bearing.
+
+    Timed polling used to hide a malformed stream: the browser would have caught
+    up on the next tick anyway. It no longer does. `EventSource` dispatches a
+    named `field` event only for a record whose lines are separated by real
+    newlines and terminated by a blank line, so this asserts the exact bytes
+    rather than that a stream merely exists.
+    """
+    app_module.store = SessionStore(tmp_path)
+
+    async def read_two_records():
+        response = await app_module.memory_field_events()
+        assert response.media_type == "text/event-stream"
+        stream = response.body_iterator
+        first = await asyncio.wait_for(stream.__anext__(), timeout=2)
+        # A change made while the browser is connected produces the next record.
+        app_module.store.create("Conversación nueva")
+        second = await asyncio.wait_for(stream.__anext__(), timeout=2)
+        await stream.aclose()
+        return first, second
+
+    first, second = asyncio.run(read_two_records())
+
+    # An initial record resynchronises a browser that has just (re)connected.
+    assert first == "event: field\ndata: 0\n\n"
+    assert second == "event: field\ndata: 1\n\n"
+    for record in (first, second):
+        lines = record.split("\n")
+        assert lines[0] == "event: field", "the event name must occupy its own line"
+        assert lines[1].startswith("data: ")
+        assert record.endswith("\n\n"), "a record must be terminated by a blank line"
+        assert lines[1][len("data: "):].isdigit()
+
+    # The listener the browser installs must match the event name emitted here.
+    script = (app_module.ROOT / "static" / "app.js").read_text(encoding="utf-8")
+    assert 'addEventListener("field"' in script
+
+
 def test_interviewer_history_is_bounded_but_keeps_referenced_older_turn(monkeypatch, tmp_path):
     app_module.store = SessionStore(tmp_path)
     monkeypatch.setenv("LLM_CONVERSATION_TURNS", "4")
@@ -363,6 +403,94 @@ def test_background_extraction_waits_for_the_conversational_model(tmp_path, monk
     asyncio.run(scenario())
 
     assert observed == ["conversation start", "conversation end", "extraction"]
+
+
+def test_shutdown_cancellation_is_not_mistaken_for_conversational_preemption(tmp_path):
+    # Retrying after a pre-emption and stopping on shutdown are opposite
+    # responses to the same exception. Treating every cancellation as a
+    # pre-emption made the worker loop against a server that was trying to exit.
+    app_module.store = SessionStore(tmp_path)
+    app_module.llm.gate = model_module.ConversationGate(settle_seconds=0.0)
+    attempts = []
+
+    async def slow_extract(_turns):
+        attempts.append("started")
+        await asyncio.sleep(30)
+        return []
+
+    async def scenario():
+        session = app_module.store.create("Ficha de prueba")
+        turn = session.add_turn("user", "Nos juntábamos los domingos en el Cerro.")
+        session.classify_turn(turn.id, "MEMORY_TESTIMONY", "testimony")
+        app_module.llm.extract = slow_extract
+
+        extraction = asyncio.create_task(app_module.extract_in_background(session.id, turn.id))
+        while not attempts:
+            await asyncio.sleep(0.01)
+        # Nobody registered this cancellation with the gate, so it is a shutdown.
+        extraction.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await extraction
+        return extraction.cancelled()
+
+    try:
+        assert asyncio.run(scenario()) is True
+    finally:
+        del app_module.llm.extract
+
+    assert attempts == ["started"], "a shutdown must not provoke another attempt"
+
+
+def test_interview_history_keeps_the_recollection_the_conversation_started_from(tmp_path, monkeypatch):
+    # The policy asks every move to ground itself in the most recent participant
+    # turn, so the grounded-anchor mechanism almost never rescues an old topic on
+    # its own. Without this the opening subject silently leaves the interviewer's
+    # view after a handful of exchanges.
+    app_module.store = SessionStore(tmp_path)
+    monkeypatch.setenv("LLM_CONVERSATION_TURNS", "4")
+    session = app_module.store.create("Contexto")
+    opening = session.add_turn("user", "Mi tío Julio trabajaba en el frigorífico.")
+    session.classify_turn(opening.id, "MEMORY_TESTIMONY", "testimony")
+    for index in range(6):
+        user = session.add_turn("user", f"Recuerdo posterior {index}.")
+        session.classify_turn(user.id, "MEMORY_TESTIMONY", "testimony")
+        session.add_turn("assistant", "Ajá.", record_kind="interview_move", grounded_in=[user.id])
+
+    history = app_module._interview_history(session)
+
+    assert history[0]["id"] == opening.id
+    assert "Julio" in history[0]["text"]
+
+
+def test_latency_traces_are_recorded_and_summarised(tmp_path):
+    app_module.store = SessionStore(tmp_path)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            await client.delete("/api/latency")
+            for reply_ms in (2400, 2600, 3000):
+                stored = await client.post(
+                    "/api/latency",
+                    json={
+                        "vad_wait_ms": 1700,
+                        "asr_ms": 210,
+                        "interview_ms": 1400,
+                        "tts_synthesis_ms": 150,
+                        "perceived_reply_ms": reply_ms,
+                        "classification_source": "router_model",
+                    },
+                )
+                assert stored.status_code == 200
+            return (await client.get("/api/latency")).json()
+
+    report = asyncio.run(run_flow())
+
+    assert len(report["traces"]) == 3
+    assert report["stages"]["perceived_reply_ms"]["median_ms"] == 2600
+    assert report["stages"]["perceived_reply_ms"]["max_ms"] == 3000
+    # Non-numeric detail is carried on the trace but never averaged into a stage.
+    assert "classification_source" not in report["stages"]
 
 
 def test_multi_turn_rhythm_allows_two_turns_without_questions(tmp_path, monkeypatch):

@@ -15,8 +15,11 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python -m py_compile app.py model.py state.py memory_field.py controller.py voice.py scripts/*.py
       - run: python -m json.tool evaluation/scenarios.json > /dev/null
+      - run: python -m json.tool evaluation/routing-cases.json > /dev/null
       - run: python -m json.tool demo/sesion-ejemplo.json > /dev/null
       - run: python scripts/run_live_scenarios.py --help > /dev/null
       - run: python scripts/run_target_machine_evaluation.py --help > /dev/null
+      - run: python scripts/check_routing.py --help > /dev/null
+      - run: python scripts/check_voice_loop.py --help > /dev/null
       - run: node --check static/app.js
       - run: pytest -q

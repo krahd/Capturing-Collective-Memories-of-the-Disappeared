@@ -61,7 +61,25 @@ WHISPER_LANGUAGE=es
 At application startup, `whisper-server` loads that model once and stays
 resident. Each turn is posted to its `/inference` endpoint. `whisper-cli` remains
 configured as a fallback if the resident process cannot start or disappears.
-Set `WHISPER_SERVER_URL` when a separately supervised server should be reused.
+
+`WHISPER_SERVER_URL` only changes the address, and a server already answering
+there is reused rather than duplicated — so setting it does not disable the
+resident server. To keep the application from ever launching one, because
+something else supervises it, set `WHISPER_SERVER_EXTERNAL=1` explicitly.
+
+Startup confirms the address by asking it to transcribe a fraction of a second of
+silence. Something else holding the port answers that wrongly and is refused,
+instead of being adopted as the recogniser and failing on the first real turn.
+
+Check which path is live before trusting a demo:
+
+```bash
+curl -s http://127.0.0.1:8765/api/config | python3 -m json.tool | grep -A2 asr_mode
+```
+
+`asr_mode: resident` is the fast path. `cli_fallback` still transcribes, but it
+reloads the whole model for every turn and gives up the main reason this path
+exists.
 
 Official model files: <https://huggingface.co/ggerganov/whisper.cpp/tree/main>
 
@@ -84,8 +102,10 @@ The current Argentine Spanish voice is `es_AR-daniela-high`. Point
 PIPER_MODEL=/absolute/path/to/models/piper/es_AR-daniela-high.onnx
 ```
 
-The service uses Piper's Python API when installed, keeping the voice model in
-memory after its first use. It can fall back to a standalone `piper` executable
+The service uses Piper's Python API when installed. The voice is loaded at
+application startup by synthesizing one discarded sentence, so the first spoken
+reply does not pay for the load; `tts_mode` in `/api/config` reports `resident`
+once that has happened. It can fall back to a standalone `piper` executable
 configured with `PIPER_CLI`.
 
 Official voice list: <https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md>
@@ -104,6 +124,41 @@ conversation composer shows `voz local · es · entrada y salida`. Press
 **Hablar** once and then just talk: pause for a couple of seconds when you have
 finished a turn, listen to the reply, and keep going. Press **Terminar** to close
 the exchange.
+
+## Where the time goes
+
+Every stage is measured. The browser posts the assembled trace of each spoken
+turn to `/api/latency`, which keeps the last 64 and reports medians:
+
+```bash
+curl -s http://127.0.0.1:8765/api/latency | python3 -m json.tool
+```
+
+Ten consecutive turns on the target machine, medians in milliseconds:
+
+| Stage | ms |
+| --- | --- |
+| `vad_wait_ms` — silence before the turn is taken as finished | 1700 |
+| `audio_conversion_ms` — ffmpeg to 16 kHz mono | 54 |
+| `asr_ms` — resident whisper.cpp | 466 |
+| `classify_ms` — routing | 662 |
+| `interview_ms` — conversational move | 1145 |
+| `tts_synthesis_ms` — Piper | 334 |
+| **`perceived_reply_ms`** — silence to first audible word | **4581** |
+
+`perceived_reply_ms` is measured in the browser, because the browser holds the
+only clock spanning the whole thing: the participant falls silent there and hears
+the reply there. Numbers assembled from server stages alone would omit exactly
+the parts nobody measures and everybody notices.
+
+The largest single item is the deliberate one. The next largest is the
+conversational model, which is the thing being demonstrated.
+
+`scripts/check_voice_loop.py` drives the same path against a running application
+using the project's own Piper voice as the participant, which is how these
+figures were produced. It exercises real audio through real ffmpeg, real Whisper
+and real synthesis — but it is synthetic speech, and a person hesitating over a
+name will not transcribe as cleanly.
 
 ## Representation and limits
 

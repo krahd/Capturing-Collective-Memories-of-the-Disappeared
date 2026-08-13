@@ -37,7 +37,7 @@
         },
         "background": {
           "activeOnStart": true,
-          "beginsPattern": ".*Will watch for changes.*",
+          "beginsPattern": ".*Started server process.*",
           "endsPattern": ".*Uvicorn running on.*"
         }
       },
@@ -81,6 +81,43 @@
       "args": [
         "${workspaceFolder}/start.sh",
         "--voice-doctor"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Prototype: Routing Check",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "${workspaceFolder}/start.sh",
+        "--routing-check"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Prototype: Voice Loop Check",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "${workspaceFolder}/scripts/check_voice_loop.py",
+        "--turns",
+        "5"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

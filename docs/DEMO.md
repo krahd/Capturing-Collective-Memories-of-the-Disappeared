@@ -14,10 +14,26 @@ Not: *speak, and now somebody has to maintain an annotation system.*
 ## Before the meeting
 
 ```bash
-ollama serve                                        # if not already running
-ollama run qwen3:30b-a3b-instruct-2507-q4_K_M ""    # warms the model into memory
-bash start.sh                                       # or the VS Code "Prototype: Run" task
+ollama serve            # if not already running
+bash start.sh           # or the VS Code "Prototype: Run" task
 ```
+
+Startup now loads everything that would otherwise be paid for by whoever speaks
+first: the conversational model, the resident Whisper server and the Piper voice.
+Give it about half a minute and start it *before* people are in the room. It no
+longer runs with `--reload`; use `bash start.sh --dev` while editing, never for a
+demo, because a reload pays that whole orchestration again.
+
+Confirm the fast paths are actually live rather than assuming them:
+
+```bash
+curl -s http://127.0.0.1:8765/api/config | python3 -m json.tool
+```
+
+`asr_mode` must say `resident` and `tts_mode` must say `resident`. `cli_fallback`
+still works and still sounds fine — it just reloads a multi-gigabyte model on
+every single turn, which is the difference between a four-second reply and a
+twenty-second one.
 
 Open `http://127.0.0.1:8765`. The badge at top right should read **LOCAL** in
 green. That badge is the claim that nothing leaves the machine, and it is worth
@@ -31,7 +47,23 @@ rebuild the corpus (a few minutes, needs the model running; re-running is safe):
 python scripts/build_demo_corpus.py
 ```
 
-The first reply after starting is slow while the model loads. Warm it first.
+## What the pace is
+
+Measured over ten consecutive spoken turns on this machine, from the participant
+falling silent to the first sound of the reply: **about 4.6 seconds**, of which
+1.7 s is the deliberate wait for a pause to mean the turn is over rather than a
+hesitation. The rest is roughly 0.5 s recognition, 0.7 s routing, 1.1 s
+interviewing and 0.3 s synthesis.
+
+Say that plainly if somebody asks, and say what the 1.7 s buys: a memory
+conversation is full of people stopping mid-sentence while reaching for a name,
+and a threshold tuned for command-and-control speech cuts them off exactly there.
+
+To re-measure at any time, run a few spoken turns and read:
+
+```bash
+curl -s http://127.0.0.1:8765/api/latency | python3 -m json.tool
+```
 
 ## Sequence
 

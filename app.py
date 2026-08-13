@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+from collections import deque
 from contextlib import asynccontextmanager
 import os
 from pathlib import Path
+import statistics
 import time
 from typing import Any
 
@@ -46,9 +48,12 @@ voice = VoiceService()
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # Startup performs the expensive loads once: shared HTTP connections,
-    # resident Ollama weights, resident Whisper and (lazily) resident Piper.
+    # resident Ollama weights, resident Whisper and a resident Piper voice.
+    # Nothing here may be deferred to the first turn: whatever is left cold is
+    # paid for by the first person who speaks.
     await llm.start()
     await asyncio.to_thread(voice.start)
+    await asyncio.to_thread(voice.warm)
     try:
         yield
     finally:
@@ -84,6 +89,9 @@ class AggregateCache:
 
 
 aggregates = AggregateCache()
+
+# Enough to review a 10–15 turn spoken session without unbounded growth.
+latency_traces: deque[dict[str, Any]] = deque(maxlen=64)
 
 
 class RevalidatedStatics(StaticFiles):
@@ -263,7 +271,7 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
                 "error": str(exc),
                 "user_turn": user_turn.__dict__,
                 "session": session.to_dict(),
-                "timings_ms": {**timings, "total": round((time.perf_counter() - total_started) * 1000)},
+                "timings_ms": {**timings, "turn_total_ms": round((time.perf_counter() - total_started) * 1000)},
             },
         )
 
@@ -314,7 +322,7 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
             "user_turn": user_turn.__dict__,
             "assistant_turn": assistant_turn.__dict__,
             "session": session.to_dict(),
-            "timings_ms": {**timings, "interview_ms": 0, "total": round((time.perf_counter() - total_started) * 1000)},
+            "timings_ms": {**timings, "interview_ms": 0, "turn_total_ms": round((time.perf_counter() - total_started) * 1000)},
         }
 
     try:
@@ -329,7 +337,7 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
                 "error": str(exc),
                 "user_turn": user_turn.__dict__,
                 "session": session.to_dict(),
-                "timings_ms": {**timings, "total": round((time.perf_counter() - total_started) * 1000)},
+                "timings_ms": {**timings, "turn_total_ms": round((time.perf_counter() - total_started) * 1000)},
             },
         )
 
@@ -388,12 +396,26 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         "user_turn": user_turn.__dict__,
         "assistant_turn": assistant_turn.__dict__,
         "session": session.to_dict(),
-        "timings_ms": {**timings, "total": round((time.perf_counter() - total_started) * 1000)},
+        "timings_ms": {**timings, "turn_total_ms": round((time.perf_counter() - total_started) * 1000)},
     }
 
 
 def _interview_history(session) -> list[dict[str, str]]:
-    """Bound working context while preserving exact referenced older turns."""
+    """Bound working context while preserving exact referenced older turns.
+
+    The bound is a latency decision: prompt evaluation on the 30B interviewer
+    grows with everything sent to it, and a conversation the participant is
+    waiting through cannot carry an unbounded transcript.
+
+    What it costs is real and is not fully repaired here. The policy asks every
+    move to ground itself in the most recent participant turn, so the anchors
+    below rarely rescue a genuinely old topic, and after enough exchanges the
+    opening of the conversation would otherwise fall out of view — precisely
+    when somebody says "volviendo a lo que te decía antes". Retaining the first
+    recollection keeps the subject that gave the session its topic; carrying
+    forward open referents the participant may return to is the actual fix and
+    is not built.
+    """
     eligible = [
         turn
         for turn in session.turns
@@ -410,7 +432,7 @@ def _interview_history(session) -> list[dict[str, str]]:
             }
         )
     ]
-    limit = max(4, int(os.getenv("LLM_CONVERSATION_TURNS", "14")))
+    limit = max(4, int(os.getenv("LLM_CONVERSATION_TURNS", "20")))
     recent = eligible[-limit:]
     recent_ids = {turn.id for turn in recent}
     grounded_ids = {
@@ -420,6 +442,9 @@ def _interview_history(session) -> list[dict[str, str]]:
         for turn_id in turn.grounded_in
         if turn_id not in recent_ids
     }
+    opening = next((turn for turn in eligible if turn.role == "user"), None)
+    if opening is not None and opening.id not in recent_ids:
+        grounded_ids.add(opening.id)
     # These are exact source turns, not a lossy archive summary. They form the
     # small explicit state needed when a recent move still points further back.
     anchors = [
@@ -475,9 +500,9 @@ async def transcribe_voice(session_id: str, request: Request) -> dict[str, Any]:
     except ValueError:
         vad_wait_ms = 0
     timings = {
-        "vad_wait": vad_wait_ms,
+        "vad_wait_ms": vad_wait_ms,
         **asr_detail.get("timings_ms", {}),
-        "request_total": round((time.perf_counter() - request_started) * 1000),
+        "transcribe_request_ms": round((time.perf_counter() - request_started) * 1000),
     }
     return {"audio_id": record.id, "text": transcript, "asr": asr_detail, "timings_ms": timings}
 
@@ -495,8 +520,54 @@ async def speak_voice(body: SpeechCreate) -> Response:
     return Response(
         content=audio,
         media_type="audio/wav",
-        headers={"Server-Timing": f"tts;dur={elapsed}", "X-TTS-Ms": str(elapsed)},
+        headers={
+            "Server-Timing": f"tts;dur={elapsed}",
+            "X-TTS-Synthesis-Ms": str(elapsed),
+        },
     )
+
+
+@app.post("/api/latency")
+def record_latency(trace: dict[str, Any]) -> dict[str, Any]:
+    """Keep the last spoken turns' measured stages so a demo can be inspected.
+
+    The browser holds the only clock that spans the whole thing — the
+    participant falls silent in the browser and hears the reply in the browser —
+    so it posts the assembled trace back here. Kept in memory and bounded: this
+    is a measurement aid for a disposable prototype, not a metrics store, and it
+    must never become another thing written to disk during a conversation.
+    """
+    latency_traces.append({"recorded_at": time.time(), **trace})
+    return {"stored": len(latency_traces)}
+
+
+@app.get("/api/latency")
+def latency_report() -> dict[str, Any]:
+    traces = list(latency_traces)
+    stages: dict[str, list[float]] = {}
+    for trace in traces:
+        for key, value in trace.items():
+            if key.endswith("_ms") and isinstance(value, (int, float)):
+                stages.setdefault(key, []).append(float(value))
+    return {
+        "traces": traces,
+        "stages": {
+            key: {
+                "n": len(values),
+                "median_ms": round(statistics.median(values)),
+                "min_ms": round(min(values)),
+                "max_ms": round(max(values)),
+            }
+            for key, values in sorted(stages.items())
+        },
+    }
+
+
+@app.delete("/api/latency")
+def clear_latency() -> dict[str, Any]:
+    cleared = len(latency_traces)
+    latency_traces.clear()
+    return {"cleared": cleared}
 
 
 @app.post("/api/sessions/{session_id}/annotations")
@@ -650,9 +721,15 @@ async def extract_in_background(session_id: str, turn_id: str) -> None:
                     await run_extraction(session, [turn])
                 return
             except asyncio.CancelledError:
-                # A conversational call pre-empted analysis. Clear this one
-                # cancellation and retry only after the next quiet period.
                 task = asyncio.current_task()
+                if not llm.gate.was_preempted(task):
+                    # Not the gate's doing: the server is shutting down or
+                    # reloading. Swallowing this would make the process refuse to
+                    # exit while it kept retrying an analysis nobody is waiting
+                    # for. Only a pre-emption earns another attempt.
+                    raise
+                # A conversational call pre-empted analysis. Clear that one
+                # cancellation and retry only after the next quiet period.
                 if task is not None and hasattr(task, "uncancel"):
                     task.uncancel()
                 continue

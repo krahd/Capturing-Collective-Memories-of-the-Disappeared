@@ -1,11 +1,12 @@
 # Status
 
-**Date:** 12 August 2026  
+**Date:** 13 August 2026  
 **Phase:** disposable interaction prototype  
 **Implementation:** complete for the current interaction-discovery goal, plus capture/audit, constrained-controller, memory-field and chronology layers
-**Mechanical verification:** passing (77 deterministic tests)
+**Mechanical verification:** passing (96 deterministic tests)
 **Live-model Uruguayan-Spanish evaluation:** informal single- and multi-turn checks run on the target machine; the scored protocol is still pending
-**Voice:** implemented and unverified — no automated test exercises Whisper, Piper, browser silence detection or a complete spoken turn
+**Routing:** measured against a 49-case adversarial Uruguayan-Spanish set; see `evaluation/ROUTING.md`
+**Voice:** the complete spoken loop runs end to end on the target machine with resident recognition and synthesis, driven by synthetic participant audio. **A person speaking into a microphone for 10–15 turns has still not happened**, and browser silence detection remains exercised only by hand.
 
 ## Implemented
 
@@ -62,8 +63,12 @@
 - **extraction separated from conversation computationally, not only
   architecturally:** background extraction waits for a quiet conversational model
   before issuing an analysis call, queued extractions run one at a time, and an
-  optional `LLM_EXTRACTION_MODEL` moves the work onto a smaller local model.
-  Interpretations are attributed to whichever model produced them;
+  extraction already running yields when the participant speaks again, retrying at
+  the next quiet period. Cancellation carries a reason, so a shutdown stops the
+  worker instead of provoking another attempt. `LLM_EXTRACTION_MODEL` can move the
+  work onto a different local model and is deliberately unset — see the routing
+  and extraction evidence below. Interpretations are attributed to whichever model
+  produced them;
 - a seven-conversation researcher-authored demo corpus with deliberately
   overlapping people, places and years, whose extractions are produced by the real
   model rather than fabricated;
@@ -92,10 +97,74 @@
   anyone the participant did not;
 - an optional **continuous** half-duplex browser voice path through local
   whisper.cpp and Piper, with original audio and ASR text stored as separate
-  attributable layers. The microphone re-arms after each reply; end of turn is
-  2.4 s of silence, tuned for hesitant speech rather than commands. Barge-in is
-  deliberately not built. Voice binaries/models are not installed or configured
-  by default.
+  attributable layers. The microphone stream, audio context and analyser are held
+  across turns and only the audio track is disabled while the system thinks and
+  speaks, so re-arming costs nothing. End of turn is 1.7 s of silence, tuned for
+  hesitant speech rather than commands. Barge-in is deliberately not built. Voice
+  binaries/models are not installed or configured by default.
+
+## Performance
+
+Startup makes every expensive thing resident once — shared HTTP connections, the
+conversational model at a fixed context size and indefinite keep-alive, a
+`whisper-server` process holding the ASR model, and the Piper voice loaded by
+synthesizing one discarded sentence. Nothing is left to be paid for by whoever
+speaks first. `/api/config` reports `asr_mode` and `tts_mode` so this is checked
+rather than assumed, and startup no longer runs under `--reload`.
+
+Measured over ten consecutive spoken turns on the target machine, silence to
+first audible word: **4.6 s median**, of which 1.7 s is the deliberate
+end-of-turn wait. Recognition 0.47 s, routing 0.66 s, interviewing 1.15 s,
+synthesis 0.33 s. The browser assembles each trace and posts it to `/api/latency`,
+which keeps the last 64 and reports medians; `scripts/check_voice_loop.py`
+reproduces the measurement against a running application.
+
+Two findings from that instrumentation are worth recording because both were
+invisible to reasoning and obvious to measurement:
+
+- **Context size belongs to a loaded model, not to a request.** Bounding the
+  router and extractor to a smaller `num_ctx` than the interviewer made Ollama
+  reload the same 18 GB model on every call — 2.3–5.2 s per call, against 175 ms
+  once the size holds steady. Roles sharing a model now share its context, and
+  the largest requirement wins; a genuinely separate small router still keeps its
+  own small context, which is what that bound was for. This alone took the
+  perceived reply from 10.6 s to 4.6 s. **An optimisation intended to protect
+  residency was destroying it.**
+- The remaining largest item is the 1.7 s end-of-turn wait, which is a claim
+  about this conversation rather than a technical default, and the next is the
+  conversational model itself. Neither is a defect. Further optimisation should
+  wait for a trace that identifies something else.
+
+## Routing and extraction models
+
+Routing had been moved onto a small local model (`llama3.2`, 3B) on the reasoning
+that classification is easy and the large model should stay free. That reasoning
+was tested rather than assumed, against a 49-case adversarial Uruguayan-Spanish
+set covering testimony, hedged testimony, reported speech carrying control
+vocabulary, corrections, natural stop/pause/withdraw/delete phrasings, off-topic
+requests and prompt injection.
+
+The small router produced **seven critical failures against one**, and failed
+precisely where this project spends a whole deterministic layer: every case of
+somebody's remembered words being taken as an instruction to the system. "Me
+acuerdo que mi abuela decía borrá todo" became a deletion request. It also read
+"Sí, dale, seguime preguntando" as a request to pause. The saving was about
+40 ms per turn.
+
+On extraction, the same model dropped the named disappeared person, one of two
+contradictory dates, and both the uncertainty and hearsay markings — the
+distinctions the memory field exists to preserve.
+
+Routing and extraction therefore run on the conversational model.
+`LLM_ROUTER_MODEL` and `LLM_EXTRACTION_MODEL` remain supported and unset, and
+`bash start.sh --routing-check` exits non-zero on any critical failure so the
+decision can be re-opened with evidence rather than argument. Full record in
+`evaluation/ROUTING.md`.
+
+The routing policy was strengthened in response: a participant putting a limit on
+one topic while continuing the conversation, and minimal Uruguayan
+acknowledgements such as "Ta." or "Sí, dale", are explicitly not controls. One
+boundary case remains unstable and is recorded rather than hidden.
 
 ## Local-model evaluation path
 
@@ -128,7 +197,18 @@ Complete HTTP round-trip latency from the prototype is not TTFT and does not est
 
 ## Verification
 
-GitHub Actions is green on the current main branch. The suite verifies Python/browser syntax and deterministic tests covering transcript preservation, source traceability, derived editing/deletion, correction relations, export, policy invariants, local model configuration, explicit generation settings, scenario-corpus integrity, both evaluation runners and the end-to-end API flow.
+GitHub Actions is green on the current main branch. The suite verifies Python/browser syntax and deterministic tests covering transcript preservation, source traceability, derived editing/deletion, correction relations, export, policy invariants, local model configuration, explicit generation settings, scenario-corpus integrity, the evaluation runners and the end-to-end API flow.
+
+Added with this pass, each locking down something that had gone wrong or could
+have: the exact SSE framing of the memory-field event stream, now that timed
+polling no longer covers for it; that a configured Whisper address does not
+silently disable the resident server; that an unrelated service answering on the
+port is not adopted as the recogniser; that the speech voice is loaded at startup
+rather than on the first reply; that a shutdown cancellation is not mistaken for
+conversational pre-emption; that roles sharing one model share its context size;
+that the recollection a conversation started from stays in the interviewer's
+view; that latency traces are recorded and summarised; and that the routing set
+covers every intent and marks reported speech critical.
 
 The earlier three-action controller was smoke-tested locally against the selected
 Qwen/Ollama deployment on 12 August 2026, but that result is superseded: the
@@ -147,9 +227,22 @@ Off-topic and participant-control barriers remain unchanged. This is engineering
 evidence, not conversational or cultural validation.
 
 The revised controller, the staged field growth and the chronology have been
-verified mechanically and in a driven browser session; **neither the revised
-conversational behaviour nor the voice path has been tested by a person holding a
-real conversation.** Both remain open.
+verified mechanically and in a driven browser session.
+
+The complete spoken loop now runs end to end on the target machine: five and then
+ten consecutive turns through resident Whisper, routing, interviewing, Piper and
+the memory field, with every turn confirmed as `resident: true` rather than
+falling back to the CLI. Participant audio was produced by the project's own
+Piper voice, so real bytes pass through ffmpeg, whisper.cpp and synthesis at every
+stage. That establishes the path works and where the time goes.
+
+It does not establish that voice works. Synthetic speech transcribes far more
+cleanly than a person reaching for a name, and browser silence detection — the
+component that decides when somebody has finished speaking, which is the hardest
+judgement in the whole loop — is not exercised at all by it. **Neither the revised
+conversational behaviour nor voice has been tested by a person holding a real
+conversation.** Both remain open, and the 10–15 spoken-turn browser test in
+`docs/VOICE.md` is still the gate.
 
 ## Remaining goal gate
 

@@ -54,6 +54,43 @@ def test_rhythm_scenarios_are_multi_turn_and_runner_is_executable():
     assert "multi-turn conversational-rhythm" in result.stdout
 
 
+def test_routing_set_covers_the_boundary_a_router_change_can_break():
+    from controller import INTENTS
+
+    spec = json.loads((ROOT / "evaluation" / "routing-cases.json").read_text(encoding="utf-8"))
+    cases = spec["cases"]
+
+    assert len({case["id"] for case in cases}) == len(cases)
+    assert all(case["expected"] in INTENTS for case in cases)
+    assert all(
+        alternative in INTENTS
+        for case in cases
+        for alternative in case.get("acceptable", [])
+    )
+    # Every intent the router can return has to be represented, or a swapped
+    # model could regress a class nothing measures.
+    assert {case["expected"] for case in cases} == INTENTS
+    # The failure this project spends a whole deterministic layer preventing:
+    # somebody's remembered words being taken as an instruction to the system.
+    quoted = [case for case in cases if case["id"].startswith("quoted-")]
+    assert len(quoted) >= 5
+    assert all(case["expected"] == "MEMORY_TESTIMONY" for case in quoted)
+    assert all(case["severity"] == "critical" for case in quoted)
+
+
+def test_routing_checker_is_executable_and_gates_on_critical_failures():
+    result = subprocess.run(
+        [sys.executable, "scripts/check_routing.py", "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "--router-model" in result.stdout
+    assert "--repetitions" in result.stdout
+
+
 def test_target_machine_wrapper_exposes_evidence_arguments():
     result = subprocess.run(
         [sys.executable, "scripts/run_target_machine_evaluation.py", "--help"],

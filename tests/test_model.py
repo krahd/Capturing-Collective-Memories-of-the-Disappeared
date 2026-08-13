@@ -169,7 +169,10 @@ def test_http_client_is_reused_for_the_lifetime_of_the_llm_client():
 
 def test_ollama_native_calls_bound_context_and_keep_models_resident(monkeypatch):
     monkeypatch.setenv("LLM_API_URL", "http://127.0.0.1:11434/v1/chat/completions")
-    monkeypatch.setenv("LLM_MODEL", "local-model")
+    monkeypatch.setenv("LLM_MODEL", "big-model")
+    monkeypatch.setenv("LLM_ROUTER_MODEL", "small-model")
+    monkeypatch.setenv("LLM_CONTEXT_TOKENS", "8192")
+    monkeypatch.setenv("LLM_ROUTER_CONTEXT_TOKENS", "4096")
     monkeypatch.setenv("LLM_KEEP_ALIVE", "-1")
     client = LLMClient()
     observed = {}
@@ -182,7 +185,7 @@ def test_ollama_native_calls_bound_context_and_keep_models_resident(monkeypatch)
         client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
         result = await client._post(
             {
-                "model": "local-model",
+                "model": "small-model",
                 "messages": [{"role": "user", "content": "test"}],
                 "response_format": {"type": "json_object"},
                 "max_tokens": 48,
@@ -195,9 +198,52 @@ def test_ollama_native_calls_bound_context_and_keep_models_resident(monkeypatch)
     result = asyncio.run(scenario())
 
     assert observed["keep_alive"] == -1
+    # A genuinely separate router keeps its small context, which is what stops a
+    # tiny model from allocating enough KV cache to evict the large one.
     assert observed["options"] == {"num_predict": 48, "num_ctx": 4096}
     assert observed["format"] == "json"
     assert result["choices"][0]["message"]["content"] == '{"ok":true}'
+
+
+def test_roles_sharing_one_model_share_its_context_instead_of_reloading_it(monkeypatch):
+    # Context size belongs to the loaded model, not to the request. Asking the
+    # same model for 4096 to route and 8192 to interview made Ollama reload an
+    # 18 GB model twice per turn — measured at 2.3–5.2 s per call against 175 ms
+    # once the size holds steady. Bounding the router's context was supposed to
+    # protect residency; applied to a shared model it destroyed it.
+    monkeypatch.setenv("LLM_API_URL", "http://127.0.0.1:11434/v1/chat/completions")
+    monkeypatch.setenv("LLM_MODEL", "one-model")
+    monkeypatch.delenv("LLM_ROUTER_MODEL", raising=False)
+    monkeypatch.delenv("LLM_EXTRACTION_MODEL", raising=False)
+    monkeypatch.setenv("LLM_CONTEXT_TOKENS", "8192")
+    monkeypatch.setenv("LLM_ROUTER_CONTEXT_TOKENS", "4096")
+    monkeypatch.setenv("LLM_EXTRACTION_CONTEXT_TOKENS", "4096")
+    client = LLMClient()
+
+    assert client.model_context_tokens() == {"one-model": 8192}
+    assert client.context_for("one-model", 4096) == 8192
+
+    contexts = []
+
+    def handler(request):
+        contexts.append(json.loads(request.content)["options"]["num_ctx"])
+        return httpx.Response(200, json={"message": {"content": '{"ok":true}'}})
+
+    async def scenario():
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        for requested in (4096, 8192, 4096):
+            await client._post(
+                {"model": "one-model", "messages": [], "max_tokens": 48},
+                context_tokens=requested,
+            )
+        await client.close()
+
+    asyncio.run(scenario())
+
+    assert contexts == [8192, 8192, 8192], "every call must hold the model at one size"
+    # The record has to state the size the model was actually served with.
+    assert client.router_provenance()["context_tokens"] == 8192
+    assert client.provenance(for_extraction=True)["context_tokens"] == 8192
 
 
 def test_extraction_model_defaults_to_the_conversational_one(monkeypatch):

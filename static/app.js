@@ -1015,6 +1015,10 @@ async function processRecording() {
   const mimeType = voiceRuntime.recorder?.mimeType || "audio/webm";
   const blob = new Blob(voiceRuntime.chunks, { type: mimeType });
   const vadWaitMs = voiceRuntime.vadWaitMs;
+  // The participant's wait starts when they stop talking, not when the browser
+  // concludes they have. Only this clock spans the whole turn, so the honest
+  // total has to be measured here rather than assembled from server stages.
+  const wentQuietAt = voiceRuntime.silentSince || performance.now();
   // Retain the stream, AudioContext and analyser across turns. Only the track
   // is disabled while thinking and speaking, preserving half-duplex behaviour.
   pauseMicrophone();
@@ -1024,6 +1028,7 @@ async function processRecording() {
   }
 
   setVoicePhase("transcribing", "Transcribiendo localmente…");
+  const transcribeSentAt = performance.now();
   try {
     const response = await fetch(`/api/sessions/${state.session.id}/voice/transcribe`, {
       method: "POST",
@@ -1031,6 +1036,7 @@ async function processRecording() {
       body: blob,
     });
     const result = await response.json();
+    const transcribeReturnedAt = performance.now();
     if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
     $("message").value = result.text;
     setVoicePhase("thinking", "Pensando…");
@@ -1038,8 +1044,14 @@ async function processRecording() {
     state.lastVoiceTimings = {
       ...(result.timings_ms || {}),
       ...(turnResult?.timings_ms || {}),
+      transcribe_round_trip_ms: Math.round(transcribeReturnedAt - transcribeSentAt),
+      // Silence to first audible word. This is the number a participant would
+      // recognise as "how long it took to answer"; every other stage only
+      // explains it.
+      perceived_reply_ms: Math.round(performance.now() - wentQuietAt),
     };
     console.info("voice latency (ms)", state.lastVoiceTimings);
+    recordLatencyTrace(state.lastVoiceTimings);
     $("message").value = "";
     // Half-duplex: the microphone was closed for synthesis and opens again on
     // its own. Nothing to press between turns.
@@ -1047,6 +1059,16 @@ async function processRecording() {
   } catch (error) {
     endVoiceLoop(`No se pudo procesar la voz: ${error.message}`);
   }
+}
+
+// Kept so ten spoken turns can be reviewed afterwards at /api/latency instead
+// of being read off the console one at a time while a conversation is running.
+function recordLatencyTrace(timings) {
+  fetch("/api/latency", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(timings),
+  }).catch((error) => console.debug("latency trace not recorded", error));
 }
 
 async function speakText(text) {
@@ -1062,18 +1084,26 @@ async function speakText(text) {
     throw new Error(payload.detail || `HTTP ${response.status}`);
   }
   const url = URL.createObjectURL(await response.blob());
-  const synthesisMs = Number(response.headers.get("X-TTS-Ms") || 0);
+  const synthesisMs = Number(response.headers.get("X-TTS-Synthesis-Ms") || 0);
+  const timings = {
+    tts_synthesis_ms: synthesisMs,
+    tts_request_ms: Math.round(performance.now() - started),
+  };
   try {
     const audio = new Audio(url);
     await audio.play();
+    // The moment sound actually starts is the end of the participant's wait.
+    // Everything after it is the reply being delivered, not latency.
+    timings.speech_first_audio_ms = Math.round(performance.now() - started);
     await new Promise((resolve, reject) => {
       audio.addEventListener("ended", resolve, { once: true });
       audio.addEventListener("error", reject, { once: true });
     });
+    timings.speech_playback_ms = Math.round(performance.now() - started);
   } finally {
     URL.revokeObjectURL(url);
   }
-  return { tts: synthesisMs, tts_request_and_playback: Math.round(performance.now() - started) };
+  return timings;
 }
 
 async function createFreshSession() {
