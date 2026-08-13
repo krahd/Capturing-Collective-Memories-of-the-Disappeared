@@ -16,6 +16,10 @@ The material deliberately overlaps: the same people, places and years recur
 across conversations that do not otherwise know about each other, and two
 conversations date the same move differently without the corpus resolving it.
 
+Re-running is safe and is the right thing to do after changing the extraction
+policy: each conversation replaces its own previous build rather than adding a
+second copy beside it.
+
     python scripts/build_demo_corpus.py
 """
 
@@ -104,7 +108,20 @@ CONVERSATIONS: list[tuple[str, list[tuple[str, str]]]] = [
 ]
 
 
+def discard_previous(store: SessionStore, title: str) -> int:
+    """Remove an earlier build of this conversation.
+
+    Without this, re-running after changing the extraction policy leaves the old
+    interpretations in the field beside the new ones and doubles the corpus.
+    Only conversations this script authored are touched — they are matched by
+    their exact title, which no live session has.
+    """
+    stale = [session.id for session in store.list() if session.title == title]
+    return sum(1 for session_id in stale if store.discard(session_id))
+
+
 async def build_one(store: SessionStore, llm: LLMClient, title: str, script: list[tuple[str, str]]) -> None:
+    discarded = discard_previous(store, title)
     session = store.create(title)
     session.is_recorded = True
     for role, text in script:
@@ -135,7 +152,8 @@ async def build_one(store: SessionStore, llm: LLMClient, title: str, script: lis
             except ValueError:
                 continue
     store.save(session)
-    print(f"  {title}: {len(testimony)} recuerdos, {created} interpretaciones del modelo")
+    note = f" (reemplaza {discarded} anterior[es])" if discarded else ""
+    print(f"  {title}: {len(testimony)} recuerdos, {created} interpretaciones del modelo{note}")
 
 
 async def main() -> None:

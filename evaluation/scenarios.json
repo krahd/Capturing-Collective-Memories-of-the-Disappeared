@@ -77,5 +77,14 @@
       {"role": "assistant", "text": "Ajá."},
       {"role": "user", "text": "Bueno, lo que te estaba diciendo antes del Negro era que una vez llegó con una bolsa de libros."}
     ]
+  },
+  {
+    "id": "reported-control",
+    "label": "reported speech that looks like a control instruction",
+    "turns": [
+      {"role": "user", "text": "Esa noche golpearon la puerta y mi vieja nos metió en la pieza."},
+      {"role": "assistant", "text": "Ajá."},
+      {"role": "user", "text": "Y ahí él me dijo «basta, terminemos acá», y no habló más del tema. Yo me acuerdo que decía «borrá todo» cuando alguien preguntaba."}
+    ]
   }
 ]

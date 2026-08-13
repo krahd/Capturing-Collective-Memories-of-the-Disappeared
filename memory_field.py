@@ -9,9 +9,14 @@ nodes**. Entities hang off the recollections that mention them, and a
 recollection always belongs to a conversation:
 
     Conversación 07
-        ├── recuerdo r1 ── menciona ──→ Julio
-        │                └─ ocurre en ─→ la facultad
-        └── recuerdo r2 ── fecha ─────→ 1976
+        ├── recuerdo r1 ── menciona ───────→ Julio
+        │                └─ menciona lugar ─→ la facultad
+        └── recuerdo r2 ── menciona fecha ──→ 1976
+
+Every edge says `menciona`. That is deliberately weak: extraction establishes
+that a recollection referred to something, not that the remembered episode
+occurred there or happened then. An edge reading "ocurre en" would assert more
+than the material behind it supports.
 
 Two recollections may date the same material differently. Both edges are kept.
 Nothing here resolves a contradiction into a canonical value; density comes from
@@ -32,8 +37,15 @@ from state import ORIGIN_MODEL, Session
 
 # Extraction kinds that name something in the world, and the node type each
 # becomes. Anything not listed is either an epistemic mark or is left out.
+#
+# `entity` stays generic on purpose. Extraction is asked for `person` when it
+# means a person; anything it can only call an entity — an institution, an
+# organisation, an object — must not be silently drawn and labelled as a person.
+# Displaying a stronger claim than the extraction made is exactly the kind of
+# quiet hardening this project exists to avoid.
 ENTITY_KINDS = {
-    "entity": "person",
+    "person": "person",
+    "entity": "entity",
     "place": "place",
     "event": "event",
     "time": "time",
@@ -43,17 +55,24 @@ ENTITY_KINDS = {
 # Extraction kinds that describe how a thing was said, not a thing.
 EPISTEMIC_KINDS = {"uncertainty", "hearsay", "correction"}
 
+# What an edge is allowed to assert. Extraction establishes only that a
+# recollection *referred to* something; it does not establish that the
+# remembered episode occurred in a place or happened on a date. So every edge
+# says `menciona`, differentiated by what was mentioned. "Ocurre en" and
+# "recuerda" claimed more than the provenance supports.
 EDGE_LABELS = {
     "person": "menciona",
-    "place": "ocurre en",
-    "event": "recuerda",
-    "time": "fecha",
-    "theme": "trata de",
+    "entity": "menciona",
+    "place": "menciona lugar",
+    "event": "menciona hecho",
+    "time": "menciona fecha",
+    "theme": "menciona tema",
 }
 
 # Order the counters and chips are shown in.
 NODE_TYPE_LABELS = {
     "person": "Personas",
+    "entity": "Entidades",
     "place": "Lugares",
     "event": "Eventos",
     "time": "Fechas",
@@ -219,4 +238,129 @@ def build_memory_field(sessions: Iterable[Session]) -> dict[str, Any]:
             {"type": node_type, "label": label, "count": by_type.get(node_type, 0)}
             for node_type, label in NODE_TYPE_LABELS.items()
         ],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Cronología: one view the accumulated material can actually produce.
+#
+# The interesting claim is not that a chronology can be drawn. It is that one
+# can be drawn *without first deciding which date is right*. A year here is a
+# reading of the words somebody used, never a replacement for them: every point
+# carries the exact phrases behind it, and a subject dated two ways appears at
+# both years with both sources reachable.
+# ---------------------------------------------------------------------------
+
+FULL_YEAR = re.compile(r"\b(1[89]\d{2}|20\d{2})\b")
+# "el 76", "por el 77, 78", "'79". A bare two-digit number is only read as a
+# year when the phrase frames it as one; otherwise "estaba en cuarto" and
+# "tendría nueve o diez" would silently become dates.
+SHORT_YEAR_FRAME = re.compile(r"(?:\b(?:el|del|en|por|para|hasta|desde|año|años)\b\s*|')'?\d{2}\b")
+SHORT_YEAR = re.compile(r"'?\b(\d{2})\b")
+
+
+def years_in(label: str) -> list[int]:
+    """Read the years a time phrase names, keeping every one it names.
+
+    "por el 77, 78, por ahí" names two years and stays two years: narrowing it
+    to one would be exactly the adjudication this view exists to avoid.
+    """
+    years = {int(value) for value in FULL_YEAR.findall(label)}
+    if not years and SHORT_YEAR_FRAME.search(label):
+        for value in SHORT_YEAR.findall(label):
+            number = int(value)
+            if 20 <= number <= 99:
+                years.add(1900 + number)
+    return sorted(years)
+
+
+def build_timeline(sessions: Iterable[Session]) -> dict[str, Any]:
+    """Years, the recollections that date to them, and what is dated two ways."""
+    ordered = sorted(sessions, key=lambda s: s.created_at)
+    field = MemoryField()
+    for index, session in enumerate(ordered):
+        field.add_session(session, index)
+
+    recollections = {
+        node["turn_id"]: node for node in field.nodes.values() if node["type"] == "recollection"
+    }
+    conversation_titles = {
+        node["session_id"]: node["label"]
+        for node in field.nodes.values()
+        if node["type"] == "conversation"
+    }
+
+    points: dict[int, dict[str, Any]] = {}
+    undated: list[dict[str, Any]] = []
+    # Which years each recollection was dated to, so a subject's years can be
+    # read off the recollections that mention it.
+    years_by_turn: dict[str, set[int]] = {}
+
+    for node in field.nodes.values():
+        if node["type"] != "time":
+            continue
+        years = years_in(node["label"])
+        if not years:
+            undated.append({"label": node["label"], "recollections": list(node["recollections"])})
+            continue
+        for year in years:
+            point = points.setdefault(
+                year, {"year": year, "labels": [], "recollections": [], "conversations": []}
+            )
+            if node["label"] not in point["labels"]:
+                point["labels"].append(node["label"])
+            for turn_id in node["recollections"]:
+                years_by_turn.setdefault(turn_id, set()).add(year)
+                source = recollections.get(turn_id)
+                if source is None or any(
+                    r["turn_id"] == turn_id for r in point["recollections"]
+                ):
+                    continue
+                point["recollections"].append(
+                    {
+                        "turn_id": turn_id,
+                        "session_id": source["session_id"],
+                        "conversation": conversation_titles.get(source["session_id"], ""),
+                        "text": source["label"],
+                        "marks": list(source.get("marks", [])),
+                    }
+                )
+                if source["session_id"] not in point["conversations"]:
+                    point["conversations"].append(source["session_id"])
+
+    # A subject reached from recollections dated to different years. Deliberately
+    # not called a contradiction: reunions that ran from 1977 to 1979 look the
+    # same from here as a move two people date differently. The view shows that
+    # it happened and hands over the exact words rather than ruling on them.
+    divergences = []
+    for node in field.nodes.values():
+        if node["type"] not in NODE_TYPE_LABELS or node["type"] == "time":
+            continue
+        by_year: dict[int, list[str]] = {}
+        for turn_id in node["recollections"]:
+            for year in years_by_turn.get(turn_id, ()):
+                by_year.setdefault(year, []).append(turn_id)
+        if len(by_year) > 1:
+            divergences.append(
+                {
+                    "id": node["id"],
+                    "subject": node["label"],
+                    "type": node["type"],
+                    "years": sorted(by_year),
+                    "by_year": {str(year): turn_ids for year, turn_ids in sorted(by_year.items())},
+                }
+            )
+    divergences.sort(key=lambda d: (-len(d["years"]), d["subject"]))
+
+    ordered_points = [points[year] for year in sorted(points)]
+    return {
+        "points": ordered_points,
+        "undated": sorted(undated, key=lambda x: x["label"]),
+        "divergences": divergences,
+        "counts": {
+            "años": len(ordered_points),
+            "recuerdos_fechados": len(years_by_turn),
+            "sin_año": len(undated),
+            "fechados_de_varias_maneras": len(divergences),
+        },
     }

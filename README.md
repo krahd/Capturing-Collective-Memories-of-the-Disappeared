@@ -31,10 +31,17 @@ Its shape encodes a claim. A conventional knowledge graph reads
 
 ```text
 Conversación 07
-    ├── recuerdo r1 ── menciona ──→ Julio
-    │                └─ ocurre en ─→ la facultad
-    └── recuerdo r2 ── fecha ─────→ 1976
+    ├── recuerdo r1 ── menciona ───────→ Julio
+    │                └─ menciona lugar ─→ la facultad
+    └── recuerdo r2 ── menciona fecha ──→ 1976
 ```
+
+Every edge says `menciona`. That weakness is deliberate: extraction establishes
+that a recollection *referred to* something, not that the remembered episode
+occurred there or happened then. For the same reason a node is drawn as a person
+only when extraction explicitly said `person`; what it could only call an entity
+stays a generic entity, because an institution or an object silently labelled a
+person is a claim nobody made.
 
 Entities are shared across conversations, so separate accounts meet at the same
 node and the graph densifies as more people speak. Nodes several conversations
@@ -48,10 +55,40 @@ Clicking any node shows the exact words it came from, across every conversation
 that produced it. That is the only inspection affordance, and it reads as
 exploration rather than labour.
 
+### Growth happens in visible stages
+
+The field is not updated once, some seconds later. Three things happen and each
+is meant to be seen separately, because together they *are* the explanation of
+what the system does:
+
+1. **The words are preserved.** The recollection node appears as soon as the turn
+   is stored — before the reply has been composed. Preserving what somebody said
+   does not depend on understanding it.
+2. **Interpretation arrives.** People, places, dates and themes read out of that
+   recollection appear around it, on their own, once the conversational model is
+   free.
+3. **The collective connection is made.** If any of them already existed
+   elsewhere, the edge attaches to the existing node and that node swells and
+   pulses, named, with the number of conversations that now reach it.
+
+No caption explains the pipeline. The animation is the explanation.
+
+### What the material can produce
+
 Below the graph, **Extraído** counts what exists and **Puede producir** names
-what the material could support — timeline, map, search, themes, connections.
-Those are deliberately not built yet; they are there to show the archive is
-computationally productive.
+what the material could support.
+
+**Cronología** is built. Years are read out of the phrases people actually used —
+"el 76", "por el 77, 78, por ahí" — and each year holds the recollections that
+named it. A subject dated more than one way sits at both years, joined by an arc,
+with both source recollections reachable; the view says plainly that it does not
+resolve the difference. Time material that names no locatable year — "después",
+"los domingos" — is kept and shown as such rather than dropped or given an
+invented date. The point is not that a chronology can be drawn. It is that one
+can be drawn without first deciding which recollection has the date right.
+
+Map, search, themes and connections are deliberately not built, and are marked as
+such.
 
 Control and off-topic turns never become recollections, and withdrawn
 interpretation leaves the field while remaining in the transcript and the record.
@@ -71,7 +108,13 @@ Underneath, three commitments hold, reachable through *registro de la sesión*:
   that a redaction happened. The two are deliberately different operations.
 
 *registro de la sesión* opens the append-only record, attributing every action to
-`participante`, `investigador`, `modelo` or `sistema`. Both exports carry it.
+`participante`, `investigador`, `modelo` or `sistema`, naming the model behind
+each stage, and holding the JSON and Markdown exports. Both exports carry it.
+
+The badge in the header says **LOCAL** and nothing else. Which model is running,
+on which endpoint, under which settings, is one click away in the record: the
+claim worth making in a room is that nothing leaves the machine, not a
+quantisation suffix.
 
 The manual annotation, derived-material and relation operations still exist in
 the API, the data model and the exports; they are simply not surfaced in the
@@ -90,7 +133,8 @@ refuses new turns. Rebuild it with `python scripts/build_demo_session.py`.
 authored; the **extractions are real**, produced by running the configured model
 exactly as the application does, so model provenance in the graph is genuine
 rather than fabricated. It therefore needs a configured model and takes a few
-minutes.
+minutes. Re-running is safe and is the right thing to do after changing the
+extraction policy: each conversation replaces its own previous build.
 
 Appending `?session=<id>` or `?node=place:cerro` to the URL opens a specific
 session or entity directly.
@@ -190,11 +234,11 @@ uvicorn app:app --reload --port 8765
 
 Open `http://127.0.0.1:8765`.
 
-Without a configured model, the workbench and session creation still run, but sending conversational turns and automatic extraction are disabled. This is deliberate: the prototype does not fake conversational quality with canned replies.
+Without a configured model, the memory field, the chronology and session creation still run, but sending conversational turns and automatic extraction are disabled. This is deliberate: the prototype does not fake conversational quality with canned replies.
 
 ### VS Code
 
-1. Copy `.env.example` to `.env` and fill in the endpoint and model you want to use. You can skip this step to run the workbench without model-backed conversation.
+1. Copy `.env.example` to `.env` and fill in the endpoint and model you want to use. You can skip this step to explore the memory field without model-backed conversation.
 2. Run **Tasks: Run Build Task** (`Cmd+Shift+B` on macOS) and choose **Prototype: Run**. The first run creates `.venv` and installs the dependencies.
 3. Open `http://127.0.0.1:8765`.
 
@@ -213,9 +257,32 @@ The controller validates the move without rewriting its prose. Questions are
 required only for follow-up and clarification; content-bearing moves must ground
 in what the cited turn actually introduced, and recent assistant wording cannot
 simply repeat. Control material remains in the immutable transcript with a
-`non_testimony/control` label and is excluded from automatic extraction.
+`non_testimony/control` label and is excluded from automatic extraction. Which
+move produced a reply is recorded on the turn and shown in the session record,
+not beside the conversation.
 
-The original ten cases remain in `evaluation/scenarios.json`. A separate
+Two protections exist because of specific observed failures:
+
+**Acknowledgement over hedged material.** An acknowledgement asserts without
+asking, so it slips past every leading-question check. When the participant has
+marked something as second-hand or uncertain, the guard requires the reply to
+keep that distance, and no move may attribute knowledge, memory or certainty to
+anyone the participant did not. This came from a live run in which the model
+reported that a participant's mother "recordaba bien" what she had only been said
+to talk about.
+
+**Reported speech is not a control instruction.** Memories are full of other
+people talking, and the control vocabulary is exactly the vocabulary of being
+told to stop. "Y ahí él me dijo «basta, terminemos acá»" is testimony about a
+moment; "me acuerdo que decía «borrá todo»" is not a deletion request. The
+deterministic controller searches only the participant's own voice, with
+quotation and reported clauses removed, and the router is told the same. Getting
+this wrong would end a session in the middle of a memory about being told to stop
+talking — or appear to accept a request to destroy the recording.
+
+The researcher-authored cases remain in `evaluation/scenarios.json`, including one
+in which the participant quotes somebody else telling them to stop and to destroy
+something. A separate
 multi-turn rhythm corpus in `evaluation/rhythm-scenarios.json` feeds every
 generated assistant reply into the following turn so question frequency,
 initiative, grounding and repetition can be reviewed as conversation rather than
@@ -227,11 +294,36 @@ python scripts/run_rhythm_scenarios.py
 
 ## Optional local voice
 
-The browser can run a half-duplex local path through whisper.cpp and Piper:
-listen, detect the end-of-turn silence, transcribe in Spanish, generate, speak,
-then listen again. Run **Prototype: Voice Doctor** to see missing components.
-Installation, `.env` configuration, provenance, and limits are in
-[`docs/VOICE.md`](docs/VOICE.md).
+The browser can run a continuous half-duplex local path through whisper.cpp and
+Piper: listen, detect the end-of-turn silence, transcribe in Spanish, generate,
+speak, then listen again **by itself**. *Hablar* starts the exchange and
+*Terminar* ends it; nothing is pressed between turns. The microphone is closed
+while the system is speaking, so there is no barge-in.
+
+End of turn is 2.4 seconds of silence, not the ~1 second a command interface
+would use. A memory conversation is full of hesitation, and a threshold tuned for
+command-and-control speech cuts people off exactly where they are reaching for
+something. This is demo turn detection, not archival VAD.
+
+Run **Prototype: Voice Doctor** to see missing components. Installation, `.env`
+configuration, provenance, and limits are in [`docs/VOICE.md`](docs/VOICE.md).
+
+## Extraction does not compete with the conversation
+
+Extraction runs behind the reply, which is an architectural separation. On a
+single local server it also needs to be a computational one: an analysis call and
+the next conversational call contend for the same weights, and it is the
+participant who waits. Background extraction therefore also waits for the
+conversational model to go quiet — no call in flight, and quiet for
+`LLM_EXTRACTION_SETTLE` seconds, since somebody mid-thought speaks again within a
+second or two. Queued extractions run one at a time.
+
+Better still, set `LLM_EXTRACTION_MODEL` to a much smaller local model and leave
+the conversational weights alone entirely. Interpretations are attributed to
+whichever model actually produced them, in the record and in the exports.
+
+Nothing about this delays the field: the recollection is already visible while
+extraction is still waiting.
 
 ## Tests
 

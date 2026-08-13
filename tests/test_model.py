@@ -1,6 +1,9 @@
+import asyncio
 import json
 
 from model import (
+    EXTRACTION_POLICY,
+    ConversationGate,
     LLMClient,
     URUGUAYAN_CONVERSATION_POLICY,
     conversation_messages,
@@ -96,7 +99,7 @@ def test_extraction_does_not_inherit_the_short_conversational_token_cap(monkeypa
     client = LLMClient()
 
     assert client._generation_options()["max_tokens"] == 256
-    assert client._generation_options(client.extraction_max_tokens)["max_tokens"] == 1024
+    assert client._generation_options(client.extraction_max_tokens)["max_tokens"] == 1536
 
 
 def test_provenance_reports_the_settings_actually_used(monkeypatch):
@@ -115,7 +118,67 @@ def test_provenance_reports_the_settings_actually_used(monkeypatch):
     assert conversation["local"] is True
     assert conversation["endpoint"] == "http://127.0.0.1:11434"
     assert conversation["max_tokens"] == 256
-    assert extraction["max_tokens"] == 1024
+    assert extraction["max_tokens"] == 1536
+
+
+def test_a_separate_extraction_model_is_attributed_to_itself(monkeypatch):
+    # Interpretations must name the model that actually produced them, not the
+    # conversational one that happens to be configured alongside it.
+    monkeypatch.setenv("LLM_API_URL", "http://127.0.0.1:11434/v1/chat/completions")
+    monkeypatch.setenv("LLM_MODEL", "qwen3:30b-a3b-instruct-2507-q4_K_M")
+    monkeypatch.setenv("LLM_EXTRACTION_MODEL", "llama3.2:latest")
+
+    client = LLMClient()
+
+    assert client.provenance()["model"] == "qwen3:30b-a3b-instruct-2507-q4_K_M"
+    assert client.provenance(for_extraction=True)["model"] == "llama3.2:latest"
+
+
+def test_extraction_model_defaults_to_the_conversational_one(monkeypatch):
+    monkeypatch.setenv("LLM_MODEL", "one-model")
+    monkeypatch.delenv("LLM_EXTRACTION_MODEL", raising=False)
+
+    client = LLMClient()
+
+    assert client.extraction_model is None
+    assert client.provenance(for_extraction=True)["model"] == "one-model"
+
+
+def test_extraction_asks_for_person_explicitly_and_keeps_entity_generic():
+    policy = EXTRACTION_POLICY.lower()
+    assert "person" in policy
+    assert "`person` sólo para seres humanos" in policy
+    assert "ante la duda usá `entity`" in policy
+
+
+def test_gate_waits_for_a_conversational_call_to_finish_and_settle():
+    async def scenario():
+        gate = ConversationGate(settle_seconds=0.05)
+        waiter = asyncio.create_task(gate.wait_until_idle(timeout=5))
+
+        async with gate.conversing():
+            await asyncio.sleep(0.1)
+            # Background work must not have started while the participant waits.
+            assert not waiter.done()
+
+        assert await waiter is True
+
+    asyncio.run(scenario())
+
+
+def test_gate_gives_up_rather_than_never_extracting():
+    # A participant who keeps talking can hold the model busy indefinitely.
+    # Growing the field late beats never growing it.
+    async def scenario():
+        gate = ConversationGate(settle_seconds=0.05)
+        async with gate.conversing():
+            assert await gate.wait_until_idle(timeout=0.1) is False
+
+    asyncio.run(scenario())
+
+
+def test_gate_is_idle_before_anything_has_been_asked_of_the_model():
+    assert asyncio.run(ConversationGate(settle_seconds=0).wait_until_idle(timeout=1)) is True
 
 
 def test_policy_addresses_observed_hearsay_and_register_failures():
@@ -124,6 +187,12 @@ def test_policy_addresses_observed_hearsay_and_register_failures():
     # right after the participant said they did not remember them.
     assert "no le preguntes por detalles que sólo tendría si lo hubiera vivido" in policy
     assert "no repitas la misma fórmula de pregunta" in policy
+    # Added after a live run in which an acknowledgement reported that the
+    # participant's mother "recordaba bien" what she had only been said to talk
+    # about. Acknowledgements assert without asking, so they evade the
+    # leading-question rules entirely.
+    assert "preferí backchannel o invite_continue" in policy
+    assert "conservá la distancia que puso la persona" in policy
 
 
 def test_policy_allows_floor_yielding_moves_without_forced_questions():

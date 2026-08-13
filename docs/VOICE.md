@@ -5,11 +5,38 @@ The optional voice path is deliberately simple:
 ```text
 browser microphone → end-of-turn silence → ffmpeg → whisper.cpp (Spanish)
 → constrained conversation controller → Piper es_AR → browser speakers
+→ microphone again
 ```
 
 The microphone is stopped before transcription begins and remains off while the
 reply is synthesized and played. There is no wake word, barge-in, simultaneous
 listening, or end-to-end speech model.
+
+## Continuous half-duplex
+
+The loop re-arms by itself. **Hablar** starts an exchange and **Terminar** ends
+it; between turns nothing is pressed. Pressing a button for every single
+utterance is what makes a voice interface feel like a form rather than a
+conversation, and re-arming gives most of the experiential benefit of barge-in
+at none of its risk.
+
+The loop also ends on its own if a re-armed microphone hears nothing for 20
+seconds, so it never sits open indefinitely.
+
+Barge-in — interrupting the system mid-sentence — is the next increment and is
+deliberately not built. It should not be attempted until the ordinary path has
+been shown to be reliable in a real spoken conversation.
+
+## End of turn
+
+A turn ends after **2.4 seconds** of silence.
+
+That number is a claim about this conversation, not a technical default. A memory
+conversation is full of hesitation — people stop mid-sentence while reaching for
+a name, a year, a street — and a threshold tuned for command-and-control speech
+cuts them off exactly where the material is hardest to retrieve. It remains demo
+turn detection rather than archival VAD; it is simply tuned for reflective speech
+instead of instructions.
 
 ## 1. Install speech recognition
 
@@ -67,7 +94,9 @@ bash start.sh --voice-doctor
 
 Start the normal **Prototype: Run** task. When both layers are ready, the
 conversation composer shows `voz local · es · entrada y salida`. Press
-**Hablar**, speak naturally, and leave roughly 1.25 seconds of silence.
+**Hablar** once and then just talk: pause for a couple of seconds when you have
+finished a turn, listen to the reply, and keep going. Press **Terminar** to close
+the exchange.
 
 ## Representation and limits
 
@@ -84,3 +113,9 @@ conversation composer shows `voz local · es · entrada y salida`. Press
 - Browser silence detection is a demo turn detector, not archival VAD. Use
   headphones if speaker bleed is a concern, even though the microphone is off
   during playback.
+- **The voice path has no automated coverage of the speech itself.** The tests
+  verify configuration detection, path resolution and MIME handling; they do not
+  exercise Whisper, Piper, browser silence detection, or a complete spoken turn.
+  Treat voice as unverified until a real browser conversation of 10–15 turns has
+  been held, with ordinary reflective pauses, and record the result in
+  `docs/TEST-REPORT.md`.

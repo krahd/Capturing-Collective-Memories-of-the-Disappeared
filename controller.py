@@ -62,14 +62,49 @@ class InterviewMove:
     grounded_in: str
 
 
+# A memory is full of other people talking. "Y ahí él me dijo «basta, terminemos
+# acá»" is testimony about a moment, not an instruction to stop the session, and
+# "me acuerdo que decía 'borrá todo'" is not a deletion request. Both quotation
+# and a reporting verb put the words in someone else's mouth, so the control
+# vocabulary is searched only in what remains after both are removed.
+_QUOTED = re.compile(r"«[^»]*»|\"[^\"]*\"|“[^”]*”|'[^']{2,}'|‘[^’]*’")
+
+# Deliberately no first-person `dije`: "dije mal, era jueves" is the participant
+# correcting themselves, not quoting anybody, and removing it would swallow the
+# correction.
+_REPORTING_VERB = (
+    r"dijo|dij[eé]ron|dec[íi]a|dec[íi]an|grit[óo]|gritaba|repet[íi]a|"
+    r"cont[óo]|contaba|contaban|preguntaba|pregunt[óo]|orden[óo]|mand[óo]|pidi[óo]|ped[íi]a|avis[óo]"
+)
+# Everything from a reporting verb to the end of its clause is what that person
+# said. A clause boundary — punctuation, or a conjunction that starts a new
+# statement by the participant — closes the quotation again.
+_REPORTED_CLAUSE = re.compile(
+    rf"\b(?:{_REPORTING_VERB})\b\s*(?:que\s+)?[^.;:!?\n]*",
+    re.I,
+)
+
+
+def _participant_voice(text: str) -> str:
+    """Strip what the participant is quoting other people as having said."""
+    without_quotes = _QUOTED.sub(" ", text)
+    return _REPORTED_CLAUSE.sub(" ", without_quotes)
+
+
 def deterministic_intent(text: str) -> str | None:
     """Recognise high-stakes controls and explicit prompt commands before any LLM call.
 
     These expressions are intentionally conservative: semantic classification handles
     ambiguous language, while unmistakable participant controls never depend on a model.
+
+    Only the participant's own voice is searched. Testimony reporting someone
+    else's words must never be mistaken for an instruction to the application —
+    the cost of that confusion is stopping a session, or worse appearing to
+    accept a deletion request, in the middle of a memory about being told to
+    stop talking.
     """
 
-    value = " ".join(text.lower().split())
+    value = " ".join(_participant_voice(text).lower().split())
     if re.search(
         r"\b(borr[aáe]|elimin[aáe]|revoc[oa]|destru[ií]|suprim[ií])\b.*"
         r"\b(todo|sesión|sesion|audio|grabación|grabacion|datos|lo que dije|testimonio)\b",
@@ -181,6 +216,19 @@ def guard_interview_move(
             return None
         if not _has_content_overlap(utterance, context[grounded_in]):
             return None
+        # An acknowledgement is where an inference is easiest to smuggle in: it
+        # is content-bearing, it does not ask anything, and it therefore never
+        # trips the leading-question checks. When the source explicitly marked
+        # what it said as second-hand or uncertain, an acknowledgement that
+        # restates it flatly hardens the memory. Keeping the distance is what
+        # earns the right to say something back about hedged material.
+        if _declares_distance(context[grounded_in]) and not _declares_distance(utterance):
+            return None
+
+    # Restating someone else's certainty, knowledge or memory is an assertion
+    # about the world dressed as attention, whatever move it arrives under.
+    if _asserts_certainty(utterance):
+        return None
 
     # Common signatures of answering a request or turning into a general assistant.
     if re.search(
@@ -229,6 +277,50 @@ _MINIMAL_FOLLOW_UPS = {
     "que paso despues",
     "y que paso despues",
 }
+
+
+# Ways a speaker marks that what they are saying is not first-hand or not
+# certain: reported speech, attribution to someone else, hedges, non-memory.
+# Covers first, second and third person, because the same test asks both
+# whether the participant declared distance and whether the reply kept it.
+_DISTANCE = re.compile(
+    r"\b("
+    r"cont(ó|o|aron|aba|aban)|dec(ía|ia|ían|ian)|dicen|dijeron|me dijeron|"
+    r"según|segun|de o[ií]das|se comenta|el rumor|"
+    r"me parece|parece que|creo que|capaz|por ah[ií]|m[áa]s o menos|"
+    r"supongo|quiz[áa]s?|tal vez|habr[áa] sido|tendr[íi]a|"
+    r"no me acuerdo|no te acord[áa]s|no se acuerda|nunca supe|no lo vi|no la vi|"
+    r"no sé|no sabés|no estoy segur|no estaba segur|no sabe|"
+    r"por (mi|tu|su) (vieja|viejo|madre|padre|abuela|abuelo|hermana|hermano|t[íi]a|t[íi]o)"
+    r")\b",
+    re.I,
+)
+
+# Predicates that assert somebody's knowledge, memory or certainty. Restating a
+# hedged account with one of these is how an inference enters without ever
+# looking like a leading question — the observed failure was an acknowledgement
+# reporting that a participant's mother "recordaba bien" something the
+# participant had only said she used to talk about.
+_CERTAINTY = re.compile(
+    r"\b("
+    r"record(aba|aban|ó|o)\b|se acord(aba|aban|ó|o)\b|"
+    r"sab(ía|ia|ían|ian)\b|conoc(ía|ia) bien|"
+    r"estaba segur|estaban segur|sin duda|no hay duda|"
+    r"obviamente|claramente|evidentemente|efectivamente|es evidente|est[áa] claro|"
+    r"seguro que|de hecho|en realidad|realmente fue|fue as[íi]|era as[íi]"
+    r")\b",
+    re.I,
+)
+
+
+def _declares_distance(text: str) -> bool:
+    """Whether the text marks its material as second-hand, hedged or unremembered."""
+    return bool(_DISTANCE.search(text))
+
+
+def _asserts_certainty(text: str) -> bool:
+    """Whether the text claims knowledge, memory or certainty on someone's behalf."""
+    return bool(_CERTAINTY.search(text))
 
 
 def _words(text: str) -> set[str]:

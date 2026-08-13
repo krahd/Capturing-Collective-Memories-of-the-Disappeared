@@ -3,6 +3,7 @@ import asyncio
 import httpx
 
 import app as app_module
+import model as model_module
 from controller import InterviewMove
 from state import SessionStore
 
@@ -200,6 +201,107 @@ def test_pause_is_application_control_and_can_be_resumed(tmp_path, monkeypatch):
             assert resumed.json()["status"] == "active"
 
     asyncio.run(run_flow())
+
+
+def test_timeline_endpoint_produces_a_chronology_over_stored_conversations(tmp_path):
+    # "Puede producir" has to contain at least one thing that is actually
+    # produced, or the strip is only a promise.
+    app_module.store = SessionStore(tmp_path)
+    first = app_module.store.create("Ficha 02")
+    turn = first.add_turn("user", "Fue en el 76, ese año nos mudamos.")
+    first.add_derived_item("time", "el 76", [turn.id], origin="modelo")
+    first.add_derived_item("event", "la mudanza", [turn.id], origin="modelo")
+    app_module.store.save(first)
+
+    second = app_module.store.create("Ficha 03")
+    other = second.add_turn("user", "Yo digo que la mudanza fue en el 77.")
+    second.add_derived_item("time", "el 77", [other.id], origin="modelo")
+    second.add_derived_item("event", "la mudanza", [other.id], origin="modelo")
+    app_module.store.save(second)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.get("/api/timeline")
+            assert response.status_code == 200
+            timeline = response.json()
+            assert [point["year"] for point in timeline["points"]] == [1976, 1977]
+            divergence = timeline["divergences"][0]
+            assert divergence["subject"] == "la mudanza"
+            assert divergence["years"] == [1976, 1977]
+            # Every year hands back the words it was read from.
+            assert all(point["recollections"] for point in timeline["points"])
+
+    asyncio.run(run_flow())
+
+
+def test_quoted_control_in_testimony_does_not_end_the_session(tmp_path, monkeypatch):
+    # The end-to-end cost of confusing reported speech with an instruction: a
+    # session stopped in the middle of a memory about being told to stop
+    # talking. The recollection must be preserved as testimony instead.
+    app_module.store = SessionStore(tmp_path)
+
+    async def fake_classify(_turns):
+        return "MEMORY_TESTIMONY"
+
+    async def fake_interview(turns):
+        return InterviewMove("BACKCHANNEL", "Ajá.", turns[-1]["id"])
+
+    async def fake_extract(_turns):
+        return []
+
+    monkeypatch.setattr(app_module.llm, "classify", fake_classify)
+    monkeypatch.setattr(app_module.llm, "interview", fake_interview)
+    monkeypatch.setattr(app_module.llm, "extract", fake_extract)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            session_id = (await client.post("/api/sessions", json={})).json()["id"]
+            reply = await client.post(
+                f"/api/sessions/{session_id}/turns",
+                json={"text": "Y ahí él me dijo «basta, terminemos acá», y no habló más."},
+            )
+            assert reply.status_code == 200
+            payload = reply.json()
+            assert payload["session"]["status"] == "active"
+            assert payload["user_turn"]["record_kind"] == "testimony"
+            assert payload["assistant_turn"]["text"] == "Ajá."
+
+    asyncio.run(run_flow())
+
+
+def test_background_extraction_waits_for_the_conversational_model(tmp_path, monkeypatch):
+    # Not blocking the reply is not the same as not competing with it. Extraction
+    # is queued while the participant is composing their next turn, so it has to
+    # yield to the conversational call that turn provokes rather than contend
+    # with it for the same local weights.
+    app_module.store = SessionStore(tmp_path)
+    app_module.llm.gate = model_module.ConversationGate(settle_seconds=0.02)
+    observed: list[str] = []
+
+    async def fake_extract(_turns):
+        observed.append("extraction")
+        return []
+
+    monkeypatch.setattr(app_module.llm, "extract", fake_extract)
+    monkeypatch.setattr(app_module.llm, "provenance", lambda **_: {"model": "test-model"})
+
+    async def scenario():
+        session = app_module.store.create("Ficha de prueba")
+        turn = session.add_turn("user", "Nos juntábamos los domingos en el Cerro.")
+
+        extraction = asyncio.create_task(app_module.extract_in_background(session.id, turn.id))
+        async with app_module.llm.gate.conversing():
+            observed.append("conversation start")
+            await asyncio.sleep(0.15)
+            assert observed == ["conversation start"], "extraction ran against a busy model"
+            observed.append("conversation end")
+        await extraction
+
+    asyncio.run(scenario())
+
+    assert observed == ["conversation start", "conversation end", "extraction"]
 
 
 def test_multi_turn_rhythm_allows_two_turns_without_questions(tmp_path, monkeypatch):

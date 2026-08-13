@@ -20,7 +20,7 @@ from controller import (
     record_kind_for_intent,
     safe_interview_fallback,
 )
-from memory_field import build_memory_field
+from memory_field import build_memory_field, build_timeline
 from model import LLMClient, opening_message
 from state import (
     ACTOR_MODEL,
@@ -116,6 +116,9 @@ def config() -> dict[str, Any]:
         "llm_configured": llm.configured,
         "model": llm.model if llm.configured else None,
         "provenance": llm.provenance() if llm.configured else None,
+        # Named separately because it may be a different, smaller model, and an
+        # interpretation must never be read as the conversational model's.
+        "extraction_provenance": llm.provenance(for_extraction=True) if llm.configured else None,
         "voice": voice.config(),
     }
 
@@ -497,12 +500,26 @@ async def run_extraction(session, turns: list) -> list[dict[str, Any]]:
     return created
 
 
+# Queued extractions run one at a time. Several recollections in quick
+# succession would otherwise fire several concurrent analysis calls at a local
+# server that can only really do one thing well at once.
+extraction_queue = asyncio.Lock()
+
+
 async def extract_in_background(session_id: str, turn_id: str) -> None:
     """Grow the memory field from one recollection without delaying the reply.
 
     The participant is talking; extraction must never sit between what they said
-    and what the system says back. Failure here is recorded and otherwise
-    ignored — the transcript is the archive, the field is a working surface.
+    and what the system says back — and on a single local server, "not blocking
+    the reply" is not enough. An analysis call issued while the participant is
+    typing their next turn still competes for the same weights, so this waits
+    for the conversational model to go quiet before asking anything of it.
+
+    The recollection itself is already visible in the field by then: it appears
+    the moment the turn is stored, and this only adds what was read out of it.
+
+    Failure here is recorded and otherwise ignored — the transcript is the
+    archive, the field is a working surface.
     """
     try:
         session = store.get(session_id)
@@ -511,17 +528,19 @@ async def extract_in_background(session_id: str, turn_id: str) -> None:
     turn = next((t for t in session.turns if t.id == turn_id), None)
     if turn is None or turn.record_kind != "testimony":
         return
-    try:
-        await run_extraction(session, [turn])
-    except Exception as exc:  # noqa: BLE001 - a failed extraction must not surface mid-conversation
-        session.record(
-            ACTOR_MODEL,
-            "extraccion_fallida",
-            f"La extracción automática falló para un turno: {exc}",
-            target_id=turn_id,
-            target_kind="turn",
-        )
-        store.save(session)
+    async with extraction_queue:
+        await llm.gate.wait_until_idle()
+        try:
+            await run_extraction(session, [turn])
+        except Exception as exc:  # noqa: BLE001 - a failed extraction must not surface mid-conversation
+            session.record(
+                ACTOR_MODEL,
+                "extraccion_fallida",
+                f"La extracción automática falló para un turno: {exc}",
+                target_id=turn_id,
+                target_kind="turn",
+            )
+            store.save(session)
 
 
 @app.get("/api/memory-field")
@@ -530,6 +549,16 @@ def memory_field(focus: str = "") -> dict[str, Any]:
     field = build_memory_field(store.list())
     field["focus"] = focus
     return field
+
+
+@app.get("/api/timeline")
+def timeline() -> dict[str, Any]:
+    """A chronology the accumulated material produces without resolving it first.
+
+    Years are read out of the phrases people used; the phrases stay attached and
+    a subject dated two ways appears at both years.
+    """
+    return build_timeline(store.list())
 
 
 @app.post("/api/sessions/{session_id}/extract")

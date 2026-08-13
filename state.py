@@ -608,6 +608,22 @@ class SessionStore:
         self._sessions[session_id] = session
         return session
 
+    def discard(self, session_id: str) -> bool:
+        """Forget a stored session entirely.
+
+        Used only when rebuilding the researcher-authored demo corpus, where the
+        previous build has to go or its interpretations accumulate alongside the
+        new ones. Not reachable from the API: participant material is withdrawn
+        or deleted through the session's own recorded operations, never dropped
+        wholesale behind the record's back.
+        """
+        self._sessions.pop(session_id, None)
+        path = self.root / f"{safe_filename(session_id)}.json"
+        if not path.exists():
+            return False
+        path.unlink()
+        return True
+
     def save(self, session: Session) -> None:
         path = self.root / f"{safe_filename(session.id)}.json"
         path.write_text(json.dumps(session.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")

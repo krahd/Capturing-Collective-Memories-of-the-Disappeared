@@ -2,9 +2,10 @@
 
 **Date:** 12 August 2026  
 **Phase:** disposable interaction prototype  
-**Implementation:** complete for the current interaction-discovery goal, plus capture/audit, constrained-controller and memory-field layers
-**Mechanical verification:** passing (57 deterministic tests)
+**Implementation:** complete for the current interaction-discovery goal, plus capture/audit, constrained-controller, memory-field and chronology layers
+**Mechanical verification:** passing (77 deterministic tests)
 **Live-model Uruguayan-Spanish evaluation:** informal single- and multi-turn checks run on the target machine; the scored protocol is still pending
+**Voice:** implemented and unverified — no automated test exercises Whisper, Piper, browser silence detection or a complete spoken turn
 
 ## Implemented
 
@@ -20,7 +21,9 @@
 - JSON and Markdown export;
 - local JSON session persistence ignored by git;
 - automated CI verification;
-- ten executable researcher-authored Uruguayan-Spanish evaluation scenarios;
+- eleven executable researcher-authored Uruguayan-Spanish evaluation scenarios,
+  including one in which the participant quotes somebody else telling them to
+  stop and to destroy something;
 - live-model scenario recorder retaining exact context and raw output;
 - one-command target-machine evidence bundler combining conversational outputs, machine/configuration metadata and the independent Modelito benchmark;
 - explicit portable sampling controls for comparable conversational runs (`temperature`, `top_p`, `max_tokens`);
@@ -43,7 +46,24 @@
   correction mark the recollection that carries them rather than becoming entities.
   Clicking a node shows the exact words, across every conversation, that produced
   it. Manual annotation/derived/relation operations remain in the API, data model
-  and exports, but are no longer surfaced;
+  and exports, but are no longer surfaced. The graph asserts no more than the
+  extraction behind it: a node is a person only when extraction said `person`,
+  anything it could only call an entity stays generic, and every edge claims
+  `menciona` rather than "ocurre en" or "recuerda". Growth is staged visibly —
+  the recollection appears while the reply is still being composed, its
+  interpretation arrives afterwards, and material the corpus already held swells
+  and names its reach as a new conversation reaches it;
+- **cronología:** the first view actually produced from the accumulated material
+  rather than only named. Years are read out of the participants' own phrases;
+  each year holds the recollections that named it; a subject dated more than one
+  way sits at both years with both sources reachable and nothing adjudicating;
+  time material naming no locatable year is kept and shown as such. Map, search,
+  themes and connections remain deliberately unbuilt and marked as such;
+- **extraction separated from conversation computationally, not only
+  architecturally:** background extraction waits for a quiet conversational model
+  before issuing an analysis call, queued extractions run one at a time, and an
+  optional `LLM_EXTRACTION_MODEL` moves the work onto a smaller local model.
+  Interpretations are attributed to whichever model produced them;
 - a seven-conversation researcher-authored demo corpus with deliberately
   overlapping people, places and years, whose extractions are produced by the real
   model rather than fabricated;
@@ -62,10 +82,20 @@
 - control/off-topic turns remain preserved as `non_testimony/control` while
   being excluded from interviewer context and automatic/manual derived memory;
 - deterministic `STOP`, `PAUSE`, `WITHDRAW` and `REVOKE_DELETE` protocol
-  responses, including an explicit resume path for a paused session;
-- an optional half-duplex browser voice path through local whisper.cpp and
-  Piper, with original audio and ASR text stored as separate attributable
-  layers. Voice binaries/models are not installed or configured by default.
+  responses, including an explicit resume path for a paused session. The control
+  vocabulary is searched only in the participant's own voice: quotation and
+  reported clauses are removed first, so testimony about being told to stop, or
+  quoting somebody saying "borrá todo", is not mistaken for an instruction;
+- a guard protection against acknowledgements hardening hedged material: when the
+  participant marked something as second-hand or uncertain the reply must keep
+  that distance, and no move may attribute knowledge, memory or certainty to
+  anyone the participant did not;
+- an optional **continuous** half-duplex browser voice path through local
+  whisper.cpp and Piper, with original audio and ASR text stored as separate
+  attributable layers. The microphone re-arms after each reply; end of turn is
+  2.4 s of silence, tuned for hesitant speech rather than commands. Barge-in is
+  deliberately not built. Voice binaries/models are not installed or configured
+  by default.
 
 ## Local-model evaluation path
 
@@ -109,9 +139,17 @@ five acknowledgements, four backchannels, one follow-up and two guarded fallback
 invitations. Ten model utterances passed unchanged; the guard rejected
 `Entendido.` as an ungrounded acknowledgement and a content-directed invitation
 mislabelled as floor-yielding. The run still exposed wording for human review,
-including one acknowledgement that inferred the mother `recordaba bien`.
+including one acknowledgement that inferred the mother `recordaba bien`. That
+particular failure is now blocked structurally rather than by prompt wording: an
+acknowledgement over material the participant marked as second-hand must keep the
+distance, and certainty attributed to a third party is rejected under any move.
 Off-topic and participant-control barriers remain unchanged. This is engineering
 evidence, not conversational or cultural validation.
+
+The revised controller, the staged field growth and the chronology have been
+verified mechanically and in a driven browser session; **neither the revised
+conversational behaviour nor the voice path has been tested by a person holding a
+real conversation.** Both remain open.
 
 ## Remaining goal gate
 

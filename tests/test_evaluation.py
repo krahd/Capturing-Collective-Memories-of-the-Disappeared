@@ -11,9 +11,12 @@ def test_research_scenarios_are_machine_readable_and_complete():
     scenarios = json.loads(
         (ROOT / "evaluation" / "scenarios.json").read_text(encoding="utf-8")
     )
-    assert len(scenarios) == 10
-    assert len({scenario["id"] for scenario in scenarios}) == 10
+    assert len(scenarios) >= 10
+    assert len({scenario["id"] for scenario in scenarios}) == len(scenarios)
     assert all(scenario["turns"] for scenario in scenarios)
+    # Memories contain other people's instructions. The scope controller has to
+    # be exercised against reported speech, not only against real controls.
+    assert "reported-control" in {scenario["id"] for scenario in scenarios}
     assert all(
         turn["role"] in {"user", "assistant"} and isinstance(turn["text"], str)
         for scenario in scenarios

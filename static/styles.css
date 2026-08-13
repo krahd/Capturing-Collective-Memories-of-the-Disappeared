@@ -51,11 +51,14 @@ p { margin: .15rem 0; line-height: 1.45; }
 }
 .toolbar { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .status {
-  font-size: .74rem; padding: .22rem .5rem; border-radius: 999px;
-  border: 1px solid var(--ink-faint); color: var(--ink-soft); font-variant-numeric: tabular-nums;
+  font-size: .72rem; padding: .22rem .6rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--ink-faint); color: var(--ink-soft);
+  letter-spacing: .08em; font-weight: 700; text-transform: uppercase;
 }
-/* Running on this machine is a claim worth showing, not hiding in a tooltip. */
-.status-local { border-color: var(--participant-edge); background: var(--participant); color: #3c5a37; }
+/* Running on this machine is the claim worth making, and it is not a model id.
+   The identifier lives in the record, one click away. */
+.status-local { border-color: #4d7a44; background: #dfeadc; color: #2f5129; }
+.status-remote { border-color: #b08a3a; background: #f6ecdb; color: #6c4f10; }
 
 
 .layout { height: calc(100vh - 55px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(420px, .9fr); }
@@ -108,15 +111,24 @@ p { margin: .15rem 0; line-height: 1.45; }
 
 .edge { stroke: #c3bfb6; stroke-width: .9; }
 .edge.dim { stroke: #e2dfd9; }
+/* A connection being made right now, rather than one already there. */
+.edge.fresh { stroke: #c39a2c; stroke-width: 1.8; }
 .node { cursor: pointer; stroke: var(--paper-3); stroke-width: 1.2; transition: opacity .2s ease; }
 .node.dim { opacity: .18; }
 .pulse { fill: #d9bf62; pointer-events: none; }
+/* One conversation arriving at something another conversation already gave.
+   This is the strongest visual argument in the prototype, so it is loud. */
+.converge-ring { fill: none; stroke: #c39a2c; stroke-width: 2.2; pointer-events: none; }
+.node.converging { stroke: #c39a2c; stroke-width: 3.4; }
+.node-reach { font-size: 9px; fill: var(--model); font-weight: 700; pointer-events: none; }
 
 /* Conversations are the ground; recollections are first-class, not connective
    tissue; entities are what recollections converge on. */
 .node-conversation { fill: #4a4741; stroke-width: 2; }
 .node-recollection { fill: #7f9a77; }
 .node-person   { fill: #2c4f6b; }
+/* Not a person, not a place: extraction would not commit further than this. */
+.node-entity   { fill: #5c6b7a; }
 .node-place    { fill: #1f6f63; }
 .node-event    { fill: #8a5a17; }
 .node-time     { fill: #6b4a86; }
@@ -128,6 +140,41 @@ p { margin: .15rem 0; line-height: 1.45; }
 
 .node-label { font-size: 9.5px; fill: var(--ink-soft); pointer-events: none; }
 .label-conversation { fill: #4a4741; font-weight: 650; font-size: 10px; }
+.node-label.converging { fill: var(--ink); font-weight: 700; font-size: 11.5px; }
+
+/* ---------------- cronología ---------------- */
+
+.timeline {
+  position: absolute; inset: 0; background: var(--paper-3); display: flex; flex-direction: column;
+  padding: .8rem .9rem; gap: .5rem; overflow: hidden;
+}
+.timeline[hidden] { display: none; }
+.timeline-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.timeline-head .muted { display: block; margin-top: .1rem; }
+.timeline-head button { padding: .15rem .5rem; font-size: .72rem; }
+.timeline-axis { width: 100%; height: 132px; flex: none; overflow: visible; }
+.axis { stroke: var(--rule); stroke-width: 1.2; }
+.timeline-point { fill: #6b4a86; cursor: pointer; stroke: var(--paper-3); stroke-width: 2; }
+.timeline-point.active { fill: var(--ink); }
+.timeline-year { font-size: 11px; font-weight: 650; fill: var(--ink-soft); cursor: pointer; }
+.timeline-year.active { fill: var(--ink); }
+.timeline-count { font-size: 8.5px; fill: var(--ink-faint); pointer-events: none; }
+/* Two datings of the same subject, held open rather than reconciled. */
+.divergence { fill: none; stroke: var(--model); stroke-width: 1.4; stroke-dasharray: 3 3; pointer-events: none; }
+.divergence.active { stroke-width: 2.4; stroke-dasharray: none; }
+.divergence-hit { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
+.divergence-label { font-size: 9.5px; fill: var(--model); cursor: pointer; }
+.divergence-label.active { font-weight: 700; }
+
+.timeline-detail { flex: 1; min-height: 0; overflow-y: auto; display: grid; gap: .4rem; align-content: start; }
+.timeline-subject { display: grid; gap: .1rem; margin-bottom: .1rem; }
+.timeline-subject strong { font-size: .95rem; }
+.timeline-year-block { display: grid; gap: .3rem; margin-bottom: .5rem; }
+.timeline-year-tag {
+  font-size: .68rem; font-weight: 700; color: var(--model); letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+}
+.quote-source { display: block; font-size: .64rem; color: var(--ink-faint); margin-bottom: .15rem; }
 
 .node-detail {
   position: absolute; left: .7rem; right: .7rem; bottom: .7rem; max-height: 58%; overflow-y: auto;
@@ -140,7 +187,8 @@ p { margin: .15rem 0; line-height: 1.45; }
 .detail-type {
   font-size: .66rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 650; color: var(--ink-soft);
 }
-.type-person { color: #2c4f6b; } .type-place { color: #1f6f63; } .type-event { color: #8a5a17; }
+.type-person { color: #2c4f6b; } .type-entity { color: #5c6b7a; }
+.type-place { color: #1f6f63; } .type-event { color: #8a5a17; }
 .type-time { color: #6b4a86; } .type-theme { color: #96632c; } .type-recollection { color: #4d6b45; }
 .detail-label { font-size: .92rem; line-height: 1.45; margin-top: .3rem; }
 .detail-marks { display: flex; gap: .3rem; margin-top: .35rem; flex-wrap: wrap; }
@@ -160,10 +208,15 @@ p { margin: .15rem 0; line-height: 1.45; }
 .chips { display: flex; gap: .3rem; flex-wrap: wrap; }
 .chip { font-size: .68rem; border: 1px solid var(--rule); background: var(--card); border-radius: .3rem; padding: .1rem .4rem; color: var(--ink-soft); }
 .chip b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.chip-person { border-color: #b9cddd; } .chip-place { border-color: #a8ccc5; } .chip-event { border-color: #dcc192; }
+.chip-person { border-color: #b9cddd; } .chip-entity { border-color: #c0c6cc; }
+.chip-place { border-color: #a8ccc5; } .chip-event { border-color: #dcc192; }
 .chip-time { border-color: #c4b3d3; } .chip-theme { border-color: #d9c0a2; }
 /* Not yet built. Present to show the material is computationally productive. */
 .chip-future { border-style: dashed; color: var(--ink-faint); }
+/* Built. One of them had to be, or the strip is only a promise. */
+.chip-live { cursor: pointer; color: var(--ink); border-color: #c4b3d3; font-weight: 600; }
+.chip-live:hover { background: #f1ecf6; }
+.chip-live[aria-pressed="true"] { background: #6b4a86; border-color: #6b4a86; color: #fff; }
 .record-link {
   border: 0; background: none; padding: 0; margin-top: .5rem; font-size: .7rem; color: var(--ink-faint);
   text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
@@ -178,6 +231,19 @@ p { margin: .15rem 0; line-height: 1.45; }
 }
 .record-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .4rem; }
 .record-head button { padding: .15rem .5rem; font-size: .75rem; }
+
+/* Which model produced what, spelled out where provenance is being read. */
+.record-models { display: grid; gap: .3rem; margin-top: .7rem; }
+.record-model {
+  display: grid; gap: .05rem; border: 1px solid var(--rule-soft); border-left: 3px solid var(--model);
+  background: var(--paper-3); border-radius: .35rem; padding: .4rem .55rem;
+}
+.record-model-role { font-size: .62rem; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); font-weight: 700; }
+.record-model-id { font-size: .8rem; font-weight: 600; word-break: break-all; }
+.record-model-where { font-size: .68rem; color: var(--ink-soft); }
+
+.record-exports { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; padding-top: .8rem; border-top: 1px solid var(--rule-soft); }
+.record-exports button { font-size: .78rem; padding: .35rem .7rem; }
 
 .audit-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; margin: .8rem 0 1rem; }
 .stat { border: 1px solid var(--rule-soft); background: var(--paper-3); border-radius: .4rem; padding: .5rem .45rem; display: grid; gap: .1rem; text-align: center; }

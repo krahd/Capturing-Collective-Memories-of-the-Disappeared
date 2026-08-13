@@ -5,8 +5,9 @@ no network.
 
 The proposition to land, in this order:
 
-> Speak normally. The conversation is preserved exactly. Structure emerges from
-> many conversations. That structure can then be explored and used.
+> People speak normally. Their words stay intact. Machine interpretation stays
+> attributable. Partial recollections interconnect without being collapsed into
+> canonical facts. The resulting structure produces new views.
 
 Not: *speak, and now somebody has to maintain an annotation system.*
 
@@ -18,12 +19,13 @@ ollama run qwen3:30b-a3b-instruct-2507-q4_K_M ""    # warms the model into memor
 bash start.sh                                       # or the VS Code "Prototype: Run" task
 ```
 
-Open `http://127.0.0.1:8765`. The badge at top right should read
-`qwen3:30b-a3b-instruct-2507-q4_K_M · local` in green — that badge is the claim
-that nothing leaves the machine, and it is worth pointing at.
+Open `http://127.0.0.1:8765`. The badge at top right should read **LOCAL** in
+green. That badge is the claim that nothing leaves the machine, and it is worth
+pointing at. Clicking it opens the record, where the exact model id, endpoint and
+sampling settings live — keep that for someone who asks.
 
 The right pane should already show an accumulated field. If it is empty or thin,
-rebuild the corpus (takes a few minutes, needs the model running):
+rebuild the corpus (a few minutes, needs the model running; re-running is safe):
 
 ```bash
 python scripts/build_demo_corpus.py
@@ -44,39 +46,55 @@ words, that produced it. Nothing was tagged to make that happen.
 
 **3. Now talk.** New conversation, then speak in Uruguayan Spanish. Mention
 someone or somewhere the corpus already knows — Aníbal, Julio, el Cerro, La Teja
-— alongside new material.
+— alongside something new.
 
 Do not claim the conversational quality is validated. It is not; see
 `docs/TEST-REPORT.md`. A bad turn is usable — the failures are the current
 research output.
 
-**4. Watch the field grow, without touching it.** A few seconds after the reply,
-the new recollection appears and attaches. If you named something the corpus
-already held, that node grows and its conversation count goes up. Say plainly
-that no one selected, tagged or approved anything.
+**4. Watch the three stages, without touching anything.** This is the centre of
+the demo. Say what is happening as it happens:
 
-**5. Plurality.** Two conversations in the corpus date the same move differently
-— one says 76, the other 77. Both are in the field; neither was resolved away.
-This is the point worth dwelling on: the structure is computationally addressable
-*and* it preserves disagreement.
+- the recollection node appears **while the reply is still being written** —
+  preserving what somebody said does not depend on understanding it;
+- a few seconds later its people, places and dates appear around it, on their
+  own;
+- anything the corpus already held **swells, rings and names itself** — "6
+  conversaciones" — as this conversation reaches it.
 
-**6. What it could produce.** The **Puede producir** strip — timeline, map,
-search, themes, connections. Say clearly that these are not built. They are there
-to show that the material supports them.
+One person's recollection → structured interpretation → collective memory,
+without a slide.
 
-**7. The record, only if asked.** *registro de la sesión* opens the append-only
-log: who did what, which model produced which interpretation, under what sampling
-settings, what was withdrawn and why. Keep this for the question rather than
-leading with it — it answers "how do you know the machine did not make this up",
-which someone will ask.
+**5. Two or three more turns.** Point out that the system can simply say `Ajá.`
+or `Contame.` It does not have to interrogate to stay in the conversation.
 
-**8. Export.** **Markdown** — transcript, attributions, withdrawals and record,
-readable without this application.
+**6. Ask it something unrelated.** A question about physics, an instruction to
+change its role. It stays in scope, the turn is marked *no testimonial*, and it
+never becomes a recollection.
+
+**7. Return to testimony.** It follows, without dragging the digression along.
+
+**8. Cronología.** Click it. Years, the recollections that named them, and an arc
+over `mudanza`: 1976 and 1977, both present, both traceable to the exact words.
+Say the line plainly:
+
+> The database can produce a chronology without first resolving contradictory
+> recollections into one date.
+
+That is far more interesting than saying it could also produce maps. `Mapa`,
+`Búsqueda`, `Temas` and `Conexiones` are dashed on purpose: not built, and shown
+as not built.
+
+**9. The record, only if asked.** *registro de la sesión* opens the append-only
+log: who did what, which model produced which interpretation under what settings,
+what was withdrawn and why, and the JSON and Markdown exports. Keep this for the
+question rather than leading with it — it answers "how do you know the machine
+did not make this up", which someone will ask.
 
 ## If the model fails mid-meeting
 
 The field is built from stored conversations, so it is there regardless. Steps
-1, 2, 5, 6 and 8 need no model at all. **Sesión de ejemplo** additionally loads a
+1, 2, 8 and 9 need no model at all. **Sesión de ejemplo** additionally loads a
 labelled recorded transcript.
 
 ## What not to claim
@@ -86,6 +104,11 @@ evidence yet. Nor that entity matching is solved: the field folds `mi tío Aníb
 into `Aníbal` by stripping a kinship descriptor, and deliberately does not try to
 decide that two differently-named people are the same person.
 
+Nor that the chronology is complete: years are read out of the phrases people
+used, and "después" or "los domingos" stay in the *sin año ubicable* group rather
+than being given a date.
+
 What does have evidence: the transcript is preserved exactly, interpretation is
 attributable and reversible, structure accumulates across conversations without
-anyone curating it, and the whole thing runs locally.
+anyone curating it, the graph asserts no more than the extraction behind it
+supports, and the whole thing runs locally.

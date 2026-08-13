@@ -10,14 +10,14 @@
   <header class="topbar">
     <div>
       <strong>Memorias</strong>
-      <span class="muted">prototipo descartable</span>
+      <span class="muted">prototipo de investigación</span>
     </div>
     <div class="toolbar">
-      <span id="model-status" class="status">modelo…</span>
+      <!-- Running on this machine is the claim worth showing. The model id is
+           an implementation detail and lives in the record. -->
+      <button id="model-status" class="status" type="button">modelo…</button>
       <button id="new-session">Nueva conversación</button>
       <button id="load-demo" class="ghost">Sesión de ejemplo</button>
-      <button id="export-json" disabled>JSON</button>
-      <button id="export-md" disabled>Markdown</button>
     </div>
   </header>
 
@@ -58,6 +58,20 @@
           La estructura aparece a medida que se conversa.
         </div>
         <div id="node-detail" class="node-detail" hidden></div>
+
+        <!-- One view the accumulated material actually produces. -->
+        <section id="timeline" class="timeline" hidden aria-label="Cronología">
+          <div class="timeline-head">
+            <div>
+              <strong>Cronología</strong>
+              <span id="timeline-counts" class="muted"></span>
+            </div>
+            <button id="close-timeline" type="button">volver al campo</button>
+          </div>
+          <svg id="timeline-axis" class="timeline-axis" role="img"
+               aria-label="Años nombrados en las conversaciones"></svg>
+          <div id="timeline-detail" class="timeline-detail"></div>
+        </section>
       </div>
 
       <div class="field-strips">
@@ -68,7 +82,7 @@
         <div class="strip">
           <span class="strip-label">Puede producir</span>
           <span class="chips">
-            <span class="chip chip-future">Cronología</span>
+            <button id="open-timeline" class="chip chip-live" type="button" aria-pressed="false">Cronología</button>
             <span class="chip chip-future">Mapa</span>
             <span class="chip chip-future">Búsqueda</span>
             <span class="chip chip-future">Temas</span>
@@ -90,8 +104,14 @@
         La transcripción no se reescribe. Cada interpretación indica quién la produjo.
         Lo retirado se conserva marcado, no se borra.
       </p>
+      <div id="record-models" class="record-models"></div>
       <div id="audit-summary" class="audit-summary"></div>
       <div id="audit-log" class="audit-log"></div>
+      <div class="record-exports">
+        <span class="strip-label">Exportar</span>
+        <button id="export-json" disabled>JSON</button>
+        <button id="export-md" disabled>Markdown</button>
+      </div>
     </div>
   </div>
 
