@@ -9,6 +9,7 @@ const state = {
   timeline: null,
   timelineYear: null,
   timelineSubject: null,
+  lastVoiceTimings: null,
 };
 
 const voiceRuntime = {
@@ -16,11 +17,13 @@ const voiceRuntime = {
   stream: null,
   context: null,
   analyser: null,
+  source: null,
   chunks: [],
   frame: null,
   heardSpeech: false,
   silentSince: 0,
   startedAt: 0,
+  vadWaitMs: 0,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -881,6 +884,7 @@ function canListen() {
 
 function endVoiceLoop(message) {
   state.voiceContinuous = false;
+  if (voiceRuntime.recorder?.state !== "recording") cleanupMicrophone();
   setVoicePhase("idle", "");
   if (message) $("voice-status").textContent = message;
 }
@@ -897,23 +901,24 @@ async function startListening() {
     return endVoiceLoop("Este navegador no ofrece grabación de micrófono.");
   }
   try {
-    setVoicePhase("requesting", "Esperando permiso para usar el micrófono…");
-    voiceRuntime.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    // The participant may press Terminar while the browser's permission sheet
-    // is still open. If permission arrives afterwards, do not begin a recording
-    // they already cancelled.
-    if (!state.voiceContinuous) {
-      cleanupMicrophone();
-      return endVoiceLoop("");
+    if (!voiceRuntime.stream || !voiceRuntime.stream.active) {
+      setVoicePhase("requesting", "Esperando permiso para usar el micrófono…");
+      voiceRuntime.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Permission can arrive after the participant has already ended the loop.
+      if (!state.voiceContinuous) {
+        cleanupMicrophone();
+        return endVoiceLoop("");
+      }
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) throw new Error("el navegador no ofrece análisis de audio");
+      voiceRuntime.context = new AudioContextClass();
+      voiceRuntime.source = voiceRuntime.context.createMediaStreamSource(voiceRuntime.stream);
+      voiceRuntime.analyser = voiceRuntime.context.createAnalyser();
+      voiceRuntime.analyser.fftSize = 1024;
+      voiceRuntime.source.connect(voiceRuntime.analyser);
     }
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) throw new Error("el navegador no ofrece análisis de audio");
-    voiceRuntime.context = new AudioContextClass();
+    voiceRuntime.stream.getAudioTracks().forEach((track) => { track.enabled = true; });
     if (voiceRuntime.context.state === "suspended") await voiceRuntime.context.resume();
-    const source = voiceRuntime.context.createMediaStreamSource(voiceRuntime.stream);
-    voiceRuntime.analyser = voiceRuntime.context.createAnalyser();
-    voiceRuntime.analyser.fftSize = 1024;
-    source.connect(voiceRuntime.analyser);
 
     const preferred = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"]
       .find((type) => MediaRecorder.isTypeSupported(type));
@@ -923,6 +928,7 @@ async function startListening() {
     voiceRuntime.chunks = [];
     voiceRuntime.heardSpeech = false;
     voiceRuntime.silentSince = 0;
+    voiceRuntime.vadWaitMs = 0;
     voiceRuntime.startedAt = performance.now();
     voiceRuntime.recorder.addEventListener("dataavailable", (event) => {
       if (event.data.size) voiceRuntime.chunks.push(event.data);
@@ -945,7 +951,7 @@ async function startListening() {
 // conversation rather than a technical default: a memory conversation is full
 // of hesitation, and a threshold tuned for command-and-control speech cuts
 // people off exactly where they are reaching for something.
-const END_OF_TURN_SILENCE_MS = 2400;
+const END_OF_TURN_SILENCE_MS = 1700;
 // The microphone re-arms by itself after each reply. If nobody says anything at
 // all, the loop ends rather than sitting open indefinitely.
 const REARM_TIMEOUT_MS = 20000;
@@ -967,7 +973,7 @@ function monitorSilence() {
     voiceRuntime.silentSince = 0;
   } else if (voiceRuntime.heardSpeech) {
     if (!voiceRuntime.silentSince) voiceRuntime.silentSince = now;
-    if (now - voiceRuntime.silentSince > END_OF_TURN_SILENCE_MS) return stopListening();
+    if (now - voiceRuntime.silentSince > END_OF_TURN_SILENCE_MS) return stopListening("silence");
   } else if (state.voiceContinuous && now - voiceRuntime.startedAt > REARM_TIMEOUT_MS) {
     // Re-armed, and nobody spoke. Close the loop quietly.
     state.voiceContinuous = false;
@@ -977,7 +983,10 @@ function monitorSilence() {
   voiceRuntime.frame = requestAnimationFrame(monitorSilence);
 }
 
-function stopListening() {
+function stopListening(reason = "manual") {
+  if (reason === "silence" && voiceRuntime.silentSince) {
+    voiceRuntime.vadWaitMs = Math.round(performance.now() - voiceRuntime.silentSince);
+  }
   if (voiceRuntime.recorder?.state === "recording") voiceRuntime.recorder.stop();
   if (voiceRuntime.frame) cancelAnimationFrame(voiceRuntime.frame);
 }
@@ -990,6 +999,14 @@ function cleanupMicrophone() {
   voiceRuntime.stream = null;
   voiceRuntime.context = null;
   voiceRuntime.analyser = null;
+  voiceRuntime.source = null;
+  voiceRuntime.recorder = null;
+}
+
+function pauseMicrophone() {
+  if (voiceRuntime.frame) cancelAnimationFrame(voiceRuntime.frame);
+  voiceRuntime.stream?.getAudioTracks().forEach((track) => { track.enabled = false; });
+  voiceRuntime.frame = null;
   voiceRuntime.recorder = null;
 }
 
@@ -997,7 +1014,10 @@ async function processRecording() {
   const heardSpeech = voiceRuntime.heardSpeech;
   const mimeType = voiceRuntime.recorder?.mimeType || "audio/webm";
   const blob = new Blob(voiceRuntime.chunks, { type: mimeType });
-  cleanupMicrophone();
+  const vadWaitMs = voiceRuntime.vadWaitMs;
+  // Retain the stream, AudioContext and analyser across turns. Only the track
+  // is disabled while thinking and speaking, preserving half-duplex behaviour.
+  pauseMicrophone();
   if (!heardSpeech || blob.size < 1000) {
     endVoiceLoop(state.voiceContinuous ? "No se detectó voz. Tocá Hablar cuando quieras seguir." : "");
     return;
@@ -1007,14 +1027,19 @@ async function processRecording() {
   try {
     const response = await fetch(`/api/sessions/${state.session.id}/voice/transcribe`, {
       method: "POST",
-      headers: { "Content-Type": mimeType },
+      headers: { "Content-Type": mimeType, "X-VAD-Wait-Ms": String(vadWaitMs) },
       body: blob,
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
     $("message").value = result.text;
     setVoicePhase("thinking", "Pensando…");
-    await submitTurn(result.text, result.audio_id, true);
+    const turnResult = await submitTurn(result.text, result.audio_id, true);
+    state.lastVoiceTimings = {
+      ...(result.timings_ms || {}),
+      ...(turnResult?.timings_ms || {}),
+    };
+    console.info("voice latency (ms)", state.lastVoiceTimings);
     $("message").value = "";
     // Half-duplex: the microphone was closed for synthesis and opens again on
     // its own. Nothing to press between turns.
@@ -1026,6 +1051,7 @@ async function processRecording() {
 
 async function speakText(text) {
   setVoicePhase("speaking", "Hablando…");
+  const started = performance.now();
   const response = await fetch("/api/voice/speak", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1036,6 +1062,7 @@ async function speakText(text) {
     throw new Error(payload.detail || `HTTP ${response.status}`);
   }
   const url = URL.createObjectURL(await response.blob());
+  const synthesisMs = Number(response.headers.get("X-TTS-Ms") || 0);
   try {
     const audio = new Audio(url);
     await audio.play();
@@ -1046,6 +1073,7 @@ async function speakText(text) {
   } finally {
     URL.revokeObjectURL(url);
   }
+  return { tts: synthesisMs, tts_request_and_playback: Math.round(performance.now() - started) };
 }
 
 async function createFreshSession() {
@@ -1089,7 +1117,6 @@ async function submitTurn(text, audioId = "", speakReply = false) {
   // recollection can appear while the reply is still being composed. Preserving
   // what somebody said does not depend on understanding it, and showing that
   // first is the whole point of separating the stages.
-  watchStorage();
   try {
     const result = await api(`/api/sessions/${state.session.id}/turns`, {
       method: "POST",
@@ -1098,9 +1125,8 @@ async function submitTurn(text, audioId = "", speakReply = false) {
     setSession(result.session);
     $("send-status").textContent = "";
     // Interpretation follows on its own, once the conversational model is free.
-    watchField();
     if (speakReply && result.assistant_turn && state.config.voice?.tts_configured) {
-      await speakText(result.assistant_turn.text);
+      Object.assign(result.timings_ms, await speakText(result.assistant_turn.text));
     }
     return result;
   } catch (error) {
@@ -1113,32 +1139,17 @@ async function submitTurn(text, audioId = "", speakReply = false) {
   }
 }
 
-let storageTimers = [];
-function watchStorage() {
-  storageTimers.forEach(clearTimeout);
-  // The turn is written before classification, so a look shortly after the
-  // request is issued already finds it. Two looks, because the first can lose
-  // the race and there is nothing to gain from polling for it.
-  storageTimers = [500, 1400].map((delay) => setTimeout(loadField, delay));
-}
-
-let watchTimers = [];
-function watchField() {
-  watchTimers.forEach(clearTimeout);
-  // Two distinct moments, not one delayed one.
-  //
-  // The words are preserved the instant the turn is stored, so the recollection
-  // node is drawn now — before anything has been read out of it. Interpretation
-  // arrives afterwards, on its own, when the conversational model is free, and
-  // brings the people, places and dates with it. Whatever the corpus already
-  // held then lights up as this conversation reaches it.
-  //
-  // Showing both at once would collapse "stored", "interpreted" and "connected"
-  // into a single unexplained event.
-  loadField();
-  watchTimers = [2000, 4000, 7000, 11000, 16000, 24000, 34000].map((delay) =>
-    setTimeout(loadField, delay)
-  );
+let fieldEvents = null;
+let fieldRefreshTimer = null;
+function subscribeToFieldChanges() {
+  fieldEvents?.close();
+  fieldEvents = new EventSource("/api/memory-field/events");
+  fieldEvents.addEventListener("field", () => {
+    clearTimeout(fieldRefreshTimer);
+    // Coalesce the several saves that make up one turn into one graph refresh.
+    fieldRefreshTimer = setTimeout(loadField, 120);
+  });
+  fieldEvents.onerror = (error) => console.debug("memory field event stream reconnecting", error);
 }
 
 $("composer").addEventListener("submit", async (event) => {
@@ -1219,6 +1230,7 @@ function renderRecordModels() {
     return;
   }
   const conversation = state.config.provenance;
+  const router = state.config.router_provenance || conversation;
   const extraction = state.config.extraction_provenance || conversation;
   const line = (role, provenance) => `
     <div class="record-model">
@@ -1228,6 +1240,7 @@ function renderRecordModels() {
     </div>`;
   panel.innerHTML =
     line("conversación", conversation) +
+    (router.model !== conversation.model ? line("enrutamiento", router) : "") +
     (extraction.model !== conversation.model ? line("extracción", extraction) : "");
 }
 
@@ -1254,6 +1267,7 @@ async function init() {
     await createFreshSession();
   }
   await loadField();
+  subscribeToFieldChanges();
   // ?node=place:cerro opens straight to one entity and its recollections.
   const node = params.get("node");
   if (node && sim.byId.has(node)) selectNode(node);

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import asynccontextmanager
+import os
 from pathlib import Path
+import time
 from typing import Any
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -38,7 +41,49 @@ ROOT = Path(__file__).resolve().parent
 store = SessionStore(ROOT / "data" / "sessions")
 llm = LLMClient()
 voice = VoiceService()
-app = FastAPI(title="Collective Memories Prototype", version="0.1.0")
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Startup performs the expensive loads once: shared HTTP connections,
+    # resident Ollama weights, resident Whisper and (lazily) resident Piper.
+    await llm.start()
+    await asyncio.to_thread(voice.start)
+    try:
+        yield
+    finally:
+        await llm.close()
+        await asyncio.to_thread(voice.close)
+
+
+app = FastAPI(title="Collective Memories Prototype", version="0.1.0", lifespan=lifespan)
+
+
+class AggregateCache:
+    """Cache corpus-wide views until SessionStore's cheap revision changes."""
+
+    def __init__(self) -> None:
+        self.field_key: tuple[int, int] | None = None
+        self.timeline_key: tuple[int, int] | None = None
+        self.field: dict[str, Any] | None = None
+        self.timeline: dict[str, Any] | None = None
+
+    def memory_field(self) -> dict[str, Any]:
+        key = (id(store), store.field_revision)
+        if self.field is None or self.field_key != key:
+            self.field = build_memory_field(store.list())
+            self.field_key = key
+        return self.field
+
+    def chronology(self) -> dict[str, Any]:
+        key = (id(store), store.field_revision)
+        if self.timeline is None or self.timeline_key != key:
+            self.timeline = build_timeline(store.list())
+            self.timeline_key = key
+        return self.timeline
+
+
+aggregates = AggregateCache()
 
 
 class RevalidatedStatics(StaticFiles):
@@ -122,9 +167,11 @@ def config() -> dict[str, Any]:
         "llm_configured": llm.configured,
         "model": llm.model if llm.configured else None,
         "provenance": llm.provenance() if llm.configured else None,
+        "router_provenance": llm.router_provenance() if llm.configured else None,
         # Named separately because it may be a different, smaller model, and an
         # interpretation must never be read as the conversational model's.
         "extraction_provenance": llm.provenance(for_extraction=True) if llm.configured else None,
+        "warmup": llm.warm_status,
         "voice": voice.config(),
     }
 
@@ -167,6 +214,8 @@ def get_session(session_id: str) -> dict[str, Any]:
 
 @app.post("/api/sessions/{session_id}/turns")
 async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTasks) -> dict[str, Any]:
+    total_started = time.perf_counter()
+    timings: dict[str, Any] = {}
     session = get_session_or_404(session_id)
     if session.is_recorded:
         raise HTTPException(409, "Esta es una transcripción grabada; no admite turnos nuevos")
@@ -191,24 +240,38 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         transcription_detail=transcription_detail,
     )
     store.save(session)
+    store.touch_field()
 
     try:
         history = _interview_history(session)
-        intent = deterministic_intent(body.text) or await llm.classify(history)
+        classify_started = time.perf_counter()
+        intent = deterministic_intent(body.text)
+        if intent:
+            timings["classification_source"] = "deterministic"
+        else:
+            timings["classification_source"] = "router_model"
+            intent = await llm.classify(history)
+        timings["classify_ms"] = round((time.perf_counter() - classify_started) * 1000)
     except Exception as exc:
         # Preserve the participant turn even if classification fails.
         session.classify_turn(user_turn.id, "UNCLASSIFIED", "non_testimony/control")
         store.save(session)
+        store.touch_field()
         return JSONResponse(
             status_code=503,
             content={
                 "error": str(exc),
                 "user_turn": user_turn.__dict__,
                 "session": session.to_dict(),
+                "timings_ms": {**timings, "total": round((time.perf_counter() - total_started) * 1000)},
             },
         )
 
     session.classify_turn(user_turn.id, intent, record_kind_for_intent(intent))
+    if record_kind_for_intent(intent) != "testimony":
+        # The just-stored provisional recollection is no longer part of the
+        # testimonial field once routing identifies it as control material.
+        store.touch_field()
 
     # The memory field grows on its own. Nobody selects turns or presses extract:
     # the structure is a by-product of speaking, not a curation task.
@@ -251,10 +314,13 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
             "user_turn": user_turn.__dict__,
             "assistant_turn": assistant_turn.__dict__,
             "session": session.to_dict(),
+            "timings_ms": {**timings, "interview_ms": 0, "total": round((time.perf_counter() - total_started) * 1000)},
         }
 
     try:
+        interview_started = time.perf_counter()
         candidate = await llm.interview(_interview_history(session))
+        timings["interview_ms"] = round((time.perf_counter() - interview_started) * 1000)
     except Exception as exc:
         store.save(session)
         return JSONResponse(
@@ -263,6 +329,7 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
                 "error": str(exc),
                 "user_turn": user_turn.__dict__,
                 "session": session.to_dict(),
+                "timings_ms": {**timings, "total": round((time.perf_counter() - total_started) * 1000)},
             },
         )
 
@@ -321,13 +388,14 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         "user_turn": user_turn.__dict__,
         "assistant_turn": assistant_turn.__dict__,
         "session": session.to_dict(),
+        "timings_ms": {**timings, "total": round((time.perf_counter() - total_started) * 1000)},
     }
 
 
 def _interview_history(session) -> list[dict[str, str]]:
-    """Exclude control/off-topic material from the interviewing model's context."""
-    return [
-        {"id": turn.id, "role": turn.role, "text": turn.text}
+    """Bound working context while preserving exact referenced older turns."""
+    eligible = [
+        turn
         for turn in session.turns
         if (
             turn.role == "user" and turn.record_kind == "testimony"
@@ -341,6 +409,25 @@ def _interview_history(session) -> list[dict[str, str]]:
                 "interview_fallback",
             }
         )
+    ]
+    limit = max(4, int(os.getenv("LLM_CONVERSATION_TURNS", "14")))
+    recent = eligible[-limit:]
+    recent_ids = {turn.id for turn in recent}
+    grounded_ids = {
+        turn_id
+        for turn in recent
+        if turn.role == "assistant"
+        for turn_id in turn.grounded_in
+        if turn_id not in recent_ids
+    }
+    # These are exact source turns, not a lossy archive summary. They form the
+    # small explicit state needed when a recent move still points further back.
+    anchors = [
+        turn for turn in eligible if turn.id in grounded_ids and turn.role == "user"
+    ][-4:]
+    return [
+        {"id": turn.id, "role": turn.role, "text": turn.text}
+        for turn in [*anchors, *recent]
     ]
 
 
@@ -356,6 +443,7 @@ def resume_session(session_id: str) -> dict[str, Any]:
 
 @app.post("/api/sessions/{session_id}/voice/transcribe")
 async def transcribe_voice(session_id: str, request: Request) -> dict[str, Any]:
+    request_started = time.perf_counter()
     session = get_session_or_404(session_id)
     if session.is_recorded or session.status != "active":
         raise HTTPException(409, "La sesión no admite una nueva entrada de voz")
@@ -382,18 +470,33 @@ async def transcribe_voice(session_id: str, request: Request) -> dict[str, Any]:
         str(relative), mime_type, len(audio), transcript, asr_detail, record_id=audio_id
     )
     store.save(session)
-    return {"audio_id": record.id, "text": transcript, "asr": asr_detail}
+    try:
+        vad_wait_ms = max(0, min(10000, round(float(request.headers.get("x-vad-wait-ms", "0")))))
+    except ValueError:
+        vad_wait_ms = 0
+    timings = {
+        "vad_wait": vad_wait_ms,
+        **asr_detail.get("timings_ms", {}),
+        "request_total": round((time.perf_counter() - request_started) * 1000),
+    }
+    return {"audio_id": record.id, "text": transcript, "asr": asr_detail, "timings_ms": timings}
 
 
 @app.post("/api/voice/speak")
 async def speak_voice(body: SpeechCreate) -> Response:
     if not voice.tts_configured:
         raise HTTPException(503, "Salida de voz no configurada; revisá /api/config")
+    started = time.perf_counter()
     try:
         audio = await asyncio.to_thread(voice.synthesize, body.text)
     except RuntimeError as exc:
         raise HTTPException(503, str(exc)) from exc
-    return Response(content=audio, media_type="audio/wav")
+    elapsed = round((time.perf_counter() - started) * 1000)
+    return Response(
+        content=audio,
+        media_type="audio/wav",
+        headers={"Server-Timing": f"tts;dur={elapsed}", "X-TTS-Ms": str(elapsed)},
+    )
 
 
 @app.post("/api/sessions/{session_id}/annotations")
@@ -415,6 +518,7 @@ def add_derived(session_id: str, body: DerivedCreate) -> dict[str, Any]:
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     store.save(session)
+    store.touch_field()
     return item.__dict__
 
 
@@ -426,6 +530,7 @@ def update_derived(session_id: str, item_id: str, body: DerivedUpdate) -> dict[s
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     store.save(session)
+    store.touch_field()
     return item.__dict__
 
 
@@ -438,6 +543,7 @@ def withdraw_derived(session_id: str, item_id: str, body: WithdrawRequest) -> di
     except ValueError as exc:
         raise HTTPException(404, str(exc)) from exc
     store.save(session)
+    store.touch_field()
     return item.__dict__
 
 
@@ -458,6 +564,7 @@ def delete_derived(session_id: str, item_id: str) -> dict[str, Any]:
     except ValueError as exc:
         raise HTTPException(404, str(exc)) from exc
     store.save(session)
+    store.touch_field()
     return {"deleted": item.id}
 
 
@@ -503,6 +610,7 @@ async def run_extraction(session, turns: list) -> list[dict[str, Any]]:
         detail={**provenance, "source_turn_ids": [t.id for t in turns]},
     )
     store.save(session)
+    store.touch_field()
     return created
 
 
@@ -535,26 +643,59 @@ async def extract_in_background(session_id: str, turn_id: str) -> None:
     if turn is None or turn.record_kind != "testimony":
         return
     async with extraction_queue:
-        await llm.gate.wait_until_idle()
-        try:
-            await run_extraction(session, [turn])
-        except Exception as exc:  # noqa: BLE001 - a failed extraction must not surface mid-conversation
-            session.record(
-                ACTOR_MODEL,
-                "extraccion_fallida",
-                f"La extracción automática falló para un turno: {exc}",
-                target_id=turn_id,
-                target_kind="turn",
-            )
-            store.save(session)
+        while True:
+            await llm.gate.wait_until_idle()
+            try:
+                async with llm.gate.analyzing():
+                    await run_extraction(session, [turn])
+                return
+            except asyncio.CancelledError:
+                # A conversational call pre-empted analysis. Clear this one
+                # cancellation and retry only after the next quiet period.
+                task = asyncio.current_task()
+                if task is not None and hasattr(task, "uncancel"):
+                    task.uncancel()
+                continue
+            except Exception as exc:  # noqa: BLE001 - background failure stays off the turn path
+                session.record(
+                    ACTOR_MODEL,
+                    "extraccion_fallida",
+                    f"La extracción automática falló para un turno: {exc}",
+                    target_id=turn_id,
+                    target_kind="turn",
+                )
+                store.save(session)
+                return
 
 
 @app.get("/api/memory-field")
 def memory_field(focus: str = "") -> dict[str, Any]:
     """The accumulated graph across every stored conversation."""
-    field = build_memory_field(store.list())
+    field = dict(aggregates.memory_field())
     field["focus"] = focus
+    field["version"] = store.field_revision
     return field
+
+
+@app.get("/api/memory-field/events")
+async def memory_field_events() -> StreamingResponse:
+    """Notify the browser once per stored change without rebuilding the graph."""
+
+    async def events():
+        seen = -1
+        heartbeat = time.monotonic()
+        while True:
+            revision = store.field_revision
+            if revision != seen:
+                seen = revision
+                yield f"event: field\ndata: {revision}\n\n"
+                heartbeat = time.monotonic()
+            elif time.monotonic() - heartbeat >= 15:
+                yield ": keepalive\n\n"
+                heartbeat = time.monotonic()
+            await asyncio.sleep(0.25)
+
+    return StreamingResponse(events(), media_type="text/event-stream")
 
 
 @app.get("/api/timeline")
@@ -564,7 +705,7 @@ def timeline() -> dict[str, Any]:
     Years are read out of the phrases people used; the phrases stay attached and
     a subject dated two ways appears at both years.
     """
-    return build_timeline(store.list())
+    return aggregates.chronology()
 
 
 @app.post("/api/sessions/{session_id}/extract")

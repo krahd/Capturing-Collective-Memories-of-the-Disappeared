@@ -261,6 +261,15 @@ simply repeat. Control material remains in the immutable transcript with a
 move produced a reply is recorded on the turn and shown in the session record,
 not beside the conversation.
 
+Set `LLM_ROUTER_MODEL` to a small local model; it also becomes the extraction
+model unless `LLM_EXTRACTION_MODEL` overrides it. The 30B model is then used
+only for substantive interview moves. Ollama calls use its native API so the
+router/extractor context can be held to 4K and the interview context to 8K
+(`LLM_*_CONTEXT_TOKENS`), allowing both models to remain resident with
+`OLLAMA_KEEP_ALIVE=-1`. Startup warms them, and all calls reuse one HTTP client.
+The interviewer receives the last 14 eligible turns plus exact older turns still
+referenced by recent grounding, rather than an indefinitely growing transcript.
+
 Two protections exist because of specific observed failures:
 
 **Acknowledgement over hedged material.** An acknowledgement asserts without
@@ -297,10 +306,11 @@ python scripts/run_rhythm_scenarios.py
 The browser can run a continuous half-duplex local path through whisper.cpp and
 Piper: listen, detect the end-of-turn silence, transcribe in Spanish, generate,
 speak, then listen again **by itself**. *Hablar* starts the exchange and
-*Terminar* ends it; nothing is pressed between turns. The microphone is closed
-while the system is speaking, so there is no barge-in.
+*Terminar* ends it; nothing is pressed between turns. The microphone track is
+disabled while the system is speaking, so there is no barge-in, while the stream
+and analyser remain allocated for the next turn.
 
-End of turn is 2.4 seconds of silence, not the ~1 second a command interface
+End of turn is 1.7 seconds of silence, not the ~1 second a command interface
 would use. A memory conversation is full of hesitation, and a threshold tuned for
 command-and-control speech cuts people off exactly where they are reaching for
 something. This is demo turn detection, not archival VAD.
@@ -316,11 +326,18 @@ the next conversational call contend for the same weights, and it is the
 participant who waits. Background extraction therefore also waits for the
 conversational model to go quiet — no call in flight, and quiet for
 `LLM_EXTRACTION_SETTLE` seconds, since somebody mid-thought speaks again within a
-second or two. Queued extractions run one at a time.
+second or two. Queued extractions run one at a time, and an extraction already
+in flight is cancelled and retried if a new conversational call arrives.
 
-Better still, set `LLM_EXTRACTION_MODEL` to a much smaller local model and leave
-the conversational weights alone entirely. Interpretations are attributed to
-whichever model actually produced them, in the record and in the exports.
+`LLM_EXTRACTION_MODEL` can select a different small model; otherwise extraction
+reuses `LLM_ROUTER_MODEL` and leaves the conversational weights alone.
+Interpretations are attributed to whichever model actually produced them, in
+the record and in the exports.
+
+The accumulated graph is cached by a field-specific version. The browser holds
+one server-sent event stream and refreshes only when a recollection is stored or
+an extraction changes the field; it no longer issues a timed polling burst after
+every turn.
 
 Nothing about this delays the field: the recollection is already visible while
 extraction is still waiting.

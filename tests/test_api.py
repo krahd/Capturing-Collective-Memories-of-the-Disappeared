@@ -254,6 +254,48 @@ def test_timeline_endpoint_produces_a_chronology_over_stored_conversations(tmp_p
     asyncio.run(run_flow())
 
 
+def test_memory_field_is_cached_until_the_store_revision_changes(tmp_path, monkeypatch):
+    app_module.store = SessionStore(tmp_path)
+    original = app_module.build_memory_field
+    builds = []
+
+    def counted(sessions):
+        builds.append(True)
+        return original(sessions)
+
+    monkeypatch.setattr(app_module, "build_memory_field", counted)
+    app_module.memory_field()
+    app_module.memory_field()
+    assert len(builds) == 1
+
+    app_module.store.create("Otra conversación")
+    app_module.memory_field()
+    assert len(builds) == 2
+
+
+def test_interviewer_history_is_bounded_but_keeps_referenced_older_turn(monkeypatch, tmp_path):
+    app_module.store = SessionStore(tmp_path)
+    monkeypatch.setenv("LLM_CONVERSATION_TURNS", "4")
+    session = app_module.store.create("Contexto")
+    old = session.add_turn("user", "La caja de fotografías quedó en el altillo.")
+    session.classify_turn(old.id, "MEMORY_TESTIMONY", "testimony")
+    for index in range(5):
+        user = session.add_turn("user", f"Recuerdo reciente {index}.")
+        session.classify_turn(user.id, "MEMORY_TESTIMONY", "testimony")
+        session.add_turn(
+            "assistant",
+            "Ajá.",
+            record_kind="interview_move",
+            grounded_in=[old.id if index == 4 else user.id],
+        )
+
+    history = app_module._interview_history(session)
+
+    assert history[0]["id"] == old.id
+    assert len(history) == 5
+    assert history[-1]["role"] == "assistant"
+
+
 def test_quoted_control_in_testimony_does_not_end_the_session(tmp_path, monkeypatch):
     # The end-to-end cost of confusing reported speech with an instruction: a
     # session stopped in the middle of a memory about being told to stop

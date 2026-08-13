@@ -5,9 +5,13 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import time
 import wave
 from io import BytesIO
 from typing import Any
+from urllib.parse import urlparse
+
+import httpx
 
 
 def _resolved_command(env_name: str, default: str) -> str | None:
@@ -27,13 +31,20 @@ def _resolved_file(env_name: str) -> str | None:
 
 
 class VoiceService:
-    """Thin adapters around local whisper.cpp, ffmpeg and Piper executables."""
+    """Resident local speech services with CLI fallbacks."""
 
     def __init__(self) -> None:
         self.ffmpeg = _resolved_command("FFMPEG_CLI", "ffmpeg")
         self.whisper_cli = _resolved_command("WHISPER_CLI", "whisper-cli")
+        self.whisper_server = _resolved_command("WHISPER_SERVER", "whisper-server")
         self.whisper_model = _resolved_file("WHISPER_MODEL")
         self.whisper_language = os.getenv("WHISPER_LANGUAGE", "es")
+        configured_server_url = os.getenv("WHISPER_SERVER_URL")
+        self.whisper_server_url = configured_server_url or "http://127.0.0.1:8178/inference"
+        self._external_server = bool(configured_server_url)
+        self._whisper_process: subprocess.Popen[str] | None = None
+        self._server_client: httpx.Client | None = None
+        self._server_ready = False
         self.piper_cli = _resolved_command("PIPER_CLI", "piper")
         self.piper_model = _resolved_file("PIPER_MODEL")
         try:
@@ -43,10 +54,13 @@ class VoiceService:
         self._piper_voice_class = PiperVoice
         self._piper_voice = None
         self.command_timeout = float(os.getenv("VOICE_COMMAND_TIMEOUT", "180"))
+        self.startup_timeout = float(os.getenv("WHISPER_STARTUP_TIMEOUT", "180"))
 
     @property
     def asr_configured(self) -> bool:
-        return bool(self.ffmpeg and self.whisper_cli and self.whisper_model)
+        resident = self.whisper_model and (self.whisper_server or self._external_server)
+        fallback = self.whisper_model and self.whisper_cli
+        return bool(self.ffmpeg and (resident or fallback))
 
     @property
     def tts_configured(self) -> bool:
@@ -58,12 +72,18 @@ class VoiceService:
             "tts_configured": self.tts_configured,
             "half_duplex": True,
             "language": self.whisper_language,
+            "asr_mode": "resident" if self._server_ready else "cli_fallback",
             "missing": {
                 "asr": [
                     name
                     for name, value in (
                         ("ffmpeg", self.ffmpeg),
-                        ("whisper-cli", self.whisper_cli),
+                        (
+                            "whisper-cli",
+                            self.whisper_cli
+                            if os.getenv("WHISPER_CLI")
+                            else self.whisper_server or self.whisper_cli,
+                        ),
                         ("WHISPER_MODEL", self.whisper_model),
                     )
                     if not value
@@ -79,6 +99,83 @@ class VoiceService:
             },
         }
 
+    def start(self) -> None:
+        """Connect to or launch whisper-server so its model is loaded once."""
+        if not self.asr_configured or not self.whisper_model:
+            return
+        self._server_client = httpx.Client(timeout=self.command_timeout)
+        # Reuse a service deliberately started outside this process, including
+        # one left resident by a supervising demo setup.
+        if self._wait_for_server(0.25):
+            self._server_ready = True
+            return
+        if self._external_server:
+            self._server_ready = self._wait_for_server(2.0)
+            return
+        if not self.whisper_server:
+            return
+        parsed = urlparse(self.whisper_server_url)
+        try:
+            self._whisper_process = subprocess.Popen(
+                [
+                    self.whisper_server,
+                    "--model",
+                    self.whisper_model,
+                    "--language",
+                    self.whisper_language,
+                    "--no-timestamps",
+                    "--host",
+                    parsed.hostname or "127.0.0.1",
+                    "--port",
+                    str(parsed.port or 8178),
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                text=True,
+            )
+            self._server_ready = self._wait_for_server(self.startup_timeout)
+        except OSError:
+            self._server_ready = False
+        if not self._server_ready:
+            self._stop_server_process()
+
+    def close(self) -> None:
+        self._stop_server_process()
+        if self._server_client is not None:
+            self._server_client.close()
+            self._server_client = None
+        self._server_ready = False
+
+    def _wait_for_server(self, timeout: float) -> bool:
+        if self._server_client is None:
+            return False
+        parsed = urlparse(self.whisper_server_url)
+        health_url = f"{parsed.scheme}://{parsed.netloc}/"
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if self._whisper_process is not None and self._whisper_process.poll() is not None:
+                return False
+            try:
+                response = self._server_client.get(health_url, timeout=1.0)
+                if response.status_code < 500:
+                    return True
+            except httpx.HTTPError:
+                pass
+            time.sleep(0.1)
+        return False
+
+    def _stop_server_process(self) -> None:
+        process = self._whisper_process
+        self._whisper_process = None
+        if process is None or process.poll() is not None:
+            return
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=5)
+
     def transcribe(self, audio: bytes, suffix: str = ".webm") -> tuple[str, dict[str, Any]]:
         if not self.asr_configured:
             raise RuntimeError("La entrada de voz no está configurada")
@@ -86,6 +183,7 @@ class VoiceService:
             raise RuntimeError("El audio está vacío")
 
         with tempfile.TemporaryDirectory(prefix="ccm-voice-") as directory:
+            total_started = time.perf_counter()
             root = Path(directory)
             # Browsers may submit WAV directly. Keep source and conversion
             # names distinct even then: ffmpeg refuses an input and output that
@@ -95,6 +193,7 @@ class VoiceService:
             output_prefix = root / "transcript"
             source.write_bytes(audio)
 
+            convert_started = time.perf_counter()
             self._run(
                 [
                     self.ffmpeg or "ffmpeg",
@@ -111,33 +210,74 @@ class VoiceService:
                     str(wav),
                 ]
             )
-            self._run(
-                [
-                    self.whisper_cli or "whisper-cli",
-                    "--model",
-                    self.whisper_model or "",
-                    "--file",
-                    str(wav),
-                    "--language",
-                    self.whisper_language,
-                    "--no-timestamps",
-                    "--output-txt",
-                    "--output-file",
-                    str(output_prefix),
-                ]
-            )
-            transcript_path = Path(f"{output_prefix}.txt")
-            if not transcript_path.exists():
-                raise RuntimeError("whisper.cpp no produjo el archivo de transcripción esperado")
-            transcript = " ".join(transcript_path.read_text(encoding="utf-8").split())
+            conversion_ms = round((time.perf_counter() - convert_started) * 1000)
+            asr_started = time.perf_counter()
+            resident = False
+            if self._server_ready and self._server_client is not None:
+                try:
+                    transcript = self._transcribe_resident(wav)
+                    resident = True
+                except RuntimeError:
+                    # A crashed resident should cost at most one CLI fallback,
+                    # not the participant's entire turn.
+                    self._server_ready = False
+                    if not self.whisper_cli:
+                        raise
+            if not resident:
+                self._run(
+                    [
+                        self.whisper_cli or "whisper-cli",
+                        "--model",
+                        self.whisper_model or "",
+                        "--file",
+                        str(wav),
+                        "--language",
+                        self.whisper_language,
+                        "--no-timestamps",
+                        "--output-txt",
+                        "--output-file",
+                        str(output_prefix),
+                    ]
+                )
+                transcript_path = Path(f"{output_prefix}.txt")
+                if not transcript_path.exists():
+                    raise RuntimeError("whisper.cpp no produjo el archivo de transcripción esperado")
+                transcript = " ".join(transcript_path.read_text(encoding="utf-8").split())
+            asr_ms = round((time.perf_counter() - asr_started) * 1000)
             if not transcript:
                 raise RuntimeError("No se detectó habla en el audio")
             return transcript, {
                 "engine": "whisper.cpp",
                 "model": Path(self.whisper_model or "").name,
                 "language": self.whisper_language,
+                "resident": resident,
                 "derived_from": "participant_audio",
+                "timings_ms": {
+                    "conversion": conversion_ms,
+                    "asr": asr_ms,
+                    "total": round((time.perf_counter() - total_started) * 1000),
+                },
             }
+
+    def _transcribe_resident(self, wav: Path) -> str:
+        if self._server_client is None:
+            raise RuntimeError("El servicio residente de Whisper no está disponible")
+        try:
+            with wav.open("rb") as audio_file:
+                response = self._server_client.post(
+                    self.whisper_server_url,
+                    files={"file": (wav.name, audio_file, "audio/wav")},
+                    data={
+                        "language": self.whisper_language,
+                        "response_format": "json",
+                        "no_timestamps": "true",
+                    },
+                )
+            response.raise_for_status()
+            payload = response.json()
+            return " ".join(str(payload.get("text", "")).split())
+        except (httpx.HTTPError, ValueError) as exc:
+            raise RuntimeError(f"Falló el servicio residente de Whisper: {exc}") from exc
 
     def synthesize(self, text: str) -> bytes:
         if not self.tts_configured:

@@ -584,18 +584,29 @@ class SessionStore:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self._sessions: dict[str, Session] = {}
+        # Monotonic in-process change token used by cached aggregate views and
+        # their lightweight event stream. Reading this integer is much cheaper
+        # than rebuilding the graph to discover that nothing changed.
+        self.revision = 0
+        self.field_revision = 0
+
+    def touch_field(self) -> None:
+        """Signal a change that can alter the memory field or chronology."""
+        self.field_revision += 1
 
     def create(self, title: str | None = None) -> Session:
         session = Session(id=new_id("session"), title=(title or "Conversación sin título").strip())
         session.record(ACTOR_SYSTEM, "sesion_creada", f"Sesión iniciada: {session.title}")
         self._sessions[session.id] = session
         self.save(session)
+        self.touch_field()
         return session
 
     def adopt(self, session: Session) -> Session:
         """Register an externally constructed session, such as the recorded example."""
         self._sessions[session.id] = session
         self.save(session)
+        self.touch_field()
         return session
 
     def get(self, session_id: str) -> Session:
@@ -622,11 +633,13 @@ class SessionStore:
         if not path.exists():
             return False
         path.unlink()
+        self.touch_field()
         return True
 
     def save(self, session: Session) -> None:
         path = self.root / f"{safe_filename(session.id)}.json"
         path.write_text(json.dumps(session.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
+        self.revision += 1
 
     def list(self) -> list[Session]:
         found: dict[str, Session] = dict(self._sessions)

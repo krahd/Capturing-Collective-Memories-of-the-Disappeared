@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import httpx
+
 from voice import VoiceService, audio_suffix
 
 
@@ -62,3 +64,32 @@ def test_wav_input_is_converted_to_a_distinct_file(tmp_path, monkeypatch):
     ffmpeg = calls[0]
     assert ffmpeg[ffmpeg.index("-i") + 1] != ffmpeg[-1]
     assert transcript == "Una prueba de voz."
+
+
+def test_resident_whisper_receives_each_turn_without_launching_whisper_cli(tmp_path, monkeypatch):
+    service = VoiceService()
+    service.ffmpeg = "/fake/ffmpeg"
+    service.whisper_cli = "/fake/whisper-cli"
+    service.whisper_model = str(tmp_path / "model.bin")
+    service._server_ready = True
+    calls = []
+
+    def handler(request):
+        assert request.url.path == "/inference"
+        assert b'filename="converted.wav"' in request.content
+        return httpx.Response(200, json={"text": "Una respuesta residente."})
+
+    service._server_client = httpx.Client(transport=httpx.MockTransport(handler))
+
+    def fake_run(command, input_text=None):
+        calls.append(command)
+        Path(command[-1]).write_bytes(b"RIFF-test")
+
+    monkeypatch.setattr(service, "_run", fake_run)
+    transcript, detail = service.transcribe(b"browser audio", ".webm")
+
+    assert transcript == "Una respuesta residente."
+    assert detail["resident"] is True
+    assert len(calls) == 1
+    assert calls[0][0] == service.ffmpeg
+    service.close()

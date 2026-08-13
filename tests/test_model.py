@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+import httpx
+
 from model import (
     EXTRACTION_POLICY,
     ConversationGate,
@@ -134,6 +136,70 @@ def test_a_separate_extraction_model_is_attributed_to_itself(monkeypatch):
     assert client.provenance(for_extraction=True)["model"] == "llama3.2:latest"
 
 
+def test_small_router_model_handles_classification_and_is_reused_for_extraction(monkeypatch):
+    monkeypatch.setenv("LLM_API_URL", "http://127.0.0.1:11434/v1/chat/completions")
+    monkeypatch.setenv("LLM_MODEL", "large-interviewer")
+    monkeypatch.setenv("LLM_ROUTER_MODEL", "small-router")
+    monkeypatch.delenv("LLM_EXTRACTION_MODEL", raising=False)
+    client = LLMClient()
+    payloads = []
+
+    async def fake_post(payload, **_kwargs):
+        payloads.append(payload)
+        return {"choices": [{"message": {"content": '{"intent":"MEMORY_TESTIMONY"}'}}]}
+
+    client._post = fake_post
+    intent = asyncio.run(
+        client.classify([{"id": "turn_1", "role": "user", "text": "Me acuerdo de una reunión."}])
+    )
+
+    assert intent == "MEMORY_TESTIMONY"
+    assert payloads[0]["model"] == "small-router"
+    assert client.extraction_model == "small-router"
+    assert client.router_provenance()["model"] == "small-router"
+
+
+def test_http_client_is_reused_for_the_lifetime_of_the_llm_client():
+    client = LLMClient()
+    first = client._http_client()
+    second = client._http_client()
+    assert first is second
+    asyncio.run(client.close())
+
+
+def test_ollama_native_calls_bound_context_and_keep_models_resident(monkeypatch):
+    monkeypatch.setenv("LLM_API_URL", "http://127.0.0.1:11434/v1/chat/completions")
+    monkeypatch.setenv("LLM_MODEL", "local-model")
+    monkeypatch.setenv("LLM_KEEP_ALIVE", "-1")
+    client = LLMClient()
+    observed = {}
+
+    def handler(request):
+        observed.update(json.loads(request.content))
+        return httpx.Response(200, json={"message": {"content": '{"ok":true}'}})
+
+    async def scenario():
+        client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        result = await client._post(
+            {
+                "model": "local-model",
+                "messages": [{"role": "user", "content": "test"}],
+                "response_format": {"type": "json_object"},
+                "max_tokens": 48,
+            },
+            context_tokens=4096,
+        )
+        await client.close()
+        return result
+
+    result = asyncio.run(scenario())
+
+    assert observed["keep_alive"] == -1
+    assert observed["options"] == {"num_predict": 48, "num_ctx": 4096}
+    assert observed["format"] == "json"
+    assert result["choices"][0]["message"]["content"] == '{"ok":true}'
+
+
 def test_extraction_model_defaults_to_the_conversational_one(monkeypatch):
     monkeypatch.setenv("LLM_MODEL", "one-model")
     monkeypatch.delenv("LLM_EXTRACTION_MODEL", raising=False)
@@ -179,6 +245,28 @@ def test_gate_gives_up_rather_than_never_extracting():
 
 def test_gate_is_idle_before_anything_has_been_asked_of_the_model():
     assert asyncio.run(ConversationGate(settle_seconds=0).wait_until_idle(timeout=1)) is True
+
+
+def test_conversation_preempts_background_analysis():
+    async def scenario():
+        gate = ConversationGate(settle_seconds=0)
+        analysis_started = asyncio.Event()
+
+        async def analysis():
+            try:
+                async with gate.analyzing():
+                    analysis_started.set()
+                    await asyncio.sleep(10)
+            except asyncio.CancelledError:
+                return "preempted"
+
+        task = asyncio.create_task(analysis())
+        await analysis_started.wait()
+        async with gate.conversing():
+            pass
+        return await task
+
+    assert asyncio.run(scenario()) == "preempted"
 
 
 def test_policy_addresses_observed_hearsay_and_register_failures():

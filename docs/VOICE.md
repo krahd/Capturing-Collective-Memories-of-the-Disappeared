@@ -3,14 +3,15 @@
 The optional voice path is deliberately simple:
 
 ```text
-browser microphone → end-of-turn silence → ffmpeg → whisper.cpp (Spanish)
+browser microphone → end-of-turn silence → ffmpeg → resident whisper.cpp (Spanish)
 → constrained conversation controller → Piper es_AR → browser speakers
 → microphone again
 ```
 
-The microphone is stopped before transcription begins and remains off while the
-reply is synthesized and played. There is no wake word, barge-in, simultaneous
-listening, or end-to-end speech model.
+The same microphone stream and audio analyser remain allocated across turns,
+but the audio track is disabled before transcription and while the reply is
+synthesized and played. There is no wake word, barge-in, simultaneous listening,
+or end-to-end speech model.
 
 ## Continuous half-duplex
 
@@ -29,7 +30,7 @@ been shown to be reliable in a real spoken conversation.
 
 ## End of turn
 
-A turn ends after **2.4 seconds** of silence.
+A turn ends after **1.7 seconds** of silence.
 
 That number is a claim about this conversation, not a technical default. A memory
 conversation is full of hesitation — people stop mid-sentence while reaching for
@@ -52,9 +53,15 @@ GGML model from the official `ggerganov/whisper.cpp` collection. For the demo,
 
 ```bash
 WHISPER_CLI=/opt/homebrew/bin/whisper-cli
+WHISPER_SERVER=/opt/homebrew/bin/whisper-server
 WHISPER_MODEL=/absolute/path/to/ggml-large-v3-turbo.bin
 WHISPER_LANGUAGE=es
 ```
+
+At application startup, `whisper-server` loads that model once and stays
+resident. Each turn is posted to its `/inference` endpoint. `whisper-cli` remains
+configured as a fallback if the resident process cannot start or disappears.
+Set `WHISPER_SERVER_URL` when a separately supervised server should be reused.
 
 Official model files: <https://huggingface.co/ggerganov/whisper.cpp/tree/main>
 
