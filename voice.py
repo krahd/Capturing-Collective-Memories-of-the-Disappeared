@@ -100,11 +100,17 @@ class VoiceService:
         return bool((self._piper_voice_class or self.piper_cli) and self.piper_model)
 
     def config(self) -> dict[str, Any]:
+        try:
+            end_of_turn_ms = int(os.getenv("VOICE_END_OF_TURN_MS", "2200"))
+        except ValueError:
+            end_of_turn_ms = 2200
+        end_of_turn_ms = max(1000, min(5000, end_of_turn_ms))
         return {
             "asr_configured": self.asr_configured,
             "tts_configured": self.tts_configured,
             "half_duplex": True,
             "language": self.whisper_language,
+            "end_of_turn_ms": end_of_turn_ms,
             "asr_mode": "resident" if self._server_ready else "cli_fallback",
             "tts_mode": "resident" if self._piper_voice is not None else "lazy",
             "warmup": self.warm_status,

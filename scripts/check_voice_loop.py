@@ -47,67 +47,84 @@ def run(base_url: str, turns: int, vad_wait_ms: int) -> dict:
     if not voice.get("asr_configured") or not voice.get("tts_configured"):
         raise SystemExit(f"Voz no configurada: {voice.get('missing')}")
 
-    session = client.post("/api/sessions", json={}).json()
+    demo = client.post("/api/demo/runs").json()
+    run_id = demo["run_id"]
+    session = demo["session"]
     traces = []
-    for index in range(turns):
-        text = PARTICIPANT_TURNS[index % len(PARTICIPANT_TURNS)]
+    try:
+        for index in range(turns):
+            text = PARTICIPANT_TURNS[index % len(PARTICIPANT_TURNS)]
 
-        # Participant audio, produced the same way the reply will be.
-        spoken = client.post("/api/voice/speak", json={"text": text})
-        spoken.raise_for_status()
-        audio = spoken.content
+            # Participant audio, produced the same way the reply will be.
+            spoken = client.post("/api/voice/speak", json={"text": text})
+            spoken.raise_for_status()
+            audio = spoken.content
 
-        transcribe_started = time.perf_counter()
-        heard = client.post(
-            f"/api/sessions/{session['id']}/voice/transcribe",
-            content=audio,
-            headers={"Content-Type": "audio/wav", "X-VAD-Wait-Ms": str(vad_wait_ms)},
-        )
-        heard.raise_for_status()
-        heard_payload = heard.json()
-        transcribe_ms = round((time.perf_counter() - transcribe_started) * 1000)
+            transcribe_started = time.perf_counter()
+            heard = client.post(
+                f"/api/sessions/{session['id']}/voice/transcribe",
+                content=audio,
+                headers={"Content-Type": "audio/wav", "X-VAD-Wait-Ms": str(vad_wait_ms)},
+            )
+            heard.raise_for_status()
+            heard_payload = heard.json()
+            transcribe_ms = round((time.perf_counter() - transcribe_started) * 1000)
 
-        turn_started = time.perf_counter()
-        turn = client.post(
-            f"/api/sessions/{session['id']}/turns",
-            json={"text": heard_payload["text"], "audio_id": heard_payload["audio_id"]},
-        )
-        turn.raise_for_status()
-        turn_payload = turn.json()
-        turn_ms = round((time.perf_counter() - turn_started) * 1000)
+            turn_started = time.perf_counter()
+            turn = client.post(
+                f"/api/sessions/{session['id']}/turns",
+                json={"text": heard_payload["text"], "audio_id": heard_payload["audio_id"]},
+            )
+            turn.raise_for_status()
+            turn_payload = turn.json()
+            turn_ms = round((time.perf_counter() - turn_started) * 1000)
 
-        reply = turn_payload["assistant_turn"]["text"]
-        synth_started = time.perf_counter()
-        synthesized = client.post("/api/voice/speak", json={"text": reply})
-        synthesized.raise_for_status()
-        synth_ms = round((time.perf_counter() - synth_started) * 1000)
+            reply = turn_payload["assistant_turn"]["text"]
+            synth_started = time.perf_counter()
+            synthesized = client.post("/api/voice/speak", json={"text": reply})
+            synthesized.raise_for_status()
+            synth_ms = round((time.perf_counter() - synth_started) * 1000)
 
-        trace = {
-            "turn": index + 1,
-            "said": text,
-            "heard": heard_payload["text"],
-            "resident_asr": heard_payload["asr"].get("resident", False),
-            "intent": turn_payload["intent"],
-            "move": turn_payload["move"],
-            "reply": reply,
-            **heard_payload.get("timings_ms", {}),
-            "transcribe_round_trip_ms": transcribe_ms,
-            **turn_payload.get("timings_ms", {}),
-            "turn_round_trip_ms": turn_ms,
-            "tts_synthesis_ms": int(synthesized.headers.get("X-TTS-Synthesis-Ms", 0)),
-            "tts_round_trip_ms": synth_ms,
+            trace = {
+                "turn": index + 1,
+                "said": text,
+                "heard": heard_payload["text"],
+                "resident_asr": heard_payload["asr"].get("resident", False),
+                "intent": turn_payload["intent"],
+                "move": turn_payload["move"],
+                "reply": reply,
+                **heard_payload.get("timings_ms", {}),
+                "transcribe_round_trip_ms": transcribe_ms,
+                **turn_payload.get("timings_ms", {}),
+                "turn_round_trip_ms": turn_ms,
+                "tts_synthesis_ms": int(synthesized.headers.get("X-TTS-Synthesis-Ms", 0)),
+                "tts_round_trip_ms": synth_ms,
+            }
+            # What a participant would experience: their own silence, plus everything
+            # between it and the first sound of the reply.
+            trace["perceived_reply_ms"] = (
+                vad_wait_ms + transcribe_ms + turn_ms + synth_ms
+            )
+            traces.append(trace)
+            client.post("/api/latency", json=trace)
+
+        field = client.get(
+            "/api/memory-field", params={"scope": "demo", "run_id": run_id}
+        ).json()
+        return {
+            "session_id": session["id"],
+            "run_id": run_id,
+            "traces": traces,
+            "field": field,
+            "config": config,
+            "temporary": True,
         }
-        # What a participant would experience: their own silence, plus everything
-        # between it and the first sound of the reply.
-        trace["perceived_reply_ms"] = (
-            vad_wait_ms + transcribe_ms + turn_ms + synth_ms
-        )
-        traces.append(trace)
-        client.post("/api/latency", json=trace)
-
-    field = client.get("/api/memory-field").json()
-    client.close()
-    return {"session_id": session["id"], "traces": traces, "field": field, "config": config}
+    finally:
+        try:
+            client.delete(f"/api/demo/runs/{run_id}")
+        except httpx.HTTPError:
+            pass
+        client.close()
 
 
 def report(summary: dict) -> None:
@@ -155,7 +172,7 @@ def main() -> int:
     parser.add_argument(
         "--vad-wait-ms",
         type=int,
-        default=1700,
+        default=2200,
         help="silencio de fin de turno que el navegador espera realmente",
     )
     parser.add_argument("--json", type=Path)

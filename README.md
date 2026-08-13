@@ -27,7 +27,7 @@ The design docs link directly to the two research reviews maintained in `krahd/a
 
 ## What the prototype does
 
-The interface has two coordinated research/demo views.
+The interface has two explicit modes. **Contribuir** is the default participant view and shows no aggregate field. **Explorar el corpus** is a deliberately separate researcher view.
 
 ### Conversation
 
@@ -49,7 +49,7 @@ The current prototype does not yet implement a no-speech `WAIT/YIELD` move. Rese
 
 ### Campo de memoria
 
-The second pane is not an annotation workbench. A participant/researcher speaks and the field grows automatically.
+The researcher mode is not an annotation workbench. A participant speaks in the separate capture mode and the field grows automatically.
 
 A conventional knowledge graph might read `Person → Event → Place` and silently present derived structure as resolved historical fact. Here **recollections are first-class nodes**:
 
@@ -113,8 +113,7 @@ Manual annotation/derived/relation APIs remain available even though the partici
 
 The current local implementation avoids several unnecessary latency costs:
 
-- `LLM_ROUTER_MODEL` can use a small model for classification;
-- extraction defaults to the small router model when configured, or can use `LLM_EXTRACTION_MODEL`;
+- routing, interviewing and extraction currently remain on the validated 30B model; an unsafe small router is not used for the meeting prototype;
 - background extraction yields to live conversation and can be pre-empted;
 - configured Ollama models are warmed/kept resident;
 - interview context is bounded;
@@ -135,7 +134,7 @@ microphone → endpointing → ffmpeg → resident whisper.cpp
 → constrained interviewer → Piper → speakers → microphone again
 ```
 
-The current end-of-turn heuristic is **1.7 seconds** of detected silence. It is an experimental prototype parameter, not a claim about the correct duration of participant silence.
+The current end-of-turn heuristic defaults to **2.2 seconds** of detected silence and is configurable with `VOICE_END_OF_TURN_MS`. It is an experimental prototype parameter, not a claim about the correct duration of participant silence.
 
 The microphone track is disabled while the system speaks, so the participant cannot barge in. That is a known prototype limitation.
 
@@ -208,7 +207,7 @@ Naturalness, cultural validity, usability, safety and successful memory capture 
 
 ## Data
 
-Prototype sessions are written to local JSON under `data/sessions/` and ignored by git. Local evaluation evidence is written under `evaluation/results/` and ignored by git.
+Ordinary prototype sessions are written to local JSON under `data/sessions/` and ignored by git. Meeting-demo sessions and audio are ephemeral, run-scoped and removed on explicit cleanup or application shutdown. The frozen synthetic seed corpus lives under `demo/corpus/`; local evaluation evidence is written under ignored `evaluation/results/`.
 
 Do not use real participant or sensitive testimony data in this disposable prototype without the appropriate research, consent and governance route.
 

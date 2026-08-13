@@ -1,0 +1,840 @@
+{
+  "id": "session_demo_seed_01",
+  "title": "Ficha 01 · la casa del Cerro",
+  "created_at": "2026-08-13T07:37:16.841841+00:00",
+  "updated_at": "2026-08-13T07:37:24.499087+00:00",
+  "turns": [
+    {
+      "id": "turn_7e530ed19b",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:16.841891+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_008001d976",
+      "role": "user",
+      "text": "Yo era chico, tendría nueve o diez. Esto habrá sido por el 77, por ahí.",
+      "created_at": "2026-08-13T07:37:16.841909+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_af6a7a4f60",
+      "role": "assistant",
+      "text": "¿Qué te hace ubicarlo por esos años?",
+      "created_at": "2026-08-13T07:37:16.841928+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_95ec48b24a",
+      "role": "user",
+      "text": "En casa de mi abuela, en el Cerro, se juntaban los domingos. Yo me acuerdo del ruido.",
+      "created_at": "2026-08-13T07:37:16.841939+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_49539d5786",
+      "role": "assistant",
+      "text": "Contame de esas reuniones.",
+      "created_at": "2026-08-13T07:37:16.841984+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_39ec012d1b",
+      "role": "user",
+      "text": "Del Flaco yo no me acuerdo. Lo que sé es porque mi vieja contaba que aparecía por casa y hablaba horas con mi tío Aníbal.",
+      "created_at": "2026-08-13T07:37:16.842000+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_7f36f41d58",
+      "kind": "time",
+      "text": "por el 77",
+      "source_turn_ids": [
+        "turn_008001d976"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:19.140905+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e8d89761cb"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_ce02c8a2bb",
+      "kind": "theme",
+      "text": "ser chico",
+      "source_turn_ids": [
+        "turn_008001d976"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:19.140939+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e8d89761cb"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_b7fe848329",
+      "kind": "uncertainty",
+      "text": "nueve o diez",
+      "source_turn_ids": [
+        "turn_008001d976"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:19.140954+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e8d89761cb"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_0f1aee85e7",
+      "kind": "place",
+      "text": "el Cerro",
+      "source_turn_ids": [
+        "turn_95ec48b24a"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:21.529440+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_68979116c8",
+      "kind": "time",
+      "text": "los domingos",
+      "source_turn_ids": [
+        "turn_95ec48b24a"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:21.529472+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_0a83ccb0bb",
+      "kind": "event",
+      "text": "se juntaban",
+      "source_turn_ids": [
+        "turn_95ec48b24a"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:21.529486+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_06a2b85128",
+      "kind": "person",
+      "text": "yo",
+      "source_turn_ids": [
+        "turn_95ec48b24a"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:21.529498+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_576e03c5aa",
+      "kind": "theme",
+      "text": "el ruido",
+      "source_turn_ids": [
+        "turn_95ec48b24a"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:21.529509+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_1ba9574c0f",
+      "kind": "person",
+      "text": "Flaco",
+      "source_turn_ids": [
+        "turn_39ec012d1b"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:24.498959+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_1555ae7653",
+      "kind": "person",
+      "text": "vieja",
+      "source_turn_ids": [
+        "turn_39ec012d1b"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:24.498984+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_773e053490",
+      "kind": "person",
+      "text": "tío Aníbal",
+      "source_turn_ids": [
+        "turn_39ec012d1b"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:24.498997+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_3f8fd53ca3",
+      "kind": "event",
+      "text": "aparecía por casa",
+      "source_turn_ids": [
+        "turn_39ec012d1b"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:24.499047+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_9e954a7c37",
+      "kind": "theme",
+      "text": "hablar horas con mi tío Aníbal",
+      "source_turn_ids": [
+        "turn_39ec012d1b"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:24.499064+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_2fbbe164f5",
+      "kind": "uncertainty",
+      "text": "yo no me acuerdo",
+      "source_turn_ids": [
+        "turn_39ec012d1b"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:24.499079+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_0520339d0c",
+      "at": "2026-08-13T07:37:16.841874+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 01 · la casa del Cerro",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_7a1a5dcbb3",
+      "at": "2026-08-13T07:37:16.841900+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_7e530ed19b",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_60fe339d0b",
+      "at": "2026-08-13T07:37:16.841917+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Yo era chico, tendría nueve o diez. Esto habrá sido por el 77, por ahí…»",
+      "target_id": "turn_008001d976",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_8f9b50fc86",
+      "at": "2026-08-13T07:37:16.841933+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Qué te hace ubicarlo por esos años?»",
+      "target_id": "turn_af6a7a4f60",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_33040ee15d",
+      "at": "2026-08-13T07:37:16.841964+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «En casa de mi abuela, en el Cerro, se juntaban los domingos. Yo me acu…»",
+      "target_id": "turn_95ec48b24a",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_34fe75b7de",
+      "at": "2026-08-13T07:37:16.841992+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Contame de esas reuniones.»",
+      "target_id": "turn_49539d5786",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_fc378cedff",
+      "at": "2026-08-13T07:37:16.842009+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Del Flaco yo no me acuerdo. Lo que sé es porque mi vieja contaba que a…»",
+      "target_id": "turn_39ec012d1b",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_1983941d9b",
+      "at": "2026-08-13T07:37:19.140922+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «por el 77»",
+      "target_id": "item_7f36f41d58",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_008001d976"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e8d89761cb"
+      }
+    },
+    {
+      "id": "ev_14bb64dd04",
+      "at": "2026-08-13T07:37:19.140945+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «ser chico»",
+      "target_id": "item_ce02c8a2bb",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_008001d976"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e8d89761cb"
+      }
+    },
+    {
+      "id": "ev_d432d69cc3",
+      "at": "2026-08-13T07:37:19.140959+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «nueve o diez»",
+      "target_id": "item_b7fe848329",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_008001d976"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e8d89761cb"
+      }
+    },
+    {
+      "id": "ev_074cee6538",
+      "at": "2026-08-13T07:37:21.529460+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «el Cerro»",
+      "target_id": "item_0f1aee85e7",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_95ec48b24a"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      }
+    },
+    {
+      "id": "ev_b7c5c4ec8a",
+      "at": "2026-08-13T07:37:21.529477+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «los domingos»",
+      "target_id": "item_68979116c8",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_95ec48b24a"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      }
+    },
+    {
+      "id": "ev_35305c955f",
+      "at": "2026-08-13T07:37:21.529491+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (event): «se juntaban»",
+      "target_id": "item_0a83ccb0bb",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_95ec48b24a"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      }
+    },
+    {
+      "id": "ev_8948d63401",
+      "at": "2026-08-13T07:37:21.529502+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «yo»",
+      "target_id": "item_06a2b85128",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_95ec48b24a"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      }
+    },
+    {
+      "id": "ev_2990721fe2",
+      "at": "2026-08-13T07:37:21.529522+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «el ruido»",
+      "target_id": "item_576e03c5aa",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_95ec48b24a"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_feddbaaeff"
+      }
+    },
+    {
+      "id": "ev_f10f4dc3c4",
+      "at": "2026-08-13T07:37:24.498974+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Flaco»",
+      "target_id": "item_1ba9574c0f",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_39ec012d1b"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      }
+    },
+    {
+      "id": "ev_54210066c7",
+      "at": "2026-08-13T07:37:24.498989+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «vieja»",
+      "target_id": "item_1555ae7653",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_39ec012d1b"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      }
+    },
+    {
+      "id": "ev_afd3f89ae2",
+      "at": "2026-08-13T07:37:24.499026+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «tío Aníbal»",
+      "target_id": "item_773e053490",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_39ec012d1b"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      }
+    },
+    {
+      "id": "ev_56f6689cdd",
+      "at": "2026-08-13T07:37:24.499054+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (event): «aparecía por casa»",
+      "target_id": "item_3f8fd53ca3",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_39ec012d1b"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      }
+    },
+    {
+      "id": "ev_018d8156d4",
+      "at": "2026-08-13T07:37:24.499071+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «hablar horas con mi tío Aníbal»",
+      "target_id": "item_9e954a7c37",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_39ec012d1b"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      }
+    },
+    {
+      "id": "ev_f652b9f1ef",
+      "at": "2026-08-13T07:37:24.499085+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «yo no me acuerdo»",
+      "target_id": "item_2fbbe164f5",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_39ec012d1b"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7050c71eb3"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}

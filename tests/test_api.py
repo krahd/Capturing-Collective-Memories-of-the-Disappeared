@@ -19,7 +19,13 @@ def test_ui_shell_is_never_served_stale_and_names_its_required_controls():
             assert 'id="app-status"' in page.text
             assert 'id="new-session"' in page.text
             assert 'id="voice-toggle"' in page.text
-            assert "Conversación por voz" in page.text
+            assert 'id="capture-view"' in page.text
+            assert 'id="explore-view"' in page.text
+            assert "Empezar por voz" in page.text
+            assert "Terminar contribución" in page.text
+            assert "Interpretación provisional incorporada" in page.text
+            assert "Posible coincidencia entre conversaciones" in page.text
+            assert "Ensayo con datos temporales" in page.text
 
             script = await client.get("/static/app.js")
             assert script.status_code == 200
@@ -152,6 +158,150 @@ def test_recorded_example_session_loads_and_refuses_new_turns(tmp_path):
             )
             assert blocked.status_code == 409
 
+            loaded_again = await client.post("/api/sessions/demo")
+            assert loaded_again.status_code == 200
+            assert loaded_again.json()["id"] == session["id"]
+
+    asyncio.run(run_flow())
+
+
+def test_demo_run_is_ephemeral_scoped_and_removable(tmp_path, monkeypatch):
+    app_module.store = SessionStore(tmp_path / "sessions")
+    transient = tmp_path / "transient-audio"
+    monkeypatch.setattr(app_module, "TRANSIENT_AUDIO_ROOT", transient)
+    monkeypatch.setattr(app_module, "DEMO_CORPUS_ROOT", tmp_path / "no-frozen-corpus")
+
+    seed = app_module.store.create("Ficha semilla", session_kind="demo_seed")
+    seed_turn = seed.add_turn("user", "Tito aparecía por casa.")
+    seed.add_derived_item("person", "Tito", [seed_turn.id], origin="modelo")
+    app_module.store.save(seed)
+
+    unrelated = app_module.store.create("Ensayo anterior")
+    old_turn = unrelated.add_turn("user", "Este material no pertenece a la demo.")
+    unrelated.add_derived_item("theme", "material viejo", [old_turn.id], origin="modelo")
+    app_module.store.save(unrelated)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            created = (await client.post("/api/demo/runs")).json()
+            run_id = created["run_id"]
+            live = created["session"]
+            assert live["storage_policy"] == "ephemeral"
+            assert live["session_kind"] == "demo_live"
+            assert not (tmp_path / "sessions" / f"{live['id']}.json").exists()
+
+            held = app_module.store.get(live["id"])
+            turn = held.add_turn("user", "Tito también aparece en este recuerdo.")
+            held.add_derived_item("person", "Tito", [turn.id], origin="modelo")
+            app_module.store.save(held)
+            app_module.store.touch_field()
+
+            scoped = (
+                await client.get(
+                    "/api/memory-field",
+                    params={"scope": "demo", "run_id": run_id, "focus": live["id"]},
+                )
+            ).json()
+            titles = {node["label"] for node in scoped["nodes"] if node["type"] == "conversation"}
+            assert titles == {"Ficha semilla", "Contribución temporal 01"}
+            tito = next(node for node in scoped["nodes"] if node["id"] == "person:tito")
+            assert len(tito["conversations"]) == 2
+
+            source_stage = (
+                await client.get(
+                    "/api/memory-field",
+                    params={
+                        "scope": "demo",
+                        "run_id": run_id,
+                        "focus": live["id"],
+                        "stage": "source",
+                    },
+                )
+            ).json()
+            source_tito = next(node for node in source_stage["nodes"] if node["id"] == "person:tito")
+            assert source_tito["conversations"] == [seed.id]
+            assert any(
+                node["type"] == "recollection" and node["session_id"] == live["id"]
+                for node in source_stage["nodes"]
+            )
+
+            audio_dir = transient / run_id / live["id"]
+            audio_dir.mkdir(parents=True)
+            (audio_dir / "audio.webm").write_bytes(b"temporary")
+            deleted = await client.delete(f"/api/demo/runs/{run_id}")
+            assert deleted.status_code == 200
+            assert deleted.json()["sessions_removed"] == 1
+            assert not (transient / run_id).exists()
+            assert (await client.get(f"/api/sessions/{live['id']}")).status_code == 404
+            assert app_module.store.get(seed.id).title == "Ficha semilla"
+            assert app_module.store.get(unrelated.id).title == "Ensayo anterior"
+
+    asyncio.run(run_flow())
+
+
+def test_interface_controls_change_state_without_fabricating_a_turn(tmp_path):
+    app_module.store = SessionStore(tmp_path)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            session = (await client.post("/api/demo/runs")).json()["session"]
+            before = len(session["turns"])
+            paused = await client.post(
+                f"/api/sessions/{session['id']}/controls", json={"action": "PAUSE"}
+            )
+            assert paused.status_code == 200
+            assert paused.json()["status"] == "paused"
+            assert len(paused.json()["turns"]) == before
+            assert paused.json()["events"][-2]["actor"] == "participante"
+            assert paused.json()["events"][-2]["action"] == "control_participante"
+
+            resumed = await client.post(
+                f"/api/sessions/{session['id']}/controls", json={"action": "RESUME"}
+            )
+            assert resumed.json()["status"] == "active"
+            stopped = await client.post(
+                f"/api/sessions/{session['id']}/controls", json={"action": "STOP"}
+            )
+            assert stopped.json()["status"] == "stopped"
+            assert len(stopped.json()["turns"]) == before
+
+    asyncio.run(run_flow())
+
+
+def test_transcription_finishing_after_cleanup_cannot_recreate_temporary_audio(
+    tmp_path, monkeypatch
+):
+    app_module.store = SessionStore(tmp_path / "sessions")
+    transient = tmp_path / "transient-audio"
+    monkeypatch.setattr(app_module, "TRANSIENT_AUDIO_ROOT", transient)
+    monkeypatch.setattr(app_module, "DEMO_CORPUS_ROOT", tmp_path / "no-frozen-corpus")
+    monkeypatch.setattr(
+        type(app_module.voice), "asr_configured", property(lambda _self: True)
+    )
+    active_run = {"id": ""}
+
+    def finish_after_cleanup(_audio, _suffix):
+        app_module.store.discard_demo_run(active_run["id"])
+        return "Un recuerdo temporal.", {"resident": True, "timings_ms": {}}
+
+    monkeypatch.setattr(app_module.voice, "transcribe", finish_after_cleanup)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            created = (await client.post("/api/demo/runs")).json()
+            active_run["id"] = created["run_id"]
+            response = await client.post(
+                f"/api/sessions/{created['session']['id']}/voice/transcribe",
+                content=b"audio bytes",
+                headers={"Content-Type": "audio/webm"},
+            )
+            assert response.status_code == 410
+            assert not (transient / created["run_id"]).exists()
+            assert not (tmp_path / "sessions" / f"{created['session']['id']}.json").exists()
+
     asyncio.run(run_flow())
 
 
@@ -188,6 +338,34 @@ def test_prompt_command_is_redirected_without_reaching_either_model_stage(tmp_pa
                 },
             )
             assert blocked.status_code == 400
+
+    asyncio.run(run_flow())
+
+
+def test_demo_protocol_question_gets_curated_information_without_an_llm(tmp_path, monkeypatch):
+    app_module.store = SessionStore(tmp_path)
+
+    async def should_not_run(*_args, **_kwargs):
+        raise AssertionError("Protocol information must be application-owned")
+
+    monkeypatch.setattr(app_module.llm, "classify", should_not_run)
+    monkeypatch.setattr(app_module.llm, "interview", should_not_run)
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            session = (await client.post("/api/demo/runs")).json()["session"]
+            response = await client.post(
+                f"/api/sessions/{session['id']}/turns",
+                json={"text": "¿Quién va a escuchar esta grabación?"},
+            )
+            assert response.status_code == 200
+            payload = response.json()
+            assert payload["intent"] == "PROTOCOL_INFO"
+            assert payload["move"] == "PROTOCOL"
+            assert "sesión temporal" in payload["assistant_turn"]["text"]
+            assert "política final" in payload["assistant_turn"]["text"]
+            assert payload["user_turn"]["record_kind"] == "non_testimony/control"
 
     asyncio.run(run_flow())
 

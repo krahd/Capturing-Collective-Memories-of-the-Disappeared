@@ -1,10 +1,24 @@
 # Prototype test report
 
 **Updated:** 13 August 2026  
-**Status:** implementation mechanically verified; informal local-model checks exist; the revised conversational policy and real voice path still require fresh sustained human testing.  
+**Status:** tomorrow-demo implementation mechanically verified; current local-model scenario, routing and synthetic end-to-end voice checks completed; sustained human browser voice testing remains pending.
 **Participant evidence:** none. All current scenarios are researcher-authored/synthetic.
 
 This report records actual evidence and observed failures. Design requirements derived from the evidence are maintained separately in [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md), [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md), [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md), and [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md).
+
+## Tomorrow-ready rehearsal — 13 August 2026
+
+The current code was tested on the target laptop with `qwen3:30b-a3b-instruct-2507-q4_K_M`, resident Whisper and resident Piper.
+
+- **Deterministic suite:** 109 tests passed, including ephemeral storage/audio cleanup, run isolation, source-only staged fields, participant controls without fabricated transcript, idempotent recorded example, protocol answers and late-extraction/transcription cleanup races.
+- **Frozen corpus:** 10 intended synthetic conversations, 68 nodes, 74 relations, `Tito` in three conversations, and one contradictory chronology retained separately with sources.
+- **Single-turn conversation set:** all 11 researcher-authored cases returned short, grounded replies. An unresolved `lo vimos` initially produced a presuppositional question; the policy and guard were tightened and the rerun yielded the floor instead. A later correction remains conversationally acceptable but still deserves human review.
+- **Multi-turn rhythm set:** 12 turns across three four-turn conversations; four backchannels, seven invitations to continue and one grounded follow-up. No packed question, affirming `sí/claro`, therapeutic completion or direct-access question after hearsay passed the current guard.
+- **Adversarial routing:** 49 cases, 46 exact and 48 acceptable, with no critical failure. The one non-acceptable case was the explicitly ambiguous `No quiero hablar de eso.`, classified as `PAUSE`; it does not end the session. A real critical failure on `Sí, dale, seguime preguntando` was found and fixed deterministically before this final run.
+- **Synthetic voice loop:** five complete turns through real Piper bytes → ffmpeg → resident Whisper → router/interviewer → resident Piper. Resident ASR/TTS were used on every turn. Median stages were 43 ms conversion, 429 ms ASR, 645 ms routing, 1039 ms interviewing and 114 ms TTS; calculated median perceived reply was 4483 ms including the 2200 ms silence window.
+- **Cleanup:** a race allowed late background extraction to resurrect a just-deleted in-memory run. A storage tombstone was added; the real two-turn voice path then cleaned to a 404 session, no persistent JSON and no remaining run id under `data/` or `demo/`.
+
+This is researcher-authored/synthetic evidence, not participant validation. The in-app browser was unavailable to the implementation environment, so visual smoke testing at meeting resolution and a human 10–15-turn microphone rehearsal remain manual morning gates.
 
 ## Conversational-move rhythm smoke check — 12 August 2026
 
@@ -102,14 +116,14 @@ The prototype was subsequently revised to remove avoidable latency:
 - browser field updates use server-sent change events rather than timed polling bursts;
 - resident `whisper-server` can keep ASR weights loaded across turns;
 - the microphone stream/analyser are retained across continuous half-duplex turns;
-- current endpointing is 1.7 seconds of detected silence;
+- current endpointing defaults to 2.2 seconds of detected silence and is configurable;
 - turn/voice stages expose latency timings.
 
 These implementation changes are mechanically covered where deterministic. Their actual end-to-end perceptual benefit still needs to be measured in the target spoken interaction.
 
 ## Automated verification
 
-The GitHub Actions workflow verifies Python/browser syntax and deterministic pytest coverage including:
+The local deterministic suite currently passes 109 tests. The GitHub Actions workflow verifies Python/browser syntax and pytest coverage including:
 
 - transcript/source preservation;
 - model/researcher provenance;
@@ -165,7 +179,7 @@ These additions are requirements for the next evaluation pass. They have not yet
 
 ### Conversation
 
-Current capabilities include:
+**Contribuir** is now the default participant-facing mode, with no aggregate graph visible. Current capabilities include:
 
 - exact participant-turn preservation;
 - local/hosted OpenAI-compatible live model integration;
@@ -176,7 +190,7 @@ Current capabilities include:
 
 ### Campo de memoria
 
-The earlier on-screen `Mesa de trabajo` was removed. Manual annotation/derived operations remain in the API/data model/exports, but the second interface view is now the accumulated memory field.
+**Explorar el corpus** is now a deliberate, separately labelled researcher mode. The earlier on-screen `Mesa de trabajo` was removed. Manual annotation/derived operations remain in the API/data model/exports, but the second interface view is now the accumulated memory field.
 
 The field:
 
@@ -197,13 +211,13 @@ The `campo de memoria` should not be described as collective memory itself.
 The browser voice path is implemented as continuous local half duplex:
 
 ```text
-microphone → 1.7 s endpointing heuristic → ffmpeg → resident whisper.cpp where configured
+microphone → configurable 2.2 s endpointing heuristic → ffmpeg → resident whisper.cpp where configured
 → router/interviewer → Piper → speakers → microphone again
 ```
 
 The microphone stream/analyser remain allocated; the track is disabled during system speech. The participant cannot barge in.
 
-The voice path is still the largest empirical gap. The automated suite does not exercise a real microphone → Whisper → model → Piper → speaker round trip.
+The synthetic diagnostic now exercises real audio through Whisper, model and Piper, but not a human microphone, browser playback onset or reflective pauses. Human voice interaction remains the largest empirical gap.
 
 Required next check:
 
@@ -237,8 +251,7 @@ The consolidated requirements are maintained in the long-lived design docs rathe
 ## Next evidence gate
 
 1. Run sustained human/researcher conversation against the current policy/guard, not the superseded one recorded above.
-2. Validate the small router on adversarial and ordinary Uruguayan-Spanish input.
-3. Run the 11 executable scenarios and the expanded manual cases, retaining representative failures.
-4. Run the real 10–15-turn voice conversation with resident Whisper confirmed.
-5. Record actual latency breakdown including TTS when available.
-6. Use these results to decide the next prototype/production architecture rather than treating the current code as the starting point by default.
+2. Run the real 10–15-turn browser voice conversation with resident Whisper confirmed and a deliberate 1.8-second hesitation.
+3. Complete the visual smoke test at meeting resolution.
+4. Run the expanded manual suggestion/affirmation/archive-blindness cases, retaining representative failures.
+5. Use these results to decide the next prototype/production architecture rather than treating the current code as the starting point by default.

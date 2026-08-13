@@ -2,6 +2,7 @@ from controller import (
     CORRECTION,
     OFF_TOPIC,
     PAUSE,
+    PROTOCOL_INFO,
     REVOKE_DELETE,
     STOP,
     WITHDRAW,
@@ -49,6 +50,29 @@ def test_explicit_prompt_command_is_not_testimony():
     assert record_kind_for_intent(intent) == "non_testimony/control"
 
 
+def test_demo_protocol_question_is_handled_by_the_application():
+    assert deterministic_intent("¿Quién va a escuchar esta grabación?") == PROTOCOL_INFO
+    assert deterministic_intent("¿Esto queda público?") == PROTOCOL_INFO
+    assert deterministic_intent("¿Puedo borrar algo de lo que dije?") == PROTOCOL_INFO
+    assert record_kind_for_intent(PROTOCOL_INFO) == "non_testimony/control"
+
+
+def test_topic_boundary_does_not_end_a_contribution_that_explicitly_continues():
+    assert (
+        deterministic_intent(
+            "Preferiría no entrar en eso ahora, si te parece sigo con lo de la casa."
+        )
+        == "MEMORY_TESTIMONY"
+    )
+    assert deterministic_intent("No quiero hablar de eso.") is None
+
+
+def test_short_rioplatense_floor_signals_always_keep_the_session_open():
+    assert deterministic_intent("Ta.") == "MEMORY_TESTIMONY"
+    assert deterministic_intent("Sí, dale, seguime preguntando.") == "MEMORY_TESTIMONY"
+    assert deterministic_intent("Podés seguir preguntando.") == "MEMORY_TESTIMONY"
+
+
 def test_guard_preserves_complete_model_utterance_without_rewriting_it():
     move = InterviewMove(
         move="ACKNOWLEDGE",
@@ -92,6 +116,19 @@ def test_follow_up_must_be_one_question_grounded_in_actual_content():
     assert guard_interview_move(
         InterviewMove("FOLLOW_UP", "¿Cuándo fue? ¿Dónde?", "turn_1"), known
     ) is None
+    assert guard_interview_move(
+        InterviewMove("FOLLOW_UP", "¿Qué libros eran, o cómo se veían?", "turn_1"), known
+    ) is None
+
+
+def test_follow_up_to_hearsay_must_keep_the_attribution():
+    known = {"turn_1": "Mi vieja contaba que Tito aparecía por casa los viernes."}
+    assert guard_interview_move(
+        InterviewMove("FOLLOW_UP", "¿Qué hacía Tito en la casa?", "turn_1"), known
+    ) is None
+    assert guard_interview_move(
+        InterviewMove("FOLLOW_UP", "¿Qué contaba tu vieja de esas visitas de Tito?", "turn_1"), known
+    ) == ("FOLLOW_UP", "¿Qué contaba tu vieja de esas visitas de Tito?")
 
 
 def test_minimal_sequence_follow_up_only_grounds_in_latest_turn():
@@ -113,6 +150,20 @@ def test_clarification_can_resolve_ambiguous_reference():
         InterviewMove("CLARIFY", "Cuando decís ellos, ¿a quiénes te referís?", "turn_1"),
         known,
     ) == ("CLARIFY", "Cuando decís ellos, ¿a quiénes te referís?")
+
+
+def test_unresolved_person_reference_cannot_become_a_presupposed_follow_up():
+    known = {
+        "turn_1": "Después nos fuimos para el Cerro y lo vimos de nuevo ahí, cerca del club."
+    }
+    assert guard_interview_move(
+        InterviewMove("FOLLOW_UP", "¿Qué hacía ahí, cerca del club?", "turn_1"),
+        known,
+    ) is None
+    assert guard_interview_move(
+        InterviewMove("CLARIFY", "Cuando decís que lo vieron, ¿a quién te referís?", "turn_1"),
+        known,
+    ) == ("CLARIFY", "Cuando decís que lo vieron, ¿a quién te referís?")
 
 
 def test_guard_rejects_unknown_grounding_and_general_assistant_answer():
@@ -175,6 +226,18 @@ def test_acknowledgement_over_first_hand_material_is_unaffected():
     ) == ("ACKNOWLEDGE", "Esa espera en el patio te quedó.")
 
 
+def test_acknowledgement_does_not_complete_an_emotional_metaphor():
+    known = {"turn_1": "A veces siento que toda mi infancia fue eso, esperar."}
+
+    assert guard_interview_move(
+        InterviewMove("ACKNOWLEDGE", "Esperar como un tiempo que queda quieto.", "turn_1"),
+        known,
+    ) is None
+    assert guard_interview_move(
+        InterviewMove("ACKNOWLEDGE", "Sí, esperar.", "turn_1"), known
+    ) is None
+
+
 def test_repetition_check_catches_exact_and_formula_repetition():
     recent = ["¿Qué más recordás de esas reuniones?", "Ajá."]
     assert is_repetitive("Ajá.", recent)
@@ -193,3 +256,4 @@ def test_guard_rejects_recent_repetition_and_fallback_varies():
     )
     assert move == "INVITE_CONTINUE"
     assert utterance == "Podés seguir."
+    assert safe_interview_fallback([], CORRECTION) == ("BACKCHANNEL", "Te sigo.")

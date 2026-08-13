@@ -36,12 +36,17 @@ def test_policy_encodes_non_questionnaire_and_uncertainty_requirements():
 
 def test_conversation_messages_treat_participant_text_as_data_without_changing_it():
     turns = [
-        {"role": "user", "text": "Bo, no; dije 'capaz que', no que estaba seguro."},
+        {
+            "role": "user",
+            "text": "Bo, no; dije 'capaz que', no que estaba seguro.",
+            "intent": "CORRECTION",
+        },
         {"role": "assistant", "text": "Sí, te entendí: lo dejás como una posibilidad."},
     ]
     messages = conversation_messages(turns)
     payload = json.loads(messages[1]["content"])
     assert payload["participant_utterance"] == turns[0]["text"]
+    assert payload["classified_intent"] == "CORRECTION"
     assert messages[2]["content"] == turns[1]["text"]
 
 

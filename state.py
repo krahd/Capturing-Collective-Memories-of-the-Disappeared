@@ -169,6 +169,11 @@ class Session:
     # True only for the researcher-authored example transcript. It is never a
     # live conversation and the interface must say so.
     is_recorded: bool = False
+    # Prototype-only collection metadata. It keeps the meeting corpus separate
+    # from old experiments without pretending to be a production access model.
+    session_kind: str = "ordinary"
+    storage_policy: str = "persistent"
+    demo_run_id: str = ""
 
     def touch(self) -> None:
         self.updated_at = now_iso()
@@ -547,6 +552,9 @@ class Session:
             audio_records=[AudioRecord(**x) for x in data.get("audio_records", [])],
             status=data.get("status", "active"),
             is_recorded=bool(data.get("is_recorded", False)),
+            session_kind=data.get("session_kind", "ordinary"),
+            storage_policy=data.get("storage_policy", "persistent"),
+            demo_run_id=data.get("demo_run_id", ""),
         )
 
 
@@ -584,6 +592,10 @@ class SessionStore:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self._sessions: dict[str, Session] = {}
+        # A background extraction may still hold a Session object after the
+        # meeting run is deleted. Tombstones make every late save a no-op so
+        # cleanup cannot be undone by an in-flight model response.
+        self._discarded_demo_runs: set[str] = set()
         # Monotonic in-process change token used by cached aggregate views and
         # their lightweight event stream. Reading this integer is much cheaper
         # than rebuilding the graph to discover that nothing changed.
@@ -594,8 +606,25 @@ class SessionStore:
         """Signal a change that can alter the memory field or chronology."""
         self.field_revision += 1
 
-    def create(self, title: str | None = None) -> Session:
-        session = Session(id=new_id("session"), title=(title or "Conversación sin título").strip())
+    def create(
+        self,
+        title: str | None = None,
+        *,
+        session_kind: str = "ordinary",
+        storage_policy: str = "persistent",
+        demo_run_id: str = "",
+    ) -> Session:
+        if session_kind not in {"ordinary", "demo_seed", "demo_live", "recorded_example"}:
+            raise ValueError(f"Tipo de sesión desconocido: {session_kind}")
+        if storage_policy not in {"persistent", "ephemeral"}:
+            raise ValueError(f"Política de almacenamiento desconocida: {storage_policy}")
+        session = Session(
+            id=new_id("session"),
+            title=(title or "Conversación sin título").strip(),
+            session_kind=session_kind,
+            storage_policy=storage_policy,
+            demo_run_id=demo_run_id,
+        )
         session.record(ACTOR_SYSTEM, "sesion_creada", f"Sesión iniciada: {session.title}")
         self._sessions[session.id] = session
         self.save(session)
@@ -622,21 +651,46 @@ class SessionStore:
     def discard(self, session_id: str) -> bool:
         """Forget a stored session entirely.
 
-        Used only when rebuilding the researcher-authored demo corpus, where the
-        previous build has to go or its interpretations accumulate alongside the
-        new ones. Not reachable from the API: participant material is withdrawn
-        or deleted through the session's own recorded operations, never dropped
-        wholesale behind the record's back.
+        Persistent deletion is used only when rebuilding researcher-authored
+        fixtures. The demo API reaches this method solely through
+        ``discard_demo_run``, which selects explicitly ephemeral, process-local
+        sessions from one run and leaves every persistent session untouched.
         """
-        self._sessions.pop(session_id, None)
+        held = self._sessions.pop(session_id, None)
         path = self.root / f"{safe_filename(session_id)}.json"
-        if not path.exists():
-            return False
-        path.unlink()
-        self.touch_field()
-        return True
+        existed = held is not None
+        if path.exists():
+            path.unlink()
+            existed = True
+        if existed:
+            self.touch_field()
+        return existed
+
+    def discard_demo_run(self, run_id: str) -> list[str]:
+        """Forget only ephemeral sessions belonging to one meeting run."""
+        targets = [
+            session.id
+            for session in self.list()
+            if session.demo_run_id == run_id and session.storage_policy == "ephemeral"
+        ]
+        if targets:
+            self._discarded_demo_runs.add(run_id)
+        for session_id in targets:
+            self.discard(session_id)
+        return targets
+
+    def demo_run_is_discarded(self, run_id: str) -> bool:
+        return bool(run_id and run_id in self._discarded_demo_runs)
 
     def save(self, session: Session) -> None:
+        # Meeting sessions remain live in `_sessions` but never enter the
+        # persistent corpus on disk.
+        if session.storage_policy == "ephemeral":
+            if self.demo_run_is_discarded(session.demo_run_id):
+                return
+            self._sessions[session.id] = session
+            self.revision += 1
+            return
         path = self.root / f"{safe_filename(session.id)}.json"
         path.write_text(json.dumps(session.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
         self.revision += 1

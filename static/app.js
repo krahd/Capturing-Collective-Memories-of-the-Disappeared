@@ -10,6 +10,11 @@ const state = {
   timelineYear: null,
   timelineSubject: null,
   lastVoiceTimings: null,
+  demoRunId: "",
+  mode: "capture",
+  seedField: null,
+  revealPending: true,
+  revealShared: true,
 };
 
 const voiceRuntime = {
@@ -24,6 +29,9 @@ const voiceRuntime = {
   silentSince: 0,
   startedAt: 0,
   vadWaitMs: 0,
+  discardRecording: false,
+  playback: null,
+  activityToken: 0,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -44,6 +52,7 @@ const ACTION_LABELS = {
   estado_sesion_cambiado: "Estado de la sesión",
   audio_preservado: "Audio preservado",
   transcripcion_asr_creada: "Transcripción ASR",
+  control_participante: "Control de la persona",
 };
 
 const TYPE_LABELS = {
@@ -86,7 +95,16 @@ function isRecorded() {
 function setSession(session) {
   state.session = session;
   if (session?.id) localStorage.setItem("ccm-current-session", session.id);
+  if (session?.demo_run_id) {
+    state.demoRunId = session.demo_run_id;
+    localStorage.setItem("ccm-demo-run", state.demoRunId);
+  }
   render();
+}
+
+function setVoiceButtonLabel(label) {
+  const target = $("voice-button-label");
+  if (target) target.textContent = label;
 }
 
 function render() {
@@ -106,15 +124,18 @@ function render() {
         : "Escribí acá…";
   $("send").disabled = !live || !state.config.llm_configured;
   $("resume-session").hidden = sessionStatus !== "paused";
+  $("pause-session").hidden = sessionStatus !== "active" || isRecorded();
+  $("stop-session").disabled = !ready || isRecorded() || !["active", "paused"].includes(sessionStatus);
   // During a continuous exchange the button stays live: it is how the
   // participant ends it, and every render happens mid-loop.
   $("voice-toggle").disabled = state.voiceContinuous
     ? false
     : !live || !state.config.llm_configured || !state.config.voice?.asr_configured || state.voicePhase !== "idle";
-  $("voice-toggle").textContent = state.voiceContinuous ? "Terminar" : "Hablar";
+  setVoiceButtonLabel(state.voiceContinuous ? "Detener micrófono" : "Empezar por voz");
   if (state.voicePhase === "idle" && !state.voiceContinuous) renderVoiceAvailability();
   $("export-json").disabled = !ready;
   $("export-md").disabled = !ready;
+  renderCurrentSource();
 }
 
 function renderConversation() {
@@ -187,9 +208,19 @@ function radiusFor(node) {
   return 3.6 + 2.4 * Math.sqrt(reach - 1);
 }
 
-async function loadField() {
+function fieldUrl(stage = "full", includeRun = true) {
+  const params = new URLSearchParams({
+    scope: "demo",
+    focus: state.session?.id || "",
+    stage,
+  });
+  if (includeRun && state.demoRunId) params.set("run_id", state.demoRunId);
+  return `/api/memory-field?${params.toString()}`;
+}
+
+async function loadField(stage = "full", includeRun = true) {
   try {
-    const field = await api(`/api/memory-field?focus=${state.session?.id || ""}`);
+    const field = await api(fieldUrl(stage, includeRun));
     state.field = field;
     syncSimulation(field);
     renderCounters(field);
@@ -198,8 +229,11 @@ async function loadField() {
     // A conversation held while the chronology is open should reach it too,
     // without a reload.
     if (!$("timeline").hidden) refreshTimeline();
+    updateStageStatus(field);
+    return field;
   } catch (error) {
     console.error("memory field", error);
+    return null;
   }
 }
 
@@ -376,7 +410,7 @@ function drawField() {
     // An edge onto a node that has just been reached is the connection being
     // made, so it is drawn as the connection rather than as background.
     const fresh =
-      now - (edge.b.convergedAt || -Infinity) < CONVERGE_MS ||
+      (state.revealShared && now - (edge.b.convergedAt || -Infinity) < CONVERGE_MS) ||
       now - edge.a.born < BIRTH_MS ||
       now - edge.b.born < BIRTH_MS;
     parts.push(
@@ -388,14 +422,24 @@ function drawField() {
     const age = now - node.born;
     const grow = Math.min(1, age / 700);
     const converging = now - (node.convergedAt || -Infinity);
-    const collective = converging < CONVERGE_MS && node.convergenceKind === "conversation";
+    const collective =
+      state.revealShared &&
+      converging < CONVERGE_MS &&
+      node.convergenceKind === "conversation";
     // A node other conversations reach swells while it is being reached. The
     // swell is drawn, not simulated, so the layout does not lurch with it.
     const swell = collective ? 1 + 0.55 * Math.sin((Math.PI * converging) / CONVERGE_MS) : 1;
     const r = radiusFor(node) * (0.2 + 0.8 * grow) * swell;
     const selected = state.selectedNode?.id === node.id;
     const dim = state.selectedNode && !selected && !connected(node, state.selectedNode);
-    const shared = (node.conversations || []).length > 1 && !NODE_RADIUS[node.type];
+    const pendingShared =
+      !state.revealShared &&
+      converging < CONVERGE_MS &&
+      node.convergenceKind === "conversation";
+    const shared =
+      (node.conversations || []).length > 1 &&
+      !NODE_RADIUS[node.type] &&
+      !pendingShared;
     const classes = [
       "node",
       `node-${node.type}`,
@@ -440,8 +484,17 @@ function drawField() {
   const candidates = sim.nodes
     .map((node) => ({
       node,
-      converging: now - (node.convergedAt || -Infinity) < CONVERGE_MS,
-      shared: (node.conversations || []).length > 1 && !NODE_RADIUS[node.type],
+      converging:
+        state.revealShared &&
+        now - (node.convergedAt || -Infinity) < CONVERGE_MS,
+      shared:
+        (node.conversations || []).length > 1 &&
+        !NODE_RADIUS[node.type] &&
+        !(
+          !state.revealShared &&
+          now - (node.convergedAt || -Infinity) < CONVERGE_MS &&
+          node.convergenceKind === "conversation"
+        ),
       selected: state.selectedNode?.id === node.id,
     }))
     .filter(({ node, shared, selected, converging }) => {
@@ -470,7 +523,7 @@ function drawField() {
     );
     if (converging && node.convergenceKind === "conversation" && reach > 1) {
       parts.push(
-        `<text class="node-reach" text-anchor="${anchor}" x="${x.toFixed(1)}" y="${(y - 11).toFixed(1)}">${reach} conversaciones</text>`
+        `<text class="node-reach" text-anchor="${anchor}" x="${x.toFixed(1)}" y="${(y - 11).toFixed(1)}">aparece en ${reach} conversaciones</text>`
       );
     }
   });
@@ -505,6 +558,84 @@ function renderChips(field) {
   $("extracted-chips").innerHTML = field.extracted
     .map((x) => `<span class="chip chip-${x.type}">${escapeHtml(x.label)} <b>${x.count}</b></span>`)
     .join("");
+}
+
+function liveNodes(field) {
+  return (field?.nodes || []).filter(
+    (node) => node.session_kind === "demo_live" && node.demo_run_id === state.demoRunId
+  );
+}
+
+function updateStageStatus(field) {
+  const live = liveNodes(field);
+  const sourceReady = live.some((node) => node.type === "recollection");
+  const liveTurnIds = new Set(
+    live.filter((node) => node.type === "recollection").map((node) => node.turn_id)
+  );
+  const derivedReady = (field?.nodes || []).some(
+    (node) =>
+      !["conversation", "recollection"].includes(node.type) &&
+      (node.recollections || []).some((turnId) => liveTurnIds.has(turnId))
+  );
+  const sharedReady = state.revealShared && (field?.nodes || []).some(
+    (node) =>
+      !["conversation", "recollection"].includes(node.type) &&
+      (node.conversations || []).length > 1 &&
+      (node.recollections || []).some((turnId) => liveTurnIds.has(turnId))
+  );
+  const statuses = [
+    ["stage-source", sourceReady],
+    ["stage-derived", derivedReady],
+    ["stage-shared", sharedReady],
+  ];
+  statuses.forEach(([id, ready], index) => {
+    const element = $(id);
+    element.classList.toggle("done", ready);
+    element.classList.toggle(
+      "current",
+      ready && !statuses.slice(index + 1).some(([, laterReady]) => laterReady)
+    );
+  });
+}
+
+function renderCurrentSource() {
+  const panel = $("current-source");
+  if (!panel) return;
+  const turns = (state.session?.turns || []).filter((turn) => turn.role === "user").slice(-4);
+  if (!turns.length) {
+    panel.innerHTML = '<p class="muted">Todavía no hay una contribución en esta conversación.</p>';
+    return;
+  }
+  panel.innerHTML = turns
+    .map(
+      (turn) => `<blockquote class="detail-quote${turn.record_kind === "non_testimony/control" ? " non-testimony" : ""}">${escapeHtml(short(turn.text, 180))}</blockquote>`
+    )
+    .join("");
+}
+
+async function revealCorpus() {
+  showMode("explore");
+  state.revealShared = false;
+  // Always begin with the truthful source-only state. If extraction already
+  // completed while the field was hidden, the second fetch replays the actual
+  // stored order instead of collapsing both stages into one frame.
+  await loadField("source", true);
+  await new Promise((resolve) => setTimeout(resolve, 750));
+  await loadField("full", true);
+  // The full response already contains the real stored reach. Holding back
+  // only its emphasis lets the actual interpretation arrive before recurrence
+  // is announced, without fabricating or rewriting a node or relation.
+  await new Promise((resolve) => setTimeout(resolve, 800));
+  state.revealShared = true;
+  const now = performance.now();
+  sim.nodes.forEach((node) => {
+    if (node.convergenceKind === "conversation" && now - (node.convergedAt || -Infinity) < CONVERGE_MS) {
+      node.convergedAt = now;
+    }
+  });
+  updateStageStatus(state.field);
+  kick();
+  state.revealPending = false;
 }
 
 function selectNode(nodeId) {
@@ -575,7 +706,9 @@ function renderNodeDetail() {
 
 async function refreshTimeline() {
   try {
-    state.timeline = await api("/api/timeline");
+    const params = new URLSearchParams({ scope: "demo" });
+    if (state.demoRunId) params.set("run_id", state.demoRunId);
+    state.timeline = await api(`/api/timeline?${params.toString()}`);
   } catch (error) {
     console.error("timeline", error);
     return false;
@@ -851,7 +984,7 @@ function renderVoiceAvailability() {
     return;
   }
   status.textContent = config.tts_configured
-    ? `Lista en ${config.language || "es"}. Tocá Hablar, autorizá el micrófono y empezá a contar; termina cada turno con una pausa.`
+    ? `Voz local lista · ${config.language || "es"}. Empezá a contar y tomate tu tiempo; una pausa larga cierra cada turno.`
     : `Entrada lista en ${config.language || "es"}; la respuesta se mostrará por escrito.`;
 }
 
@@ -863,7 +996,7 @@ function setVoicePhase(phase, label) {
   // In a continuous exchange the button is the way out, not the way in.
   // Pressing it for every single utterance is what makes voice feel like a
   // form rather than a conversation.
-  button.textContent = state.voiceContinuous ? "Terminar" : "Hablar";
+  setVoiceButtonLabel(state.voiceContinuous ? "Detener micrófono" : "Empezar por voz");
   const active = state.session?.status === "active" && !isRecorded();
   button.disabled = state.voiceContinuous ? false : phase !== "idle" && phase !== "listening";
   if (phase === "idle" && !state.voiceContinuous) {
@@ -887,6 +1020,30 @@ function endVoiceLoop(message) {
   if (voiceRuntime.recorder?.state !== "recording") cleanupMicrophone();
   setVoicePhase("idle", "");
   if (message) $("voice-status").textContent = message;
+}
+
+function stopPlayback() {
+  const audio = voiceRuntime.playback;
+  if (!audio) return;
+  voiceRuntime.playback = null;
+  audio.pause();
+  audio.currentTime = 0;
+  // `pause` has no completion event. The synthetic `ended` releases the
+  // promise in speakText so an explicit participant control cannot leave the
+  // turn handler hanging forever.
+  audio.dispatchEvent(new Event("ended"));
+}
+
+function haltVoiceActivity(message = "") {
+  voiceRuntime.activityToken += 1;
+  state.voiceContinuous = false;
+  if (voiceRuntime.recorder?.state === "recording") {
+    voiceRuntime.discardRecording = true;
+    voiceRuntime.recorder.stop();
+  }
+  stopPlayback();
+  cleanupMicrophone();
+  setVoicePhase("idle", message);
 }
 
 /** LISTEN → THINK → SPEAK → LISTEN, until the participant ends it. */
@@ -926,6 +1083,7 @@ async function startListening() {
       ? new MediaRecorder(voiceRuntime.stream, { mimeType: preferred })
       : new MediaRecorder(voiceRuntime.stream);
     voiceRuntime.chunks = [];
+    voiceRuntime.discardRecording = false;
     voiceRuntime.heardSpeech = false;
     voiceRuntime.silentSince = 0;
     voiceRuntime.vadWaitMs = 0;
@@ -951,7 +1109,9 @@ async function startListening() {
 // conversation rather than a technical default: a memory conversation is full
 // of hesitation, and a threshold tuned for command-and-control speech cuts
 // people off exactly where they are reaching for something.
-const END_OF_TURN_SILENCE_MS = 1700;
+function endOfTurnSilenceMs() {
+  return Number(state.config.voice?.end_of_turn_ms || 2200);
+}
 // The microphone re-arms by itself after each reply. If nobody says anything at
 // all, the loop ends rather than sitting open indefinitely.
 const REARM_TIMEOUT_MS = 20000;
@@ -973,7 +1133,7 @@ function monitorSilence() {
     voiceRuntime.silentSince = 0;
   } else if (voiceRuntime.heardSpeech) {
     if (!voiceRuntime.silentSince) voiceRuntime.silentSince = now;
-    if (now - voiceRuntime.silentSince > END_OF_TURN_SILENCE_MS) return stopListening("silence");
+    if (now - voiceRuntime.silentSince > endOfTurnSilenceMs()) return stopListening("silence");
   } else if (state.voiceContinuous && now - voiceRuntime.startedAt > REARM_TIMEOUT_MS) {
     // Re-armed, and nobody spoke. Close the loop quietly.
     state.voiceContinuous = false;
@@ -1011,6 +1171,13 @@ function pauseMicrophone() {
 }
 
 async function processRecording() {
+  if (voiceRuntime.discardRecording) {
+    voiceRuntime.discardRecording = false;
+    voiceRuntime.chunks = [];
+    return;
+  }
+  const activityToken = voiceRuntime.activityToken;
+  const sessionId = state.session?.id;
   const heardSpeech = voiceRuntime.heardSpeech;
   const mimeType = voiceRuntime.recorder?.mimeType || "audio/webm";
   const blob = new Blob(voiceRuntime.chunks, { type: mimeType });
@@ -1023,14 +1190,14 @@ async function processRecording() {
   // is disabled while thinking and speaking, preserving half-duplex behaviour.
   pauseMicrophone();
   if (!heardSpeech || blob.size < 1000) {
-    endVoiceLoop(state.voiceContinuous ? "No se detectó voz. Tocá Hablar cuando quieras seguir." : "");
+    endVoiceLoop(state.voiceContinuous ? "No se detectó voz. Tocá Empezar por voz cuando quieras seguir." : "");
     return;
   }
 
   setVoicePhase("transcribing", "Transcribiendo localmente…");
   const transcribeSentAt = performance.now();
   try {
-    const response = await fetch(`/api/sessions/${state.session.id}/voice/transcribe`, {
+    const response = await fetch(`/api/sessions/${sessionId}/voice/transcribe`, {
       method: "POST",
       headers: { "Content-Type": mimeType, "X-VAD-Wait-Ms": String(vadWaitMs) },
       body: blob,
@@ -1038,9 +1205,20 @@ async function processRecording() {
     const result = await response.json();
     const transcribeReturnedAt = performance.now();
     if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
+    if (activityToken !== voiceRuntime.activityToken || state.session?.id !== sessionId) return;
     $("message").value = result.text;
     setVoicePhase("thinking", "Pensando…");
-    const turnResult = await submitTurn(result.text, result.audio_id, true);
+    let firstAudioAt = 0;
+    const turnResult = await submitTurn(
+      result.text,
+      result.audio_id,
+      true,
+      () => {
+        firstAudioAt = performance.now();
+      },
+      () => activityToken === voiceRuntime.activityToken && state.session?.id === sessionId
+    );
+    if (activityToken !== voiceRuntime.activityToken || state.session?.id !== sessionId) return;
     state.lastVoiceTimings = {
       ...(result.timings_ms || {}),
       ...(turnResult?.timings_ms || {}),
@@ -1048,15 +1226,16 @@ async function processRecording() {
       // Silence to first audible word. This is the number a participant would
       // recognise as "how long it took to answer"; every other stage only
       // explains it.
-      perceived_reply_ms: Math.round(performance.now() - wentQuietAt),
+      perceived_reply_ms: Math.round((firstAudioAt || performance.now()) - wentQuietAt),
     };
     console.info("voice latency (ms)", state.lastVoiceTimings);
     recordLatencyTrace(state.lastVoiceTimings);
     $("message").value = "";
-    // Half-duplex: the microphone was closed for synthesis and opens again on
+    // Half-duplex: the microphone track was disabled for synthesis and opens again on
     // its own. Nothing to press between turns.
     rearmMicrophone();
   } catch (error) {
+    if (activityToken !== voiceRuntime.activityToken) return;
     endVoiceLoop(`No se pudo procesar la voz: ${error.message}`);
   }
 }
@@ -1071,7 +1250,7 @@ function recordLatencyTrace(timings) {
   }).catch((error) => console.debug("latency trace not recorded", error));
 }
 
-async function speakText(text) {
+async function speakText(text, onFirstAudio = null) {
   setVoicePhase("speaking", "Hablando…");
   const started = performance.now();
   const response = await fetch("/api/voice/speak", {
@@ -1091,27 +1270,70 @@ async function speakText(text) {
   };
   try {
     const audio = new Audio(url);
+    const ended = new Promise((resolve, reject) => {
+      audio.addEventListener("ended", resolve, { once: true });
+      audio.addEventListener("error", reject, { once: true });
+    });
+    voiceRuntime.playback = audio;
     await audio.play();
     // The moment sound actually starts is the end of the participant's wait.
     // Everything after it is the reply being delivered, not latency.
     timings.speech_first_audio_ms = Math.round(performance.now() - started);
-    await new Promise((resolve, reject) => {
-      audio.addEventListener("ended", resolve, { once: true });
-      audio.addEventListener("error", reject, { once: true });
-    });
+    if (onFirstAudio) onFirstAudio();
+    await ended;
     timings.speech_playback_ms = Math.round(performance.now() - started);
   } finally {
+    if (voiceRuntime.playback) voiceRuntime.playback = null;
     URL.revokeObjectURL(url);
   }
   return timings;
 }
 
 async function createFreshSession() {
+  haltVoiceActivity("");
   state.selectedNode = null;
-  const session = await api("/api/sessions", { method: "POST", body: JSON.stringify({}) });
+  let session;
+  if (state.demoRunId) {
+    try {
+      session = await api(`/api/demo/runs/${state.demoRunId}/sessions`, { method: "POST" });
+    } catch (error) {
+      // A page may remember a run that correctly disappeared when the server
+      // shut down. Recover into a new sandbox instead of stranding the meeting
+      // on a 404 after showing the recorded example.
+      if (!String(error.message).includes("no encontrada")) throw error;
+      state.demoRunId = "";
+      localStorage.removeItem("ccm-demo-run");
+    }
+  }
+  if (!session) {
+    const created = await api("/api/demo/runs", { method: "POST" });
+    state.demoRunId = created.run_id;
+    localStorage.setItem("ccm-demo-run", state.demoRunId);
+    session = created.session;
+  }
   setSession(session);
+  state.revealPending = true;
+  showMode("capture");
   $("message").focus();
   return session;
+}
+
+function showMode(mode) {
+  state.mode = mode;
+  const exploring = mode === "explore";
+  $("capture-view").hidden = exploring;
+  $("explore-view").hidden = !exploring;
+  $("mode-capture").classList.toggle("active", !exploring);
+  $("mode-explore").classList.toggle("active", exploring);
+  $("mode-capture").setAttribute("aria-pressed", String(!exploring));
+  $("mode-explore").setAttribute("aria-pressed", String(exploring));
+  if (
+    exploring &&
+    (state.voiceContinuous || state.voicePhase !== "idle" || voiceRuntime.stream || voiceRuntime.playback)
+  ) {
+    haltVoiceActivity("Micrófono detenido al abrir la vista de investigación.");
+  }
+  if (exploring) setTimeout(() => kick(), 0);
 }
 
 function reportActionError(error) {
@@ -1122,7 +1344,6 @@ function reportActionError(error) {
 $("new-session").addEventListener("click", async () => {
   try {
     await createFreshSession();
-    await loadField();
   } catch (error) {
     reportActionError(error);
   }
@@ -1131,16 +1352,24 @@ $("new-session").addEventListener("click", async () => {
 $("load-demo").addEventListener("click", async () => {
   state.selectedNode = null;
   try {
+    haltVoiceActivity("");
     setSession(await api("/api/sessions/demo", { method: "POST" }));
-    loadField();
+    showMode("capture");
   } catch (error) {
     alert(error.message);
   }
 });
 
-async function submitTurn(text, audioId = "", speakReply = false) {
+async function submitTurn(
+  text,
+  audioId = "",
+  speakReply = false,
+  onFirstAudio = null,
+  shouldSpeak = null
+) {
   if (!state.session || !state.config.llm_configured || isRecorded() || state.session.status !== "active") return null;
   if (!text.trim()) return null;
+  const targetSessionId = state.session.id;
   $("send").disabled = true;
   $("send-status").textContent = "Pensando…";
   // The words are preserved before anything is asked of the model, so the
@@ -1148,24 +1377,35 @@ async function submitTurn(text, audioId = "", speakReply = false) {
   // what somebody said does not depend on understanding it, and showing that
   // first is the whole point of separating the stages.
   try {
-    const result = await api(`/api/sessions/${state.session.id}/turns`, {
+    const result = await api(`/api/sessions/${targetSessionId}/turns`, {
       method: "POST",
       body: JSON.stringify({ text, audio_id: audioId }),
     });
-    setSession(result.session);
-    $("send-status").textContent = "";
+    if (state.session?.id === targetSessionId) {
+      setSession(result.session);
+      $("send-status").textContent = "";
+    }
     // Interpretation follows on its own, once the conversational model is free.
-    if (speakReply && result.assistant_turn && state.config.voice?.tts_configured) {
-      Object.assign(result.timings_ms, await speakText(result.assistant_turn.text));
+    if (
+      speakReply &&
+      result.assistant_turn &&
+      state.config.voice?.tts_configured &&
+      (!shouldSpeak || shouldSpeak())
+    ) {
+      Object.assign(result.timings_ms, await speakText(result.assistant_turn.text, onFirstAudio));
     }
     return result;
   } catch (error) {
-    if (error.payload?.session) setSession(error.payload.session);
-    $("send-status").textContent = `No se pudo generar respuesta: ${error.message}`;
+    if (state.session?.id === targetSessionId) {
+      if (error.payload?.session) setSession(error.payload.session);
+      $("send-status").textContent = `No se pudo generar respuesta: ${error.message}`;
+    }
     return null;
   } finally {
-    $("send").disabled = !state.config.llm_configured || isRecorded() || state.session?.status !== "active";
-    $("message").focus();
+    if (state.session?.id === targetSessionId) {
+      $("send").disabled = !state.config.llm_configured || isRecorded() || state.session?.status !== "active";
+      $("message").focus();
+    }
   }
 }
 
@@ -1176,8 +1416,12 @@ function subscribeToFieldChanges() {
   fieldEvents = new EventSource("/api/memory-field/events");
   fieldEvents.addEventListener("field", () => {
     clearTimeout(fieldRefreshTimer);
-    // Coalesce the several saves that make up one turn into one graph refresh.
-    fieldRefreshTimer = setTimeout(loadField, 120);
+    // While somebody is speaking, the corpus remains hidden and its changes
+    // wait for the deliberate reveal. In research mode they arrive live.
+    state.revealPending = true;
+    if (state.mode === "explore") {
+      fieldRefreshTimer = setTimeout(() => loadField("full", true), 120);
+    }
   });
   fieldEvents.onerror = (error) => console.debug("memory field event stream reconnecting", error);
 }
@@ -1200,12 +1444,48 @@ $("message").addEventListener("keydown", (event) => {
 $("export-json").addEventListener("click", () => window.location.assign(`/api/sessions/${state.session.id}/export.json`));
 $("export-md").addEventListener("click", () => window.location.assign(`/api/sessions/${state.session.id}/export.md`));
 
-$("resume-session").addEventListener("click", async () => {
+async function applyControl(action) {
   try {
-    setSession(await api(`/api/sessions/${state.session.id}/resume`, { method: "POST" }));
+    haltVoiceActivity("");
+    setSession(
+      await api(`/api/sessions/${state.session.id}/controls`, {
+        method: "POST",
+        body: JSON.stringify({ action }),
+      })
+    );
     $("message").focus();
   } catch (error) {
     alert(error.message);
+  }
+}
+
+$("pause-session").addEventListener("click", () => applyControl("PAUSE"));
+$("resume-session").addEventListener("click", () => applyControl("RESUME"));
+$("stop-session").addEventListener("click", () => applyControl("STOP"));
+
+$("mode-capture").addEventListener("click", () => showMode("capture"));
+$("back-to-capture").addEventListener("click", () => showMode("capture"));
+$("mode-explore").addEventListener("click", revealCorpus);
+$("show-corpus").addEventListener("click", revealCorpus);
+
+$("clear-demo").addEventListener("click", async () => {
+  if (!state.demoRunId) return;
+  if (!window.confirm("¿Borrar todas las contribuciones y audios temporales de esta demostración?")) return;
+  try {
+    haltVoiceActivity("");
+    await api(`/api/demo/runs/${state.demoRunId}`, { method: "DELETE" });
+    localStorage.removeItem("ccm-current-session");
+    localStorage.removeItem("ccm-demo-run");
+    state.demoRunId = "";
+    state.session = null;
+    state.selectedNode = null;
+    sim.nodes = [];
+    sim.edges = [];
+    sim.byId = new Map();
+    await createFreshSession();
+    state.seedField = await loadField("full", false);
+  } catch (error) {
+    reportActionError(error);
   }
 });
 
@@ -1282,12 +1562,24 @@ async function init() {
   // ?session=ID opens a specific session directly, which is convenient when
   // showing a prepared session without clicking through to find it.
   const params = new URLSearchParams(location.search);
-  const previous = params.get("session") || localStorage.getItem("ccm-current-session");
+  state.demoRunId = localStorage.getItem("ccm-demo-run") || "";
+  const explicit = params.get("session");
+  const previous = explicit || localStorage.getItem("ccm-current-session");
   if (previous) {
     try {
-      setSession(await api(`/api/sessions/${previous}`));
+      const restored = await api(`/api/sessions/${previous}`);
+      if (
+        !explicit &&
+        restored.session_kind !== "demo_live" &&
+        restored.session_kind !== "recorded_example"
+      ) {
+        throw new Error("sesión anterior fuera de la demostración");
+      }
+      setSession(restored);
     } catch (_) {
       localStorage.removeItem("ccm-current-session");
+      localStorage.removeItem("ccm-demo-run");
+      state.demoRunId = "";
       await createFreshSession();
     }
   } else {
@@ -1296,7 +1588,8 @@ async function init() {
     // remains available whenever a clean session is wanted.
     await createFreshSession();
   }
-  await loadField();
+  state.seedField = await loadField("full", false);
+  showMode("capture");
   subscribeToFieldChanges();
   // ?node=place:cerro opens straight to one entity and its recollections.
   const node = params.get("node");

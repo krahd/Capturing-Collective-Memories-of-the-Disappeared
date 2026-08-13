@@ -1,0 +1,506 @@
+{
+  "id": "session_demo_seed_03",
+  "title": "Ficha 03 · la mudanza",
+  "created_at": "2026-08-13T07:37:30.644741+00:00",
+  "updated_at": "2026-08-13T07:37:34.540616+00:00",
+  "turns": [
+    {
+      "id": "turn_9b60abbf83",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:30.644779+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_dd095c4747",
+      "role": "user",
+      "text": "Nos mudamos a La Teja después, cuando ya no estaba Aníbal.",
+      "created_at": "2026-08-13T07:37:30.644792+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_0b512e069f",
+      "role": "assistant",
+      "text": "¿Cómo fue esa mudanza?",
+      "created_at": "2026-08-13T07:37:30.644804+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_cdec94ed07",
+      "role": "user",
+      "text": "Yo digo que la mudanza fue en el 77. Mi hermana dice que en el 76. Nunca nos pusimos de acuerdo y ya no vale la pena discutirlo.",
+      "created_at": "2026-08-13T07:37:30.644815+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_2257c7dff8",
+      "kind": "place",
+      "text": "La Teja",
+      "source_turn_ids": [
+        "turn_dd095c4747"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:32.165571+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e79a9d5acf"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_d227bd8e6b",
+      "kind": "person",
+      "text": "Aníbal",
+      "source_turn_ids": [
+        "turn_dd095c4747"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:32.165628+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e79a9d5acf"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_e283cb97d0",
+      "kind": "theme",
+      "text": "mudanza",
+      "source_turn_ids": [
+        "turn_dd095c4747"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:32.165650+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e79a9d5acf"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_4e0c5b45df",
+      "kind": "time",
+      "text": "el 77",
+      "source_turn_ids": [
+        "turn_cdec94ed07"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:34.540405+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_4347268e53",
+      "kind": "time",
+      "text": "el 76",
+      "source_turn_ids": [
+        "turn_cdec94ed07"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:34.540468+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_f00a6d1e0c",
+      "kind": "theme",
+      "text": "la mudanza",
+      "source_turn_ids": [
+        "turn_cdec94ed07"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:34.540503+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_476f1da83d",
+      "kind": "uncertainty",
+      "text": "Nunca nos pusimos de acuerdo",
+      "source_turn_ids": [
+        "turn_cdec94ed07"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:34.540536+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_d15fa50873",
+      "kind": "uncertainty",
+      "text": "ya no vale la pena discutirlo",
+      "source_turn_ids": [
+        "turn_cdec94ed07"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:34.540597+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_4b64ece05d",
+      "at": "2026-08-13T07:37:30.644768+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 03 · la mudanza",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_99078e8f2c",
+      "at": "2026-08-13T07:37:30.644785+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_9b60abbf83",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_f861449d62",
+      "at": "2026-08-13T07:37:30.644798+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Nos mudamos a La Teja después, cuando ya no estaba Aníbal.»",
+      "target_id": "turn_dd095c4747",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_478546aa15",
+      "at": "2026-08-13T07:37:30.644809+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Cómo fue esa mudanza?»",
+      "target_id": "turn_0b512e069f",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_fe5324db70",
+      "at": "2026-08-13T07:37:30.644822+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Yo digo que la mudanza fue en el 77. Mi hermana dice que en el 76. Nun…»",
+      "target_id": "turn_cdec94ed07",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_8715149eb6",
+      "at": "2026-08-13T07:37:32.165587+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «La Teja»",
+      "target_id": "item_2257c7dff8",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_dd095c4747"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e79a9d5acf"
+      }
+    },
+    {
+      "id": "ev_ed8e5f12af",
+      "at": "2026-08-13T07:37:32.165639+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Aníbal»",
+      "target_id": "item_d227bd8e6b",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_dd095c4747"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e79a9d5acf"
+      }
+    },
+    {
+      "id": "ev_382724cf31",
+      "at": "2026-08-13T07:37:32.165655+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «mudanza»",
+      "target_id": "item_e283cb97d0",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_dd095c4747"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_e79a9d5acf"
+      }
+    },
+    {
+      "id": "ev_07f2a6d44b",
+      "at": "2026-08-13T07:37:34.540440+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «el 77»",
+      "target_id": "item_4e0c5b45df",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_cdec94ed07"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      }
+    },
+    {
+      "id": "ev_5819b99e2c",
+      "at": "2026-08-13T07:37:34.540482+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «el 76»",
+      "target_id": "item_4347268e53",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_cdec94ed07"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      }
+    },
+    {
+      "id": "ev_2adcbfe31c",
+      "at": "2026-08-13T07:37:34.540516+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «la mudanza»",
+      "target_id": "item_f00a6d1e0c",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_cdec94ed07"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      }
+    },
+    {
+      "id": "ev_18096dcbeb",
+      "at": "2026-08-13T07:37:34.540575+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «Nunca nos pusimos de acuerdo»",
+      "target_id": "item_476f1da83d",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_cdec94ed07"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      }
+    },
+    {
+      "id": "ev_b9803b5a76",
+      "at": "2026-08-13T07:37:34.540610+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «ya no vale la pena discutirlo»",
+      "target_id": "item_d15fa50873",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_cdec94ed07"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_373d8592b4"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}

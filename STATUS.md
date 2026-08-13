@@ -2,10 +2,10 @@
 
 **Date:** 13 August 2026  
 **Phase:** disposable interaction prototype plus production-design synthesis  
-**Current implementation baseline:** speed-improved local prototype (`9017bb1`, followed by documentation-only commits)  
-**Mechanical verification:** GitHub Actions is green on the implementation baseline and through the audited documentation sync (`e27fed7`, run 74); this status-only update does not change code  
-**Live-model Uruguayan-Spanish evaluation:** informal single- and multi-turn checks have been run; the revised policy still needs a fresh sustained human review  
-**Voice:** continuous local half duplex implemented; real 10–15-turn spoken verification still pending  
+**Current implementation baseline:** isolated meeting sandbox, participant/researcher mode split and frozen deferred-significance corpus
+**Mechanical verification:** 109 local tests pass; frozen-corpus validator passes
+**Live-model Uruguayan-Spanish evaluation:** 11 current single-turn cases, 12-turn rhythm corpus and 49-case adversarial routing run completed; sustained human review remains pending
+**Voice:** five-turn synthetic full-stack voice loop passed with resident ASR/TTS; real 10–15-turn browser conversation still pending
 **Participant data:** none; current evaluation uses researcher-authored/synthetic material
 
 ## Project objective
@@ -30,10 +30,12 @@ These documents explicitly link the two research reviews in `krahd/academic-writ
 
 Implemented in the disposable prototype:
 
-- two coordinated research/demo views: Conversation and Campo de memoria;
+- separate **Contribuir** participant mode and **Explorar el corpus** researcher mode;
+- process-local demo runs with ephemeral sessions/audio, explicit cleanup and shutdown cleanup;
+- scoped demo field/chronology excluding historical experimental sessions;
 - provider-neutral model boundary plus Ollama-native optimisation when applicable;
-- a separate small `LLM_ROUTER_MODEL` can classify turns without paying a 30B call before every interview response;
-- extraction defaults to the small router model when configured, can be overridden separately, is queued, waits for conversational quiet and can be pre-empted by a new conversational call;
+- routing, interviewing and extraction use the validated 30B model for the meeting build; the unsafe small router remains disabled;
+- extraction is queued, waits for conversational quiet and can be pre-empted by a new conversational call;
 - configured local models are warmed and HTTP connections are reused;
 - interview working context is bounded instead of growing indefinitely;
 - participant-led conversational policy for natural adult Uruguayan/Rioplatense Spanish;
@@ -50,11 +52,11 @@ Implemented in the disposable prototype:
 - memory field with recollections as first-class nodes and deliberately weak `menciona` relations;
 - chronology view retaining contradictory dates rather than adjudicating them;
 - cached aggregate field/chronology and server-sent field-change events instead of timed polling bursts;
-- seven-conversation researcher-authored demo corpus and recorded example session;
+- frozen ten-conversation synthetic demo corpus, including the three deferred-significance `Tito` fragments, plus an idempotent recorded example excluded from aggregation;
 - continuous local half-duplex voice using browser audio, ffmpeg, resident whisper.cpp where configured, and Piper;
 - microphone stream/analyser retained across turns;
-- current prototype endpointing at 1.7 seconds of detected silence;
-- latency instrumentation for endpointing/ASR and conversational model stages;
+- configurable prototype endpointing at 2.2 seconds of detected silence by default;
+- latency instrumentation ending at first audible reply rather than playback completion;
 - deterministic automated tests and researcher-authored interaction/evaluation tooling.
 
 ## Current prototype semantics and their limits
@@ -156,12 +158,12 @@ It also separates evidence levels so deterministic tests and researcher-authored
 
 The prototype voice path now uses a persistent microphone stream and can use resident `whisper-server`, removing repeated Whisper model initialisation. `.env.example` and `docs/VOICE.md` distinguish app-managed resident Whisper from an externally supervised `WHISPER_SERVER_URL`.
 
-The current endpointing threshold is 1.7 seconds, not the older 2.4-second value that remained in stale documentation before this audit.
+The current endpointing threshold defaults to 2.2 seconds and can be raised in 300 ms rehearsal increments to 2.8 seconds if a deliberate 1.8-second hesitation is cut off.
 
 Still unresolved empirically:
 
 - real 10–15-turn spoken conversation;
-- whether 1.7 seconds cuts off ordinary reflective hesitation;
+- whether 2.2 seconds cuts off ordinary reflective hesitation;
 - real ASR behaviour on Uruguayan names, places and speech;
 - first-turn/ongoing TTS latency;
 - moments where half duplex prevents a natural participant interruption;
@@ -169,13 +171,11 @@ Still unresolved empirically:
 
 ## Remaining immediate gates
 
-1. Run the revised conversational policy in sustained live Uruguayan-Spanish interaction and record the result.
-2. Validate the small router on adversarial/natural Spanish control and testimony cases; routing errors affect whether material is treated as testimony at all.
-3. Run the real 10–15-turn voice test with resident Whisper confirmed.
-4. Add/inspect TTS timing so the full perceived voice latency is measured rather than inferred.
-5. Run the expanded suggestion/affirmation/correction/archive-blindness/deferred-significance scenarios.
-6. Keep the current prototype free of real participant testimony until the appropriate ethics/governance route exists.
-7. Use the resulting evidence to design the next architecture from first principles rather than hardening prototype shortcuts.
+1. Run one 10–15-turn human browser voice conversation with resident Whisper and a deliberate reflective pause.
+2. Complete a visual smoke test at the actual meeting resolution.
+3. Run the expanded suggestion/affirmation/correction/archive-blindness scenarios.
+4. Keep the current prototype free of real participant testimony until the appropriate ethics/governance route exists.
+5. Use the resulting evidence to design the next architecture from first principles rather than hardening prototype shortcuts.
 
 ## Production work still intentionally open
 

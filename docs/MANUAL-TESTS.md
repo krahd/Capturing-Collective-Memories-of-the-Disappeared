@@ -271,7 +271,7 @@ This is not a test that every fragment receives a question. It is a test that im
 
 With **Prototype: Voice Doctor** reporting both layers ready:
 
-1. press **Hablar**, speak Scenario 1 naturally, and stop by leaving silence;
+1. press **Empezar por voz**, speak Scenario 1 naturally, and stop by leaving silence;
 2. verify the state moves through listening, transcribing, thinking, and speaking;
 3. verify the microphone indicator is off while Piper speaks;
 4. verify the microphone re-arms by itself and that nothing needs pressing to take the next turn;
@@ -345,8 +345,8 @@ The annotation operations are no longer on screen. Exercise them through the API
 
 Hold one real browser conversation of **10–15 spoken turns** and record the result in `TEST-REPORT.md`. Specifically:
 
-- press **Hablar** once and confirm nothing else needs pressing between turns;
-- hesitate deliberately mid-sentence, the way people do when reaching for a name or a year, and note whether the turn was cut short. The current prototype threshold is **1.7 s** of detected silence; this is an experimental heuristic, not an interactional optimum;
+- press **Empezar por voz** once and confirm nothing else needs pressing between turns;
+- hesitate deliberately for 1.8 seconds mid-sentence, the way people do when reaching for a name or a year, and note whether the turn was cut short. The current prototype threshold defaults to **2.2 s** of detected silence; this is an experimental heuristic, not an interactional optimum;
 - confirm the microphone track is disabled while the system is speaking;
 - note any moment when you naturally wanted to interrupt the system but could not, because that is evidence for the production full-duplex requirement;
 - confirm the loop closes by itself after a long silence;

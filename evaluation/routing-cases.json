@@ -308,10 +308,9 @@
     {
       "id": "scope-edge-2",
       "text": "¿Esto que estoy contando lo escucha alguien más?",
-      "expected": "OFF_TOPIC_COMMAND",
-      "acceptable": ["CLARIFICATION_UNCERTAINTY"],
-      "severity": "normal",
-      "note": "A consent question. Either route is survivable; silently treating it as testimony is not."
+      "expected": "PROTOCOL_INFO",
+      "severity": "critical",
+      "note": "A consent question must receive the application's truthful demo-storage answer; it must never be silently treated as testimony."
     },
     {
       "id": "scope-edge-3",

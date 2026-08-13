@@ -15,6 +15,7 @@ PAUSE = "PAUSE"
 WITHDRAW = "WITHDRAW"
 REVOKE_DELETE = "REVOKE_DELETE"
 OFF_TOPIC = "OFF_TOPIC_COMMAND"
+PROTOCOL_INFO = "PROTOCOL_INFO"
 
 INTENTS = {
     MEMORY,
@@ -25,6 +26,7 @@ INTENTS = {
     WITHDRAW,
     REVOKE_DELETE,
     OFF_TOPIC,
+    PROTOCOL_INFO,
 }
 
 INTERVIEW_MOVES = {
@@ -53,6 +55,12 @@ FIXED_PROTOCOL_RESPONSES = {
         "Este prototipo no borra testimonio automáticamente."
     ),
 }
+
+DEMO_PROTOCOL_INFORMATION = (
+    "En esta demostración queda solamente en una sesión temporal de esta computadora "
+    "y no entra al archivo. Podés borrarlo con «Borrar datos temporales». Esto describe "
+    "este ensayo, no la política final del proyecto."
+)
 
 
 @dataclass(frozen=True)
@@ -105,6 +113,26 @@ def deterministic_intent(text: str) -> str | None:
     """
 
     value = " ".join(_participant_voice(text).lower().split())
+    # Brief Rioplatense floor signals are especially poor model-routing inputs.
+    # They explicitly hand the floor back to the interviewer and must never
+    # become a protocol operation or end the contribution.
+    if re.fullmatch(r"(?:ta|dale|s[ií],? dale|segu[ií]|seguime preguntando)[.!?]*", value):
+        return MEMORY
+    if re.search(r"\b(seguime preguntando|pod[eé]s seguir preguntando)\b", value):
+        return MEMORY
+    # A participant can close one topic while explicitly continuing the
+    # contribution. This boundary has repeatedly confused semantic routers and
+    # the cost of mistaking it for STOP is ending a conversation against the
+    # participant's stated intention.
+    if re.search(
+        r"\b(no quiero hablar|prefiero no (?:hablar|entrar)|preferir[ií]a no (?:hablar|entrar)|"
+        r"dejemos (?:eso|ese tema))\b",
+        value,
+    ) and re.search(
+        r"\b(pero|sigo|sigamos|seguimos|puedo contar|te cuento|volvamos|con lo de)\b",
+        value,
+    ):
+        return MEMORY
     if re.search(
         r"\b(borr[aáe]|elimin[aáe]|revoc[oa]|destru[ií]|suprim[ií])\b.*"
         r"\b(todo|sesión|sesion|audio|grabación|grabacion|datos|lo que dije|testimonio)\b",
@@ -125,6 +153,17 @@ def deterministic_intent(text: str) -> str | None:
         value,
     ):
         return OFF_TOPIC
+    if re.search(
+        r"\b("
+        r"qui[eé]n (va a )?(escucha|escuchar|oye|oir|o[ií]r|ve|ver)|"
+        r"qu[eé] pasa con (esto|la grabaci[oó]n|el audio|mis datos)|"
+        r"(esto|la grabaci[oó]n|el audio) (es|queda) p[uú]blic[oa]?|"
+        r"est[aá]s grabando|se est[aá] grabando|"
+        r"puedo (borrar|eliminar|retirar|sacar) (esto|algo|lo que dije)"
+        r")\b",
+        value,
+    ):
+        return PROTOCOL_INFO
     return None
 
 
@@ -187,6 +226,28 @@ def guard_interview_move(
     if move in {"FOLLOW_UP", "CLARIFY"}:
         if question_count != 1 or not utterance.endswith("?"):
             return None
+        # One question mark can still hide two probes: "qué eran, o cómo se
+        # veían" forces a choice between separate recollective tasks.
+        if re.search(
+            r",\s*(?:o|y)\s+(?:c[oó]mo|qu[eé]|cu[aá]ndo|d[oó]nde|qui[eé]n|cu[aá]l)\b",
+            utterance,
+            re.I,
+        ):
+            return None
+        # A follow-up to hearsay or uncertain material must keep the distance
+        # in the question itself. Otherwise it quietly asks the contributor for
+        # direct access they already said they do not have.
+        if _declares_hearsay(context[grounded_in]) and not _declares_hearsay(utterance):
+            return None
+        # An object/person pronoun with no available antecedent must not be
+        # silently promoted into a known person by a content question. The
+        # model may clarify who was meant, or simply yield the floor.
+        if (
+            move == "FOLLOW_UP"
+            and len(context) == 1
+            and _has_unresolved_person_reference(context[grounded_in])
+        ):
+            return None
         if not _utterance_is_grounded(
             utterance,
             context[grounded_in],
@@ -198,6 +259,13 @@ def guard_interview_move(
         return None
 
     if move == "BACKCHANNEL" and len(utterance.split()) > 8:
+        return None
+    if move in {"BACKCHANNEL", "ACKNOWLEDGE"} and re.match(
+        r"^(?:s[ií]|claro)\b", utterance, re.I
+    ):
+        # These sound like agreement when attached to a remembered fact or an
+        # emotional formulation. Attention can be conveyed without endorsing
+        # what was said.
         return None
     if move == "INVITE_CONTINUE" and len(utterance.split()) > 14:
         return None
@@ -223,6 +291,16 @@ def guard_interview_move(
         # restates it flatly hardens the memory. Keeping the distance is what
         # earns the right to say something back about hedged material.
         if _declares_distance(context[grounded_in]) and not _declares_distance(utterance):
+            return None
+        if re.search(
+            r"\b("
+            r"deja (huella|marca)|te marc[oó]|queda (quiet[oa]|para siempre)|"
+            r"siempre queda|es (muy )?(fuerte|duro|terrible)|"
+            r"como (un|una|si)\b|debe haber sido"
+            r")\b",
+            utterance,
+            re.I,
+        ):
             return None
 
     # Restating someone else's certainty, knowledge or memory is an assertion
@@ -252,13 +330,23 @@ SAFE_INTERVIEW_FALLBACKS = (
 )
 
 
-def safe_interview_fallback(recent_assistant_turns: Iterable[str]) -> tuple[str, str]:
+def safe_interview_fallback(
+    recent_assistant_turns: Iterable[str],
+    intent: str = "",
+) -> tuple[str, str]:
     """Choose a minimal floor-yielding fallback after a rejected model move."""
     recent = tuple(recent_assistant_turns)
-    for move, utterance in SAFE_INTERVIEW_FALLBACKS:
+    candidates = SAFE_INTERVIEW_FALLBACKS
+    if intent == CORRECTION:
+        candidates = (
+            ("BACKCHANNEL", "Te sigo."),
+            ("INVITE_CONTINUE", "Cuando quieras."),
+            *SAFE_INTERVIEW_FALLBACKS,
+        )
+    for move, utterance in candidates:
         if not is_repetitive(utterance, recent):
             return move, utterance
-    return SAFE_INTERVIEW_FALLBACKS[0]
+    return candidates[0]
 
 _STOPWORDS = {
     "algo", "aquello", "como", "cómo", "cuando", "cuándo", "donde", "dónde", "para",
@@ -296,6 +384,15 @@ _DISTANCE = re.compile(
     re.I,
 )
 
+_HEARSAY = re.compile(
+    r"\b("
+    r"cont(ó|o|aron|aba|aban)|dec(ía|ia|ían|ian)|dicen|dijeron|me dijeron|"
+    r"según|segun|de o[ií]das|se comenta|el rumor|"
+    r"por (mi|tu|su) (vieja|viejo|madre|padre|abuela|abuelo|hermana|hermano|t[íi]a|t[íi]o)"
+    r")\b",
+    re.I,
+)
+
 # Predicates that assert somebody's knowledge, memory or certainty. Restating a
 # hedged account with one of these is how an inference enters without ever
 # looking like a leading question — the observed failure was an acknowledgement
@@ -316,6 +413,26 @@ _CERTAINTY = re.compile(
 def _declares_distance(text: str) -> bool:
     """Whether the text marks its material as second-hand, hedged or unremembered."""
     return bool(_DISTANCE.search(text))
+
+
+def _declares_hearsay(text: str) -> bool:
+    """Whether the turn attributes the material to somebody else's account."""
+    return bool(_HEARSAY.search(text))
+
+
+def _has_unresolved_person_reference(text: str) -> bool:
+    """Detect common person-like pronouns that have no antecedent in the turn."""
+    if re.search(r"\b(?:él|ella|ellos|ellas)\b", text, re.I):
+        return True
+    return bool(
+        re.search(
+            r"\b(?:lo|la|los|las)\s+"
+            r"(?:vi|vio|vimos|vieron|conoc[ií]|conoci[oó]|conocimos|"
+            r"encontr[eé]|encontr[oó]|encontramos|escuch[eé]|escuch[oó]|escuchamos)\b",
+            text,
+            re.I,
+        )
+    )
 
 
 def _asserts_certainty(text: str) -> bool:
@@ -353,7 +470,10 @@ def _utterance_is_grounded(
     if move == "FOLLOW_UP" and grounded_in_latest and normalized in _MINIMAL_FOLLOW_UPS:
         return True
     source_words = set(re.findall(r"[a-záéíóúüñ]+", source.lower()))
-    if move == "CLARIFY" and source_words & _AMBIGUOUS_REFERENCES:
+    if move == "CLARIFY" and (
+        source_words & _AMBIGUOUS_REFERENCES
+        or _has_unresolved_person_reference(source)
+    ):
         return bool(re.search(r"\b(a quién|a quiénes|quién|quiénes|te referís|decís)\b", utterance, re.I))
     return False
 

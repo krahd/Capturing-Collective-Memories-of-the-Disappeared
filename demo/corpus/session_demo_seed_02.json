@@ -1,0 +1,696 @@
+{
+  "id": "session_demo_seed_02",
+  "title": "Ficha 02 · la facultad",
+  "created_at": "2026-08-13T07:37:24.508646+00:00",
+  "updated_at": "2026-08-13T07:37:30.636610+00:00",
+  "turns": [
+    {
+      "id": "turn_28f6bd7cf8",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:24.508687+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_1b9055014f",
+      "role": "user",
+      "text": "Mi padre conocía a Julio de la facultad. Estudiaban juntos, arquitectura me parece.",
+      "created_at": "2026-08-13T07:37:24.508700+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_2f7a8f3b7b",
+      "role": "assistant",
+      "text": "¿Cómo era esa relación?",
+      "created_at": "2026-08-13T07:37:24.508713+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_ede8f55080",
+      "role": "user",
+      "text": "A Julio lo vi una sola vez, en el Cerro, en una de esas reuniones de los domingos.",
+      "created_at": "2026-08-13T07:37:24.508723+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_10634d8365",
+      "role": "assistant",
+      "text": "¿Te acordás de cuándo?",
+      "created_at": "2026-08-13T07:37:24.508734+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_1f0f76cd7c",
+      "role": "user",
+      "text": "Fue en el 76. De eso estoy seguro porque ese año nos mudamos.",
+      "created_at": "2026-08-13T07:37:24.508743+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_56e8789a0b",
+      "kind": "person",
+      "text": "Julio",
+      "source_turn_ids": [
+        "turn_1b9055014f"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:26.978207+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_796d41bb8d",
+      "kind": "person",
+      "text": "mi padre",
+      "source_turn_ids": [
+        "turn_1b9055014f"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:26.978268+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_bf7bd02a00",
+      "kind": "entity",
+      "text": "facultad",
+      "source_turn_ids": [
+        "turn_1b9055014f"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:26.978320+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_47e70ef0f6",
+      "kind": "entity",
+      "text": "arquitectura",
+      "source_turn_ids": [
+        "turn_1b9055014f"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:26.978388+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_fd9c519499",
+      "kind": "theme",
+      "text": "estudiar juntos",
+      "source_turn_ids": [
+        "turn_1b9055014f"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:26.978421+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_4329b24eaf",
+      "kind": "person",
+      "text": "Julio",
+      "source_turn_ids": [
+        "turn_ede8f55080"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:29.379488+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_8bf0e0771b",
+      "kind": "place",
+      "text": "Cerro",
+      "source_turn_ids": [
+        "turn_ede8f55080"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:29.379516+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_f3078ab791",
+      "kind": "event",
+      "text": "reuniones de los domingos",
+      "source_turn_ids": [
+        "turn_ede8f55080"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:29.379528+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_bc086bbf4a",
+      "kind": "time",
+      "text": "los domingos",
+      "source_turn_ids": [
+        "turn_ede8f55080"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:29.379539+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_83301fb23c",
+      "kind": "time",
+      "text": "el 76",
+      "source_turn_ids": [
+        "turn_1f0f76cd7c"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:30.636573+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_12bd4d41bd"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_24661cd8a0",
+      "kind": "theme",
+      "text": "mudanza",
+      "source_turn_ids": [
+        "turn_1f0f76cd7c"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:30.636603+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_12bd4d41bd"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_6ffbeebbfa",
+      "at": "2026-08-13T07:37:24.508670+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 02 · la facultad",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_0c7ea5d8f9",
+      "at": "2026-08-13T07:37:24.508693+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_28f6bd7cf8",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_1142e6dad1",
+      "at": "2026-08-13T07:37:24.508707+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Mi padre conocía a Julio de la facultad. Estudiaban juntos, arquitectu…»",
+      "target_id": "turn_1b9055014f",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_fb2a608933",
+      "at": "2026-08-13T07:37:24.508717+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Cómo era esa relación?»",
+      "target_id": "turn_2f7a8f3b7b",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_c00600ad65",
+      "at": "2026-08-13T07:37:24.508728+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «A Julio lo vi una sola vez, en el Cerro, en una de esas reuniones de l…»",
+      "target_id": "turn_ede8f55080",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_dc64b874ba",
+      "at": "2026-08-13T07:37:24.508738+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Te acordás de cuándo?»",
+      "target_id": "turn_10634d8365",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_aa830162c7",
+      "at": "2026-08-13T07:37:24.508748+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Fue en el 76. De eso estoy seguro porque ese año nos mudamos.»",
+      "target_id": "turn_1f0f76cd7c",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_d18fd6a4ea",
+      "at": "2026-08-13T07:37:26.978240+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Julio»",
+      "target_id": "item_56e8789a0b",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1b9055014f"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      }
+    },
+    {
+      "id": "ev_ee158dfb2c",
+      "at": "2026-08-13T07:37:26.978282+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «mi padre»",
+      "target_id": "item_796d41bb8d",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1b9055014f"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      }
+    },
+    {
+      "id": "ev_78d3a0a1a9",
+      "at": "2026-08-13T07:37:26.978357+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (entity): «facultad»",
+      "target_id": "item_bf7bd02a00",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1b9055014f"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      }
+    },
+    {
+      "id": "ev_7f9b26442a",
+      "at": "2026-08-13T07:37:26.978400+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (entity): «arquitectura»",
+      "target_id": "item_47e70ef0f6",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1b9055014f"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      }
+    },
+    {
+      "id": "ev_7ce0989e25",
+      "at": "2026-08-13T07:37:26.978434+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «estudiar juntos»",
+      "target_id": "item_fd9c519499",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1b9055014f"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_6dd7ae32fa"
+      }
+    },
+    {
+      "id": "ev_adb28b25bb",
+      "at": "2026-08-13T07:37:29.379505+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Julio»",
+      "target_id": "item_4329b24eaf",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_ede8f55080"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      }
+    },
+    {
+      "id": "ev_10ed19b894",
+      "at": "2026-08-13T07:37:29.379521+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «Cerro»",
+      "target_id": "item_8bf0e0771b",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_ede8f55080"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      }
+    },
+    {
+      "id": "ev_081398ef5e",
+      "at": "2026-08-13T07:37:29.379533+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (event): «reuniones de los domingos»",
+      "target_id": "item_f3078ab791",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_ede8f55080"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      }
+    },
+    {
+      "id": "ev_c95dfece84",
+      "at": "2026-08-13T07:37:29.379544+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «los domingos»",
+      "target_id": "item_bc086bbf4a",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_ede8f55080"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_84234c7733"
+      }
+    },
+    {
+      "id": "ev_401059b337",
+      "at": "2026-08-13T07:37:30.636591+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «el 76»",
+      "target_id": "item_83301fb23c",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1f0f76cd7c"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_12bd4d41bd"
+      }
+    },
+    {
+      "id": "ev_cdefaf1ce0",
+      "at": "2026-08-13T07:37:30.636608+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «mudanza»",
+      "target_id": "item_24661cd8a0",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_1f0f76cd7c"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_12bd4d41bd"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}

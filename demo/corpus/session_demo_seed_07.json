@@ -1,0 +1,458 @@
+{
+  "id": "session_demo_seed_07",
+  "title": "Ficha 07 · los domingos",
+  "created_at": "2026-08-13T07:37:45.932367+00:00",
+  "updated_at": "2026-08-13T07:37:49.552154+00:00",
+  "turns": [
+    {
+      "id": "turn_e8720c1d0a",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:45.932395+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_5a2434d1d5",
+      "role": "user",
+      "text": "Las reuniones de los domingos en el Cerro siguieron hasta el 79, más o menos.",
+      "created_at": "2026-08-13T07:37:45.932408+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_db13cf2c02",
+      "role": "assistant",
+      "text": "¿Quiénes iban?",
+      "created_at": "2026-08-13T07:37:45.932421+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_fd8d605ed1",
+      "role": "user",
+      "text": "Venía gente que yo no conocía y a mí me mandaban al fondo a jugar. Se escuchaba igual.",
+      "created_at": "2026-08-13T07:37:45.932431+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_7fdaf00e41",
+      "kind": "event",
+      "text": "reuniones de los domingos en el Cerro",
+      "source_turn_ids": [
+        "turn_5a2434d1d5"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:48.141577+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_18a67a284e",
+      "kind": "time",
+      "text": "el 79",
+      "source_turn_ids": [
+        "turn_5a2434d1d5"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:48.141606+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_3bcc45ef3a",
+      "kind": "place",
+      "text": "el Cerro",
+      "source_turn_ids": [
+        "turn_5a2434d1d5"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:48.141620+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_846e8fb7bb",
+      "kind": "uncertainty",
+      "text": "más o menos",
+      "source_turn_ids": [
+        "turn_5a2434d1d5"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:48.141632+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_fd6d6a655d",
+      "kind": "person",
+      "text": "yo",
+      "source_turn_ids": [
+        "turn_fd8d605ed1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:49.552106+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_020c009ab8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_29ca1a8478",
+      "kind": "event",
+      "text": "jugar",
+      "source_turn_ids": [
+        "turn_fd8d605ed1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:49.552135+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_020c009ab8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_f71f77127d",
+      "kind": "place",
+      "text": "al fondo",
+      "source_turn_ids": [
+        "turn_fd8d605ed1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:49.552148+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_020c009ab8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_30f2514c78",
+      "at": "2026-08-13T07:37:45.932386+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 07 · los domingos",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_2685986b56",
+      "at": "2026-08-13T07:37:45.932401+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_e8720c1d0a",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_0ddffb94e0",
+      "at": "2026-08-13T07:37:45.932415+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Las reuniones de los domingos en el Cerro siguieron hasta el 79, más o…»",
+      "target_id": "turn_5a2434d1d5",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_0663a24f03",
+      "at": "2026-08-13T07:37:45.932425+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Quiénes iban?»",
+      "target_id": "turn_db13cf2c02",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_33421e8a19",
+      "at": "2026-08-13T07:37:45.932436+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Venía gente que yo no conocía y a mí me mandaban al fondo a jugar. Se…»",
+      "target_id": "turn_fd8d605ed1",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_1b46fe3aa5",
+      "at": "2026-08-13T07:37:48.141595+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (event): «reuniones de los domingos en el Cerro»",
+      "target_id": "item_7fdaf00e41",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_5a2434d1d5"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      }
+    },
+    {
+      "id": "ev_c75ce891c9",
+      "at": "2026-08-13T07:37:48.141612+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «el 79»",
+      "target_id": "item_18a67a284e",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_5a2434d1d5"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      }
+    },
+    {
+      "id": "ev_febf5b28bd",
+      "at": "2026-08-13T07:37:48.141624+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «el Cerro»",
+      "target_id": "item_3bcc45ef3a",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_5a2434d1d5"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      }
+    },
+    {
+      "id": "ev_4586426f24",
+      "at": "2026-08-13T07:37:48.141637+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «más o menos»",
+      "target_id": "item_846e8fb7bb",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_5a2434d1d5"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_7813353a8f"
+      }
+    },
+    {
+      "id": "ev_ad6e8b867b",
+      "at": "2026-08-13T07:37:49.552123+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «yo»",
+      "target_id": "item_fd6d6a655d",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fd8d605ed1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_020c009ab8"
+      }
+    },
+    {
+      "id": "ev_27bac2a56e",
+      "at": "2026-08-13T07:37:49.552140+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (event): «jugar»",
+      "target_id": "item_29ca1a8478",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fd8d605ed1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_020c009ab8"
+      }
+    },
+    {
+      "id": "ev_19727bd43f",
+      "at": "2026-08-13T07:37:49.552153+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «al fondo»",
+      "target_id": "item_f71f77127d",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fd8d605ed1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_020c009ab8"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}

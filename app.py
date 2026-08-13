@@ -3,9 +3,12 @@ from __future__ import annotations
 import asyncio
 from collections import deque
 from contextlib import asynccontextmanager
+import json
 import os
 from pathlib import Path
+import shutil
 import statistics
+import tempfile
 import time
 from typing import Any
 
@@ -16,9 +19,11 @@ from pydantic import BaseModel, Field
 
 from controller import (
     CORRECTION,
+    DEMO_PROTOCOL_INFORMATION,
     FIXED_PROTOCOL_RESPONSES,
     FIXED_REDIRECT,
     OFF_TOPIC,
+    PROTOCOL_INFO,
     deterministic_intent,
     guard_interview_move,
     protocol_status,
@@ -31,6 +36,8 @@ from state import (
     ACTOR_MODEL,
     ACTOR_SYSTEM,
     ORIGIN_MODEL,
+    ACTOR_PARTICIPANT,
+    Session,
     SessionStore,
     export_markdown,
     load_recorded_session,
@@ -43,6 +50,41 @@ ROOT = Path(__file__).resolve().parent
 store = SessionStore(ROOT / "data" / "sessions")
 llm = LLMClient()
 voice = VoiceService()
+DEMO_CORPUS_ROOT = ROOT / "demo" / "corpus"
+TRANSIENT_AUDIO_ROOT = Path(tempfile.mkdtemp(prefix="ccm-demo-audio-"))
+
+
+def load_demo_seed_corpus() -> int:
+    """Adopt the frozen researcher-authored corpus once per process."""
+    if not DEMO_CORPUS_ROOT.exists():
+        return 0
+    known = {session.id for session in store.list()}
+    loaded = 0
+    for path in sorted(DEMO_CORPUS_ROOT.glob("session_*.json")):
+        try:
+            session = Session.from_dict(json.loads(path.read_text(encoding="utf-8")))
+        except (ValueError, TypeError, KeyError):
+            continue
+        if session.id in known:
+            continue
+        session.session_kind = "demo_seed"
+        session.storage_policy = "ephemeral"
+        session.demo_run_id = ""
+        store.adopt(session)
+        known.add(session.id)
+        loaded += 1
+    return loaded
+
+
+def cleanup_transient_demo_data() -> None:
+    run_ids = {
+        session.demo_run_id
+        for session in store.list()
+        if session.storage_policy == "ephemeral" and session.demo_run_id
+    }
+    for run_id in run_ids:
+        store.discard_demo_run(run_id)
+    shutil.rmtree(TRANSIENT_AUDIO_ROOT, ignore_errors=True)
 
 
 @asynccontextmanager
@@ -51,6 +93,7 @@ async def lifespan(_app: FastAPI):
     # resident Ollama weights, resident Whisper and a resident Piper voice.
     # Nothing here may be deferred to the first turn: whatever is left cold is
     # paid for by the first person who speaks.
+    load_demo_seed_corpus()
     await llm.start()
     await asyncio.to_thread(voice.start)
     await asyncio.to_thread(voice.warm)
@@ -59,6 +102,7 @@ async def lifespan(_app: FastAPI):
     finally:
         await llm.close()
         await asyncio.to_thread(voice.close)
+        cleanup_transient_demo_data()
 
 
 app = FastAPI(title="Collective Memories Prototype", version="0.1.0", lifespan=lifespan)
@@ -92,6 +136,23 @@ aggregates = AggregateCache()
 
 # Enough to review a 10–15 turn spoken session without unbounded growth.
 latency_traces: deque[dict[str, Any]] = deque(maxlen=64)
+
+
+def aggregate_sessions(scope: str = "", run_id: str = "") -> list[Session]:
+    """Select the evidence visible in one aggregate research view."""
+    sessions = store.list()
+    if scope != "demo":
+        return sessions
+    return [
+        session
+        for session in sessions
+        if session.session_kind == "demo_seed"
+        or (
+            session.session_kind == "demo_live"
+            and bool(run_id)
+            and session.demo_run_id == run_id
+        )
+    ]
 
 
 class RevalidatedStatics(StaticFiles):
@@ -154,6 +215,10 @@ class WithdrawRequest(BaseModel):
     reason: str = ""
 
 
+class ControlCreate(BaseModel):
+    action: str = Field(pattern="^(PAUSE|RESUME|STOP)$")
+
+
 class SpeechCreate(BaseModel):
     text: str = Field(min_length=1, max_length=1000)
 
@@ -198,13 +263,62 @@ def create_session(body: SessionCreate) -> dict[str, Any]:
     return session.to_dict()
 
 
+def _new_demo_session(run_id: str) -> Session:
+    number = 1 + sum(
+        1
+        for candidate in store.list()
+        if candidate.demo_run_id == run_id and candidate.session_kind == "demo_live"
+    )
+    session = store.create(
+        f"Contribución temporal {number:02d}",
+        session_kind="demo_live",
+        storage_policy="ephemeral",
+        demo_run_id=run_id,
+    )
+    session.add_turn("assistant", opening_message(), actor=ACTOR_SYSTEM)
+    store.save(session)
+    return session
+
+
+@app.post("/api/demo/runs")
+def create_demo_run() -> dict[str, Any]:
+    """Start an isolated, process-local meeting sandbox."""
+    load_demo_seed_corpus()
+    run_id = new_id("demo")
+    session = _new_demo_session(run_id)
+    return {"run_id": run_id, "session": session.to_dict(), "temporary": True}
+
+
+@app.post("/api/demo/runs/{run_id}/sessions")
+def create_demo_run_session(run_id: str) -> dict[str, Any]:
+    if not any(session.demo_run_id == run_id for session in store.list()):
+        raise HTTPException(404, "Demostración temporal no encontrada")
+    return _new_demo_session(run_id).to_dict()
+
+
+@app.delete("/api/demo/runs/{run_id}")
+def delete_demo_run(run_id: str) -> dict[str, Any]:
+    removed = store.discard_demo_run(run_id)
+    shutil.rmtree(TRANSIENT_AUDIO_ROOT / safe_filename(run_id), ignore_errors=True)
+    if not removed:
+        raise HTTPException(404, "Demostración temporal no encontrada")
+    return {"run_id": run_id, "sessions_removed": len(removed), "audio_removed": True}
+
+
 @app.post("/api/sessions/demo")
 def create_demo_session() -> dict[str, Any]:
     """Load the researcher-authored example transcript. Never a live conversation."""
+    existing = next(
+        (session for session in store.list() if session.session_kind == "recorded_example"),
+        None,
+    )
+    if existing is not None:
+        return existing.to_dict()
     try:
         session = load_recorded_session(ROOT / "demo" / "sesion-ejemplo.json")
     except FileNotFoundError as exc:
         raise HTTPException(404, "No hay sesión de ejemplo disponible") from exc
+    session.session_kind = "recorded_example"
     return store.adopt(session).to_dict()
 
 
@@ -294,8 +408,14 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
             actor=ACTOR_SYSTEM,
         )
 
-    if intent == OFF_TOPIC or intent in FIXED_PROTOCOL_RESPONSES:
-        assistant_text = FIXED_REDIRECT if intent == OFF_TOPIC else FIXED_PROTOCOL_RESPONSES[intent]
+    if intent == OFF_TOPIC or intent == PROTOCOL_INFO or intent in FIXED_PROTOCOL_RESPONSES:
+        assistant_text = (
+            FIXED_REDIRECT
+            if intent == OFF_TOPIC
+            else DEMO_PROTOCOL_INFORMATION
+            if intent == PROTOCOL_INFO
+            else FIXED_PROTOCOL_RESPONSES[intent]
+        )
         status = protocol_status(intent)
         if status:
             session.set_status(status, intent)
@@ -318,7 +438,7 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         store.save(session)
         return {
             "intent": intent,
-            "move": "REDIRECT" if intent == OFF_TOPIC else intent,
+            "move": "REDIRECT" if intent == OFF_TOPIC else "PROTOCOL",
             "user_turn": user_turn.__dict__,
             "assistant_turn": assistant_turn.__dict__,
             "session": session.to_dict(),
@@ -359,7 +479,7 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         turn_kind = "interview_move"
         grounded_in = [candidate.grounded_in]
     else:
-        move_name, assistant_text = safe_interview_fallback(recent_assistant)
+        move_name, assistant_text = safe_interview_fallback(recent_assistant, intent)
         actor = ACTOR_SYSTEM
         turn_kind = "interview_fallback"
         grounded_in = [user_turn.id]
@@ -451,7 +571,12 @@ def _interview_history(session) -> list[dict[str, str]]:
         turn for turn in eligible if turn.id in grounded_ids and turn.role == "user"
     ][-4:]
     return [
-        {"id": turn.id, "role": turn.role, "text": turn.text}
+        {
+            "id": turn.id,
+            "role": turn.role,
+            "text": turn.text,
+            "intent": turn.intent,
+        }
         for turn in [*anchors, *recent]
     ]
 
@@ -462,6 +587,38 @@ def resume_session(session_id: str) -> dict[str, Any]:
     if session.status != "paused":
         raise HTTPException(409, "Sólo una sesión pausada puede reanudarse")
     session.set_status("active", "RESUME")
+    store.save(session)
+    return session.to_dict()
+
+
+@app.post("/api/sessions/{session_id}/controls")
+def apply_session_control(session_id: str, body: ControlCreate) -> dict[str, Any]:
+    """Apply an explicit UI control without inventing participant speech."""
+    session = get_session_or_404(session_id)
+    if session.is_recorded:
+        raise HTTPException(409, "La transcripción grabada no admite controles")
+    action = body.action
+    if action == "PAUSE":
+        if session.status != "active":
+            raise HTTPException(409, "Sólo una conversación activa puede pausarse")
+        next_status = "paused"
+    elif action == "RESUME":
+        if session.status != "paused":
+            raise HTTPException(409, "Sólo una conversación pausada puede reanudarse")
+        next_status = "active"
+    else:
+        if session.status not in {"active", "paused"}:
+            raise HTTPException(409, "La conversación ya está terminada")
+        next_status = "stopped"
+    session.record(
+        ACTOR_PARTICIPANT,
+        "control_participante",
+        f"Control explícito de interfaz: {action}",
+        target_id=session.id,
+        target_kind="session",
+        detail={"action": action, "source": "interface_control"},
+    )
+    session.set_status(next_status, action)
     store.save(session)
     return session.to_dict()
 
@@ -486,15 +643,43 @@ async def transcribe_voice(session_id: str, request: Request) -> dict[str, Any]:
     except RuntimeError as exc:
         raise HTTPException(503, str(exc)) from exc
 
+    if session.storage_policy == "ephemeral" and store.demo_run_is_discarded(
+        session.demo_run_id
+    ):
+        raise HTTPException(410, "La demostración temporal fue borrada durante la transcripción")
+
     audio_id = new_id("audio")
-    relative = Path("data") / "audio" / safe_filename(session.id) / f"{audio_id}{suffix}"
-    absolute = ROOT / relative
+    if session.storage_policy == "ephemeral":
+        run_id = safe_filename(session.demo_run_id or "unscoped")
+        relative = Path(run_id) / safe_filename(session.id) / f"{audio_id}{suffix}"
+        absolute = TRANSIENT_AUDIO_ROOT / relative
+        stored_path = f"temporary://{relative.as_posix()}"
+    else:
+        relative = Path("data") / "audio" / safe_filename(session.id) / f"{audio_id}{suffix}"
+        absolute = ROOT / relative
+        stored_path = str(relative)
     absolute.parent.mkdir(parents=True, exist_ok=True)
     absolute.write_bytes(audio)
     record = session.add_audio_record(
-        str(relative), mime_type, len(audio), transcript, asr_detail, record_id=audio_id
+        stored_path,
+        mime_type,
+        len(audio),
+        transcript,
+        {**asr_detail, "storage_policy": session.storage_policy},
+        record_id=audio_id,
     )
     store.save(session)
+    if session.storage_policy == "ephemeral" and store.demo_run_is_discarded(
+        session.demo_run_id
+    ):
+        # Covers cleanup racing the few instructions between the pre-write
+        # tombstone check and this save. If cleanup started first, no temporary
+        # bytes are allowed to reappear after it returned.
+        shutil.rmtree(
+            TRANSIENT_AUDIO_ROOT / safe_filename(session.demo_run_id),
+            ignore_errors=True,
+        )
+        raise HTTPException(410, "La demostración temporal fue borrada durante la transcripción")
     try:
         vad_wait_ms = max(0, min(10000, round(float(request.headers.get("x-vad-wait-ms", "0")))))
     except ValueError:
@@ -746,10 +931,35 @@ async def extract_in_background(session_id: str, turn_id: str) -> None:
 
 
 @app.get("/api/memory-field")
-def memory_field(focus: str = "") -> dict[str, Any]:
-    """The accumulated graph across every stored conversation."""
-    field = dict(aggregates.memory_field())
+def memory_field(
+    focus: str = "",
+    scope: str = "",
+    run_id: str = "",
+    stage: str = "full",
+) -> dict[str, Any]:
+    """The accumulated graph, optionally isolated to the meeting sandbox."""
+    if scope and scope != "demo":
+        raise HTTPException(400, "Alcance de corpus desconocido")
+    if stage not in {"full", "source"}:
+        raise HTTPException(400, "Etapa de campo desconocida")
+    selected = aggregate_sessions(scope, run_id)
+    source_only = {
+        session.id
+        for session in selected
+        if stage == "source"
+        and session.session_kind == "demo_live"
+        and (not focus or session.id == focus)
+    }
+    field = (
+        build_memory_field(selected, source_only_session_ids=source_only)
+        if scope == "demo"
+        else dict(aggregates.memory_field())
+    )
+    field = dict(field)
     field["focus"] = focus
+    field["scope"] = scope or "all"
+    field["run_id"] = run_id
+    field["stage"] = stage
     field["version"] = store.field_revision
     return field
 
@@ -776,12 +986,16 @@ async def memory_field_events() -> StreamingResponse:
 
 
 @app.get("/api/timeline")
-def timeline() -> dict[str, Any]:
+def timeline(scope: str = "", run_id: str = "") -> dict[str, Any]:
     """A chronology the accumulated material produces without resolving it first.
 
     Years are read out of the phrases people used; the phrases stay attached and
     a subject dated two ways appears at both years.
     """
+    if scope and scope != "demo":
+        raise HTTPException(400, "Alcance de corpus desconocido")
+    if scope == "demo":
+        return build_timeline(aggregate_sessions(scope, run_id))
     return aggregates.chronology()
 
 

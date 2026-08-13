@@ -28,6 +28,45 @@ def test_session_preserves_exact_transcript_and_roundtrips(tmp_path):
     assert data["turns"][0]["text"] == "Yo dije 'por el 78', no 1978 seguro."
 
 
+def test_ephemeral_session_never_writes_a_json_file(tmp_path):
+    store = SessionStore(tmp_path)
+    session = store.create(
+        "Contribución temporal",
+        session_kind="demo_live",
+        storage_policy="ephemeral",
+        demo_run_id="demo_test",
+    )
+    session.add_turn("user", "Un recuerdo no sensible.")
+    store.save(session)
+
+    assert store.get(session.id) is session
+    assert not (tmp_path / f"{session.id}.json").exists()
+    assert session in store.list()
+
+    removed = store.discard_demo_run("demo_test")
+    assert removed == [session.id]
+    assert session not in store.list()
+
+
+def test_late_background_save_cannot_resurrect_a_cleaned_demo_run(tmp_path):
+    store = SessionStore(tmp_path)
+    session = store.create(
+        "Contribución temporal",
+        session_kind="demo_live",
+        storage_policy="ephemeral",
+        demo_run_id="demo_closed",
+    )
+
+    store.discard_demo_run("demo_closed")
+    session.add_turn("user", "Una extracción terminó después de la limpieza.")
+    store.save(session)
+
+    with pytest.raises(KeyError):
+        store.get(session.id)
+    assert session not in store.list()
+    assert not (tmp_path / f"{session.id}.json").exists()
+
+
 def test_interview_move_metadata_roundtrips_and_exports(tmp_path):
     store = SessionStore(tmp_path)
     session = store.create("Ritmo")

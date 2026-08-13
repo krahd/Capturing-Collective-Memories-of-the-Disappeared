@@ -26,6 +26,7 @@ second copy beside it.
 from __future__ import annotations
 
 import asyncio
+import json
 from pathlib import Path
 import sys
 
@@ -34,7 +35,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from model import LLMClient  # noqa: E402
-from state import ACTOR_SYSTEM, ORIGIN_MODEL, SessionStore, new_id  # noqa: E402
+from state import ACTOR_SYSTEM, ORIGIN_MODEL, Session, SessionStore, new_id  # noqa: E402
+
+FROZEN_ROOT = ROOT / "demo" / "corpus"
 
 # (title, [(role, text), ...]) — assistant turns are authored exemplars.
 CONVERSATIONS: list[tuple[str, list[tuple[str, str]]]] = [
@@ -105,6 +108,30 @@ CONVERSATIONS: list[tuple[str, list[tuple[str, str]]]] = [
             ("user", "Venía gente que yo no conocía y a mí me mandaban al fondo a jugar. Se escuchaba igual."),
         ],
     ),
+    (
+        "Ficha 08 · Tito en la casa",
+        [
+            ("assistant", "Podés empezar por donde quieras."),
+            ("user", "Había uno al que le decían Tito, que a veces aparecía por casa."),
+            ("assistant", "Ajá."),
+        ],
+    ),
+    (
+        "Ficha 09 · Tito en La Teja",
+        [
+            ("assistant", "Podés empezar por donde quieras."),
+            ("user", "Tito vivía por La Teja."),
+            ("assistant", "Contame."),
+        ],
+    ),
+    (
+        "Ficha 10 · un nombre usado",
+        [
+            ("assistant", "Podés empezar por donde quieras."),
+            ("user", "Creo que Julio usaba el nombre Tito."),
+            ("assistant", "Ajá."),
+        ],
+    ),
 ]
 
 
@@ -120,10 +147,24 @@ def discard_previous(store: SessionStore, title: str) -> int:
     return sum(1 for session_id in stale if store.discard(session_id))
 
 
-async def build_one(store: SessionStore, llm: LLMClient, title: str, script: list[tuple[str, str]]) -> None:
+async def build_one(
+    store: SessionStore,
+    llm: LLMClient,
+    index: int,
+    title: str,
+    script: list[tuple[str, str]],
+) -> None:
     discarded = discard_previous(store, title)
-    session = store.create(title)
-    session.is_recorded = True
+    # Stable ids make the frozen snapshot idempotent and keep links usable in
+    # prepared URLs. Turn/item ids remain real generated record ids.
+    session = Session(
+        id=f"session_demo_seed_{index:02d}",
+        title=title,
+        is_recorded=True,
+        session_kind="demo_seed",
+        storage_policy="persistent",
+    )
+    session.record(ACTOR_SYSTEM, "sesion_creada", f"Sesión sintética preparada: {title}")
     for role, text in script:
         session.add_turn(role, text, actor=ACTOR_SYSTEM if role == "assistant" else None)
 
@@ -152,6 +193,12 @@ async def build_one(store: SessionStore, llm: LLMClient, title: str, script: lis
             except ValueError:
                 continue
     store.save(session)
+    FROZEN_ROOT.mkdir(parents=True, exist_ok=True)
+    frozen = FROZEN_ROOT / f"session_demo_seed_{index:02d}.json"
+    frozen.write_text(
+        json.dumps(session.to_dict(), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     note = f" (reemplaza {discarded} anterior[es])" if discarded else ""
     print(f"  {title}: {len(testimony)} recuerdos, {created} interpretaciones del modelo{note}")
 
@@ -165,8 +212,8 @@ async def main() -> None:
         )
     store = SessionStore(ROOT / "data" / "sessions")
     print(f"Construyendo {len(CONVERSATIONS)} conversaciones con {llm.model}…")
-    for title, script in CONVERSATIONS:
-        await build_one(store, llm, title, script)
+    for index, (title, script) in enumerate(CONVERSATIONS, start=1):
+        await build_one(store, llm, index, title, script)
     print("Listo. Abrí la aplicación para ver el campo de memoria.")
 
 

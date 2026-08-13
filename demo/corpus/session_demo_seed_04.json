@@ -1,0 +1,458 @@
+{
+  "id": "session_demo_seed_04",
+  "title": "Ficha 04 · la maestra",
+  "created_at": "2026-08-13T07:37:34.547726+00:00",
+  "updated_at": "2026-08-13T07:37:38.110179+00:00",
+  "turns": [
+    {
+      "id": "turn_2dbe852f5f",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:34.547758+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_fc8d8d4fa1",
+      "role": "user",
+      "text": "La maestra Elena preguntaba por mi tío Aníbal, y después dejó de preguntar. Nunca supe si le dijeron algo.",
+      "created_at": "2026-08-13T07:37:34.547771+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_7ee241bf8b",
+      "role": "assistant",
+      "text": "¿Dónde era eso?",
+      "created_at": "2026-08-13T07:37:34.547784+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_e10eb90435",
+      "role": "user",
+      "text": "En la escuela del Cerro. Yo estaba en cuarto, creo.",
+      "created_at": "2026-08-13T07:37:34.547794+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_6a5acccfc4",
+      "kind": "person",
+      "text": "Elena",
+      "source_turn_ids": [
+        "turn_fc8d8d4fa1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:36.569812+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_6550196e3d",
+      "kind": "person",
+      "text": "Aníbal",
+      "source_turn_ids": [
+        "turn_fc8d8d4fa1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:36.569842+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_78fead6de3",
+      "kind": "theme",
+      "text": "pregunta sobre Aníbal",
+      "source_turn_ids": [
+        "turn_fc8d8d4fa1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:36.569854+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_85e77610d4",
+      "kind": "uncertainty",
+      "text": "Nunca supe si le dijeron algo",
+      "source_turn_ids": [
+        "turn_fc8d8d4fa1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:36.569866+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_2aab8a0435",
+      "kind": "place",
+      "text": "la escuela del Cerro",
+      "source_turn_ids": [
+        "turn_e10eb90435"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:38.110127+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_d9a7639aff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_382d77ad97",
+      "kind": "time",
+      "text": "cuarto",
+      "source_turn_ids": [
+        "turn_e10eb90435"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:38.110158+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_d9a7639aff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_9fe75f394d",
+      "kind": "uncertainty",
+      "text": "creo",
+      "source_turn_ids": [
+        "turn_e10eb90435"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:38.110172+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_d9a7639aff"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_09e0147b92",
+      "at": "2026-08-13T07:37:34.547748+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 04 · la maestra",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_f9d2b86b9e",
+      "at": "2026-08-13T07:37:34.547764+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_2dbe852f5f",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_f17db8da1e",
+      "at": "2026-08-13T07:37:34.547778+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «La maestra Elena preguntaba por mi tío Aníbal, y después dejó de pregu…»",
+      "target_id": "turn_fc8d8d4fa1",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_bf2f1932c0",
+      "at": "2026-08-13T07:37:34.547788+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Dónde era eso?»",
+      "target_id": "turn_7ee241bf8b",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_712db99e45",
+      "at": "2026-08-13T07:37:34.547798+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «En la escuela del Cerro. Yo estaba en cuarto, creo.»",
+      "target_id": "turn_e10eb90435",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_717f55efe5",
+      "at": "2026-08-13T07:37:36.569830+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Elena»",
+      "target_id": "item_6a5acccfc4",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fc8d8d4fa1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      }
+    },
+    {
+      "id": "ev_7460b73e50",
+      "at": "2026-08-13T07:37:36.569847+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Aníbal»",
+      "target_id": "item_6550196e3d",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fc8d8d4fa1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      }
+    },
+    {
+      "id": "ev_60e8ca06be",
+      "at": "2026-08-13T07:37:36.569859+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (theme): «pregunta sobre Aníbal»",
+      "target_id": "item_78fead6de3",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fc8d8d4fa1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      }
+    },
+    {
+      "id": "ev_56458dd6d8",
+      "at": "2026-08-13T07:37:36.569871+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «Nunca supe si le dijeron algo»",
+      "target_id": "item_85e77610d4",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_fc8d8d4fa1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_b86b3b903e"
+      }
+    },
+    {
+      "id": "ev_0fdf600d64",
+      "at": "2026-08-13T07:37:38.110146+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «la escuela del Cerro»",
+      "target_id": "item_2aab8a0435",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_e10eb90435"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_d9a7639aff"
+      }
+    },
+    {
+      "id": "ev_6712648fcb",
+      "at": "2026-08-13T07:37:38.110164+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «cuarto»",
+      "target_id": "item_382d77ad97",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_e10eb90435"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_d9a7639aff"
+      }
+    },
+    {
+      "id": "ev_5cf0898ed0",
+      "at": "2026-08-13T07:37:38.110177+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «creo»",
+      "target_id": "item_9fe75f394d",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_e10eb90435"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_d9a7639aff"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}

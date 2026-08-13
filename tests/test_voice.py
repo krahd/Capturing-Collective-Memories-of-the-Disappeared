@@ -16,8 +16,14 @@ def test_voice_service_reports_missing_components(monkeypatch):
 
     assert config["asr_configured"] is False
     assert config["tts_configured"] is False
+    assert config["end_of_turn_ms"] == 2200
     assert "whisper-cli" in config["missing"]["asr"]
     assert "PIPER_MODEL" in config["missing"]["tts"]
+
+
+def test_voice_end_of_turn_setting_is_clamped(monkeypatch):
+    monkeypatch.setenv("VOICE_END_OF_TURN_MS", "9000")
+    assert VoiceService().config()["end_of_turn_ms"] == 5000
 
 
 def test_voice_service_recognises_existing_explicit_paths(tmp_path, monkeypatch):

@@ -4,112 +4,165 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Memorias — prototipo conversacional</title>
-  <link rel="stylesheet" href="/static/styles.css?v=20260812-1" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260813-2" />
 </head>
 <body>
   <header class="topbar">
-    <div>
+    <div class="brand">
       <strong>Memorias</strong>
-      <span class="muted">prototipo de investigación</span>
+      <span>prototipo de investigación</span>
     </div>
+    <nav class="mode-switch" aria-label="Vistas del prototipo">
+      <button id="mode-capture" class="mode-button active" type="button" aria-pressed="true">Contribuir</button>
+      <button id="mode-explore" class="mode-button" type="button" aria-pressed="false">Explorar el corpus</button>
+    </nav>
     <div class="toolbar">
-      <!-- Running on this machine is the claim worth showing. The model id is
-           an implementation detail and lives in the record. -->
       <button id="model-status" class="status" type="button">comprobando modelo…</button>
-      <button id="new-session">Nueva conversación</button>
-      <button id="load-demo" class="ghost">Sesión de ejemplo</button>
+      <button id="new-session" class="ghost" type="button">Nueva contribución</button>
+      <button id="load-demo" class="ghost" type="button">Ejemplo grabado</button>
+      <button id="clear-demo" class="subtle" type="button">Borrar datos temporales</button>
     </div>
   </header>
 
   <div id="app-status" class="startup-banner" role="status">
-    Cargando la interfaz… Si este mensaje no desaparece, recargá la página una vez.
+    Preparando la conversación local…
   </div>
   <noscript>
     <div class="startup-banner error">Esta interfaz necesita JavaScript habilitado.</div>
   </noscript>
 
-  <main class="layout">
-    <section class="conversation-panel">
-      <div class="panel-heading">
-        <div>
-          <h1>Conversación</h1>
-          <p>Contá por donde quieras. La estructura de la derecha se arma sola.</p>
-        </div>
-      </div>
-      <div id="recorded-banner" class="recorded-banner" hidden>
-        <strong>Transcripción grabada.</strong>
-        Texto redactado por el investigador. No es una conversación en vivo ni testimonio de un participante.
-      </div>
-      <div id="conversation" class="conversation" aria-live="polite"></div>
-      <form id="composer" class="composer">
-        <textarea id="message" rows="3" placeholder="Escribí acá…" disabled></textarea>
-        <div class="voice-row">
-          <button id="voice-toggle" class="voice-button" type="button" disabled>
-            <span aria-hidden="true">●</span> Hablar
-          </button>
-          <div class="voice-copy">
-            <strong>Conversación por voz</strong>
-            <span id="voice-status" class="muted">Comprobando micrófono y modelos de voz…</span>
+  <main>
+    <section id="capture-view" class="app-view capture-view" aria-labelledby="capture-title">
+      <div class="capture-shell">
+        <div class="capture-intro">
+          <span class="eyebrow">Vista para quien contribuye</span>
+          <h1 id="capture-title">Compartir un recuerdo</h1>
+          <p class="capture-lead">No tiene que ser una historia completa. Podés empezar por una persona, una frase, un lugar, una fotografía o algo que te hayan contado.</p>
+          <div class="ground-rules" role="note">
+            <strong>Ensayo con datos temporales.</strong>
+            <span>No uses información sensible. Podés decir que no recordás, corregir, saltar un tema, pausar o terminar.</span>
           </div>
-          <button id="resume-session" type="button" hidden>Reanudar</button>
         </div>
-        <div class="composer-row">
-          <span id="send-status" class="muted"></span>
-          <button id="send" type="submit" disabled>Enviar</button>
+
+        <div id="recorded-banner" class="recorded-banner" hidden>
+          <strong>Transcripción grabada.</strong>
+          Texto redactado por el investigador. No es una conversación en vivo ni testimonio de un participante.
         </div>
-      </form>
+
+        <div id="conversation" class="conversation" aria-live="polite" aria-label="Transcripción de la conversación"></div>
+
+        <form id="composer" class="composer">
+          <div class="voice-stage">
+            <button id="voice-toggle" class="voice-button" type="button" disabled>
+              <span class="voice-dot" aria-hidden="true"></span>
+              <span id="voice-button-label">Empezar por voz</span>
+            </button>
+            <div class="voice-copy">
+              <strong>Voz local</strong>
+              <span id="voice-status">Comprobando micrófono y modelos de voz…</span>
+            </div>
+          </div>
+
+          <details class="text-fallback">
+            <summary>También podés escribir</summary>
+            <label for="message" class="sr-only">Escribí tu contribución</label>
+            <textarea id="message" rows="3" placeholder="Escribí acá…" disabled></textarea>
+            <div class="composer-row">
+              <span id="send-status" class="muted" role="status"></span>
+              <button id="send" type="submit" disabled>Enviar</button>
+            </div>
+          </details>
+
+          <div class="session-controls" aria-label="Controles de la contribución">
+            <button id="pause-session" type="button">Pausar</button>
+            <button id="resume-session" type="button" hidden>Reanudar</button>
+            <button id="stop-session" class="subtle" type="button">Terminar contribución</button>
+            <button id="show-corpus" class="primary-light" type="button">Ver cómo se incorpora</button>
+          </div>
+        </form>
+      </div>
     </section>
 
-    <aside class="field-panel">
-      <div class="field-counters" id="field-counters"></div>
-
-      <div class="field-graph-wrap">
-        <svg id="field-graph" class="field-graph" role="img"
-             aria-label="Estructura de memoria acumulada entre conversaciones"></svg>
-        <div id="field-empty" class="field-empty" hidden>
-          La estructura aparece a medida que se conversa.
+    <section id="explore-view" class="app-view explore-view" hidden aria-labelledby="explore-title">
+      <div class="explore-heading">
+        <div>
+          <span class="eyebrow">Vista de investigación · no se muestra durante la captura</span>
+          <h1 id="explore-title">Campo de memoria</h1>
+          <p>Actos de recuerdo preservados, interpretaciones provisionales y recurrencias entre conversaciones.</p>
         </div>
-        <div id="node-detail" class="node-detail" hidden></div>
+        <button id="back-to-capture" type="button">Volver a contribuir</button>
+      </div>
 
-        <!-- One view the accumulated material actually produces. -->
-        <section id="timeline" class="timeline" hidden aria-label="Cronología">
-          <div class="timeline-head">
-            <div>
-              <strong>Cronología</strong>
-              <span id="timeline-counts" class="muted"></span>
-            </div>
-            <button id="close-timeline" type="button">volver al campo</button>
+      <div class="research-layout">
+        <aside class="source-rail">
+          <div>
+            <span class="strip-label">Contribución actual</span>
+            <div id="current-source" class="current-source"></div>
           </div>
-          <svg id="timeline-axis" class="timeline-axis" role="img"
-               aria-label="Años nombrados en las conversaciones"></svg>
-          <div id="timeline-detail" class="timeline-detail"></div>
+          <ol id="stage-status" class="stage-status" aria-live="polite">
+            <li id="stage-source"><span>1</span><div><strong>Contribución preservada</strong><small>Existe antes de ser interpretada.</small></div></li>
+            <li id="stage-derived"><span>2</span><div><strong>Interpretación provisional incorporada</strong><small>Personas, lugares y fechas llegan después.</small></div></li>
+            <li id="stage-shared"><span>3</span><div><strong>Posible coincidencia entre conversaciones</strong><small>Recurrencia, no confirmación histórica.</small></div></li>
+          </ol>
+          <div class="field-legend" aria-label="Leyenda del campo">
+            <span><i class="legend-conversation"></i> conversación</span>
+            <span><i class="legend-recollection"></i> recuerdo</span>
+            <span><i class="legend-derived"></i> interpretación</span>
+            <span><i class="legend-shared"></i> aparece en varias conversaciones</span>
+          </div>
+        </aside>
+
+        <section class="field-panel">
+          <div class="field-counters" id="field-counters"></div>
+
+          <div class="field-graph-wrap">
+            <svg id="field-graph" class="field-graph" role="img"
+                 aria-label="Estructura de memoria acumulada entre conversaciones"></svg>
+            <div id="field-empty" class="field-empty" hidden>
+              La estructura aparece a medida que se conversa.
+            </div>
+            <div id="node-detail" class="node-detail" hidden></div>
+
+            <section id="timeline" class="timeline" hidden aria-label="Cronología">
+              <div class="timeline-head">
+                <div>
+                  <strong>Cronología</strong>
+                  <span id="timeline-counts" class="muted"></span>
+                </div>
+                <button id="close-timeline" type="button">volver al campo</button>
+              </div>
+              <svg id="timeline-axis" class="timeline-axis" role="img"
+                   aria-label="Años nombrados en las conversaciones"></svg>
+              <div id="timeline-detail" class="timeline-detail"></div>
+            </section>
+          </div>
+
+          <div class="field-strips">
+            <div class="strip">
+              <span class="strip-label">Extraído</span>
+              <span id="extracted-chips" class="chips"></span>
+            </div>
+            <div class="strip">
+              <span class="strip-label">Puede producir</span>
+              <span class="chips">
+                <button id="open-timeline" class="chip chip-live" type="button" aria-pressed="false">Cronología</button>
+                <span class="chip chip-future">Mapa</span>
+                <span class="chip chip-future">Búsqueda</span>
+                <span class="chip chip-future">Temas</span>
+                <span class="chip chip-future">Conexiones</span>
+              </span>
+            </div>
+            <button id="open-record" class="record-link" type="button">registro de la sesión y procedencia</button>
+          </div>
         </section>
       </div>
-
-      <div class="field-strips">
-        <div class="strip">
-          <span class="strip-label">Extraído</span>
-          <span id="extracted-chips" class="chips"></span>
-        </div>
-        <div class="strip">
-          <span class="strip-label">Puede producir</span>
-          <span class="chips">
-            <button id="open-timeline" class="chip chip-live" type="button" aria-pressed="false">Cronología</button>
-            <span class="chip chip-future">Mapa</span>
-            <span class="chip chip-future">Búsqueda</span>
-            <span class="chip chip-future">Temas</span>
-            <span class="chip chip-future">Conexiones</span>
-          </span>
-        </div>
-        <button id="open-record" class="record-link" type="button">registro de la sesión</button>
-      </div>
-    </aside>
+    </section>
   </main>
 
   <div id="record-overlay" class="record-overlay" hidden>
-    <div class="record-sheet">
+    <div class="record-sheet" role="dialog" aria-modal="true" aria-labelledby="record-title">
       <div class="record-head">
-        <strong>Registro de la sesión</strong>
+        <strong id="record-title">Registro de la sesión</strong>
         <button id="close-record" type="button">cerrar</button>
       </div>
       <p class="muted">
@@ -136,6 +189,6 @@
     </article>
   </template>
 
-  <script src="/static/app.js?v=20260812-1" defer></script>
+  <script src="/static/app.js?v=20260813-2" defer></script>
 </body>
 </html>

@@ -1,93 +1,118 @@
-# Demo runbook
+# Tomorrow demo runbook
 
-A short sequence for showing the disposable prototype. Everything runs on this machine with no network.
+This is a one-laptop research/design demonstration using only synthetic or non-sensitive colleague material. The conversation is not scripted. The prototype must remain useful when a contribution does not converge with anything already in the corpus.
 
 The proposition to land, in this order:
 
-> People speak normally. Their words stay intact. Machine interpretation stays attributable. Partial recollections can become related without being collapsed into canonical facts. The resulting structure produces new views.
+> A contribution is preserved first, interpreted provisionally, and may acquire significance only after entering relation with other contributions.
 
-Not: *speak, and now somebody has to maintain an annotation system.*
+The graph is not “collective memory,” recurrence is not truth, and the meeting is not a participant study.
 
-Also not: *the graph is collective memory*. The `campo de memoria` is a research apparatus for showing how stored acts of recollection may acquire relations across conversations.
+## Before colleagues arrive
 
-Long-lived production design is documented separately under [`docs/README.md`](README.md). The side-by-side desktop interface and half-duplex voice path are prototype instruments, not the intended mobile participant interface.
-
-## Before the meeting
+From the repository:
 
 ```bash
-ollama serve                                         # if not already running
-ollama run qwen3:30b-a3b-instruct-2507-q4_K_M ""     # warms the model into memory
-bash start.sh                                        # or the VS Code "Prototype: Run" task
+ollama serve
+bash start.sh --voice-doctor
+python scripts/validate_demo_corpus.py
+pytest -q
+bash start.sh
 ```
 
-Open `http://127.0.0.1:8765`. The badge at top right should read **LOCAL** in green. Clicking it opens the record, where the exact model id, endpoint and sampling settings live.
+Open `http://127.0.0.1:8765`. Confirm:
 
-The right pane should already show an accumulated field. If it is empty or thin, rebuild the corpus (a few minutes, needs the model running; re-running is safe):
+- the page opens in **Contribuir**, with no graph visible;
+- the status says **voz local lista**;
+- **Empezar por voz**, **Pausar** and **Terminar contribución** are visible;
+- **Explorar el corpus** opens a field containing ten seed conversations and about 68 nodes;
+- `Tito` says **aparece en 3 conversaciones**;
+- returning to **Contribuir** releases the microphone if it was active;
+- the complete layout fits the actual meeting resolution.
+
+Do a disposable preflight to remove first-inference cost:
 
 ```bash
-python scripts/build_demo_corpus.py
+python scripts/check_voice_loop.py --turns 2 --vad-wait-ms 2200
 ```
 
-The application now warms configured Ollama models at startup, but verify the system is warm before demonstrating it rather than discovering a cold path in front of an audience.
+The diagnostic creates and deletes its own temporary run. Do not leave a rehearsal contribution in the meeting sandbox.
 
-If voice is part of the demonstration, run **Prototype: Voice Doctor** and verify that ASR is actually using resident Whisper rather than silently falling back to `whisper-cli`. The voice path remains empirically unverified until the real 10–15-turn check in `MANUAL-TESTS.md` has been completed.
+## Demonstration sequence
 
-## Sequence
+### 1. Contribute
 
-**1. Start from the field, not the conversation.** Before typing anything, let the right pane sit there: several conversations, each a small cluster, with a few larger ringed nodes sitting *between* clusters. In the current prototype these are extracted labels that more than one conversation reached after conservative string normalisation. They are possible points of convergence, not resolved historical identities.
+Open **Contribuir** and read the short ground rule aloud: temporary data, no sensitive information, and the ability to forget, correct, skip, pause or stop.
 
-**2. Click a recurrent node** — `el Cerro` is usually dense. It shows how many conversations it appears in, then the exact sentences, in each speaker's own words, that produced it. Nothing was tagged to make that happen.
+Invite a colleague to speak normally. Do not prescribe a sentence or steer them toward a seed name. The opening is deliberately broad: *«Podés empezar por donde quieras. ¿Qué te gustaría contar?»*
 
-**3. Now talk.** New conversation, then speak in Uruguayan Spanish. Mention someone or somewhere the corpus already represents — Aníbal, Julio, el Cerro, La Teja — alongside something new.
+Useful things to notice without interrupting the exchange:
 
-Do not claim the conversational quality is validated. It is not; see `docs/TEST-REPORT.md`. A bad turn is usable because the failures are part of the current research output.
+- the system can yield with `Ajá.`, `Contame.` or `Cuando quieras.` instead of asking a question every turn;
+- a correction remains a new source turn rather than silently replacing the earlier words;
+- a privacy/storage question receives the fixed application-owned answer, not invented model policy;
+- **Pausar**, **Reanudar** and **Terminar contribución** are participant-owned controls and do not fabricate spoken transcript turns.
 
-**4. Watch the stages, without touching anything.** This is the centre of the demo:
+### 2. Explore deliberately
 
-- the recollection node appears while the reply is still being written: preserving what somebody said does not depend on understanding it;
-- a few seconds later its provisional people, places and dates appear around it, on their own;
-- if a normalised extracted label matches material already held by the prototype, that possible convergence becomes visually prominent.
+Switch to **Explorar el corpus**. This is explicitly the researcher view, not what the participant sees while contributing.
 
-One person's recollection → provisional structured interpretation → possible cross-conversation relation.
+The first reveal follows stored order:
 
-That is the claim. Do not turn the final arrow into `historical identity established`.
+1. **Contribución preservada** — the conversation and recollection exist before interpretation succeeds;
+2. **Interpretación provisional incorporada** — only actual extracted items appear;
+3. **Posible coincidencia entre conversaciones** — only if the live contribution truly reaches a label found elsewhere.
 
-**5. Two or three more turns.** Point out that the system can simply say `Ajá.` or `Contame.` It does not have to interrogate to stay in the conversation. The next-generation policy may also need a no-speech `WAIT/YIELD` move; that is not implemented here.
+A live contribution need not converge. If it does not, say so: preservation is not conditional on recurrence. Then open the frozen `Tito` node to show the deferred-significance example across three independent synthetic sources:
 
-**6. Ask it something unrelated.** A question about physics, an instruction to change its role. It stays in scope, the turn is marked *no testimonial*, and it never becomes a recollection.
+- somebody called Tito sometimes appeared at a house;
+- Tito lived around La Teja;
+- Julio may have used the name Tito.
 
-**7. Return to testimony.** It follows, without dragging the digression along.
+The system has not established that these mentions are one historical person. It exposes a possible relation and retains each exact source.
 
-**8. Cronología.** Click it. Years, the recollections that named them, and an arc over `mudanza`: 1976 and 1977, both present, both traceable to the exact words.
+### 3. Inspect chronology and provenance
 
-The useful line is:
+Open **Cronología**. Show that contradictory years remain separate and source-linked rather than being averaged or adjudicated.
 
-> The database can produce a chronology without first resolving contradictory recollections into one date.
+Open a node and then **Registro**. Point out the separation between participant words, ASR, application actions and model-derived interpretation. Detailed model residency and settings belong here, while capture mode shows only **voz local lista**.
 
-Add the caveat if relevant: two-digit year conversion is a prototype normalisation. Production temporal interpretation must retain the exact phrase and treat normalised years as derived candidates.
+### 4. Let colleagues play
 
-`Mapa`, `Búsqueda`, `Temas` and `Conexiones` are dashed on purpose: not built, and shown as not built.
+Use **Nueva contribución** for each colleague. Every session remains in the same temporary meeting run, so the researcher view can show the seed corpus plus this run while excluding old experimental sessions.
 
-**9. The record, only if asked.** *registro de la sesión* opens the append-only log: who did what, which model produced which interpretation under what settings, what was withdrawn and why, and the JSON and Markdown exports. Keep this for the question rather than leading with it.
+Keep the material ordinary and non-sensitive. The most informative test is a real, unscripted exchange with uncertainty, pauses, a correction or a topic change—not successful recitation of a prepared fragment.
 
-## If the model fails mid-meeting
+### 5. Clear visibly
 
-The field is built from stored conversations, so it is there regardless. Steps 1, 2, 8 and 9 need no model at all. **Sesión de ejemplo** additionally loads a labelled recorded transcript.
+Press **Borrar datos temporales** before closing. This removes only the current meeting run and its temporary audio. It does not touch the frozen seed corpus or persistent research sessions.
+
+## Fallbacks
+
+- If microphone capture fails, open **Escribir en vez de hablar** and continue the same unscripted contribution by text.
+- If the model fails, switch to **Explorar el corpus**. The frozen 10-conversation field, `Tito`, chronology and provenance remain available without rebuilding.
+- **Ejemplo grabado** is a labelled, idempotent researcher-authored transcript. It is excluded from the aggregate demo corpus.
+- If the app is restarted, all ephemeral meeting runs disappear by design.
+
+## What is verified
+
+As of 13 August 2026:
+
+- 109 deterministic tests pass;
+- the frozen corpus validator reports 10 conversations, 68 nodes, 74 relations, Tito in 3 conversations and one open contradictory chronology;
+- the 49-case adversarial router has no critical failures on the configured 30B model;
+- a five-turn synthetic full voice loop used resident ASR and TTS on every turn, with 4.48 s median perceived response including the 2.2 s silence window;
+- real cleanup was reproduced after background extraction: the deleted session returned 404, no persistent JSON existed, and no run identifier remained under `data/` or `demo/`.
+
+Still manual: one 10–15-turn human browser conversation with a deliberate 1.8-second mid-sentence hesitation, and the final visual smoke test at meeting resolution.
 
 ## What not to claim
 
 Do not claim:
 
-- naturalness, cultural validity, safety, usability or successful memory capture;
-- that the `campo de memoria` is collective memory;
-- that same-label nodes establish same historical identity;
-- that graph prominence means importance, credibility or truth;
-- that the current participant interface is the intended production interface;
-- that the current half-duplex voice loop satisfies the production full-duplex requirement;
-- that entity matching, temporal normalisation, consent, privacy, revocation or governance are solved.
-
-The current field folds `mi tío Aníbal` into `Aníbal` for a visual convergence heuristic and deliberately does not solve identity resolution. The production direction instead requires mention-level provenance and provisional coreference.
-
-The chronology is also intentionally limited: years are read out of phrases people used, and `después` or `los domingos` stay in the *sin año ubicable* group rather than being given a date.
-
-What does have mechanical evidence: source turns are preserved, interpretation is attributable and revisable, structure accumulates across stored conversations without manual curation, derived views retain paths back to source, and the current system runs locally.
+- cultural validity, safety, usability or successful memory capture;
+- that recurrence means importance, credibility, confirmation or truth;
+- that same-label nodes establish historical identity;
+- that the current half-duplex browser loop is the production speech architecture;
+- that consent, relational privacy, revocation, access or governance are solved;
+- that this colleague demonstration is participant evidence.

@@ -1,0 +1,291 @@
+{
+  "id": "session_demo_seed_10",
+  "title": "Ficha 10 · un nombre usado",
+  "created_at": "2026-08-13T07:37:51.876640+00:00",
+  "updated_at": "2026-08-13T07:37:53.912130+00:00",
+  "turns": [
+    {
+      "id": "turn_c847351e16",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:51.876663+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_05884fbfbc",
+      "role": "user",
+      "text": "Creo que Julio usaba el nombre Tito.",
+      "created_at": "2026-08-13T07:37:51.876676+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_0bb643a605",
+      "role": "assistant",
+      "text": "Ajá.",
+      "created_at": "2026-08-13T07:37:51.876687+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_38da34e585",
+      "kind": "person",
+      "text": "Julio",
+      "source_turn_ids": [
+        "turn_05884fbfbc"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:53.911949+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_bbcedbfa90",
+      "kind": "person",
+      "text": "Tito",
+      "source_turn_ids": [
+        "turn_05884fbfbc"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:53.912039+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_5382eef2dd",
+      "kind": "uncertainty",
+      "text": "Creo que",
+      "source_turn_ids": [
+        "turn_05884fbfbc"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:53.912059+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_25cb374d61",
+      "kind": "relation",
+      "text": "usaba el nombre",
+      "source_turn_ids": [
+        "turn_05884fbfbc"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:53.912073+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_45c1f0268a",
+      "at": "2026-08-13T07:37:51.876654+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 10 · un nombre usado",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_a38273fa1c",
+      "at": "2026-08-13T07:37:51.876669+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_c847351e16",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_fc3c9113db",
+      "at": "2026-08-13T07:37:51.876681+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Creo que Julio usaba el nombre Tito.»",
+      "target_id": "turn_05884fbfbc",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_2746c9819b",
+      "at": "2026-08-13T07:37:51.876691+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Ajá.»",
+      "target_id": "turn_0bb643a605",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_3ace8dcf11",
+      "at": "2026-08-13T07:37:53.911994+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Julio»",
+      "target_id": "item_38da34e585",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_05884fbfbc"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      }
+    },
+    {
+      "id": "ev_d3a1b42281",
+      "at": "2026-08-13T07:37:53.912051+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Tito»",
+      "target_id": "item_bbcedbfa90",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_05884fbfbc"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      }
+    },
+    {
+      "id": "ev_59085af693",
+      "at": "2026-08-13T07:37:53.912064+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «Creo que»",
+      "target_id": "item_5382eef2dd",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_05884fbfbc"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      }
+    },
+    {
+      "id": "ev_a1a41868ef",
+      "at": "2026-08-13T07:37:53.912111+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (relation): «usaba el nombre»",
+      "target_id": "item_25cb374d61",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_05884fbfbc"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_77ff9405dc"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}

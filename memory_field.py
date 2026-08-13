@@ -138,7 +138,13 @@ class MemoryField:
         self._edge_keys.add(key)
         self.edges.append({"source": source, "target": target, "label": label, **extra})
 
-    def add_session(self, session: Session, index: int) -> None:
+    def add_session(
+        self,
+        session: Session,
+        index: int,
+        *,
+        source_only: bool = False,
+    ) -> None:
         conversation_id = f"conv:{session.id}"
         conversation = self._node(
             conversation_id,
@@ -146,13 +152,15 @@ class MemoryField:
             session.title or f"Conversación {index + 1}",
             session_id=session.id,
             recorded=session.is_recorded,
+            session_kind=session.session_kind,
+            demo_run_id=session.demo_run_id,
         )
         conversation["conversations"] = [session.id]
 
         # Which turns carry epistemic marks, and which entities each turn produced.
         marks: dict[str, set[str]] = {}
         by_turn: dict[str, list[Any]] = {}
-        for item in session.derived_items:
+        for item in ([] if source_only else session.derived_items):
             if item.withdrawn:
                 # Withdrawn interpretation leaves the field. The transcript and
                 # the session record still hold it; the accumulated graph is a
@@ -183,6 +191,8 @@ class MemoryField:
                 turn_id=turn.id,
                 marks=turn_marks,
                 voice=turn.input_mode == "voice_asr",
+                session_kind=session.session_kind,
+                demo_run_id=session.demo_run_id,
             )
             recollection["conversations"] = [session.id]
             recollection["recollections"] = [turn.id]
@@ -204,12 +214,19 @@ class MemoryField:
                 )
 
 
-def build_memory_field(sessions: Iterable[Session]) -> dict[str, Any]:
+def build_memory_field(
+    sessions: Iterable[Session],
+    source_only_session_ids: set[str] | None = None,
+) -> dict[str, Any]:
     """One graph over every conversation, plus the counters shown above it."""
     ordered = sorted(sessions, key=lambda s: s.created_at)
     field = MemoryField()
     for index, session in enumerate(ordered):
-        field.add_session(session, index)
+        field.add_session(
+            session,
+            index,
+            source_only=session.id in (source_only_session_ids or set()),
+        )
 
     nodes = list(field.nodes.values())
     by_type: dict[str, int] = {}

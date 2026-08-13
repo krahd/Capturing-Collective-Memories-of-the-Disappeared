@@ -82,7 +82,7 @@ A mature speech system needs a legitimate action that produces no audible respon
 
 This is different from saying `Ajá.`. Every backchannel is an intervention. Sometimes it is useful; sometimes silence is the less intrusive response.
 
-The current 1.7-second silence detector is a prototype endpointing heuristic, not a definition of when a recollection has ended. [OHA evaluation guidance](https://oralhistory.org/oha-guidelines-for-the-evaluation-of-oral-historians/) explicitly recognises the importance of silence, and [Kubo et al.](https://aclanthology.org/2026.sigdial-1.2/) show why observed turn shifts should not be treated as uniquely correct binary ground truth under turn-taking ambiguity.
+The current configurable silence detector (2.2 seconds by default) is a prototype endpointing heuristic, not a definition of when a recollection has ended. [OHA evaluation guidance](https://oralhistory.org/oha-guidelines-for-the-evaluation-of-oral-historians/) explicitly recognises the importance of silence, and [Kubo et al.](https://aclanthology.org/2026.sigdial-1.2/) show why observed turn shifts should not be treated as uniquely correct binary ground truth under turn-taking ambiguity.
 
 For the future full-duplex system, turn management should distinguish technical readiness from the decision to claim the conversational floor.
 

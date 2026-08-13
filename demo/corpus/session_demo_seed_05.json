@@ -1,0 +1,410 @@
+{
+  "id": "session_demo_seed_05",
+  "title": "Ficha 05 · Maldonado",
+  "created_at": "2026-08-13T07:37:38.117232+00:00",
+  "updated_at": "2026-08-13T07:37:41.776042+00:00",
+  "turns": [
+    {
+      "id": "turn_78c250b99f",
+      "role": "assistant",
+      "text": "Podés empezar por donde quieras.",
+      "created_at": "2026-08-13T07:37:38.117261+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_f63f0584c1",
+      "role": "user",
+      "text": "A Julio lo vieron en Maldonado en el 78, pero eso me lo contaron, yo no lo vi.",
+      "created_at": "2026-08-13T07:37:38.117275+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_e212166929",
+      "role": "assistant",
+      "text": "¿Quién te lo contó?",
+      "created_at": "2026-08-13T07:37:38.117289+00:00",
+      "record_kind": "system_intervention",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    },
+    {
+      "id": "turn_61f145b065",
+      "role": "user",
+      "text": "Mi vieja decía que no, que era otro, que se parecía nomás. Quedó así.",
+      "created_at": "2026-08-13T07:37:38.117299+00:00",
+      "record_kind": "testimony",
+      "intent": "",
+      "move": "",
+      "grounded_in": [],
+      "input_mode": "text",
+      "audio_id": "",
+      "transcription_detail": {}
+    }
+  ],
+  "annotations": [],
+  "derived_items": [
+    {
+      "id": "item_4fe5c5a36f",
+      "kind": "person",
+      "text": "Julio",
+      "source_turn_ids": [
+        "turn_f63f0584c1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:40.800146+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_bc7c540fa5",
+      "kind": "place",
+      "text": "Maldonado",
+      "source_turn_ids": [
+        "turn_f63f0584c1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:40.800176+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_3a2a0717ce",
+      "kind": "time",
+      "text": "el 78",
+      "source_turn_ids": [
+        "turn_f63f0584c1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:40.800190+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_6c4be23247",
+      "kind": "hearsay",
+      "text": "me lo contaron",
+      "source_turn_ids": [
+        "turn_f63f0584c1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:40.800202+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_6458df9bf6",
+      "kind": "uncertainty",
+      "text": "yo no lo vi",
+      "source_turn_ids": [
+        "turn_f63f0584c1"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:40.800214+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    },
+    {
+      "id": "item_b1f8f759ae",
+      "kind": "uncertainty",
+      "text": "decía que no, que era otro, que se parecía nomás",
+      "source_turn_ids": [
+        "turn_61f145b065"
+      ],
+      "status": "provisional",
+      "note": "",
+      "created_at": "2026-08-13T07:37:41.775959+00:00",
+      "origin": "modelo",
+      "origin_detail": {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_f9a200e0c3"
+      },
+      "revisions": [],
+      "withdrawn": false,
+      "withdrawn_at": "",
+      "withdrawn_reason": ""
+    }
+  ],
+  "relations": [],
+  "events": [
+    {
+      "id": "ev_96a9c81711",
+      "at": "2026-08-13T07:37:38.117252+00:00",
+      "actor": "sistema",
+      "action": "sesion_creada",
+      "summary": "Sesión sintética preparada: Ficha 05 · Maldonado",
+      "target_id": "",
+      "target_kind": "",
+      "detail": {}
+    },
+    {
+      "id": "ev_6864d5c181",
+      "at": "2026-08-13T07:37:38.117268+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Podés empezar por donde quieras.»",
+      "target_id": "turn_78c250b99f",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_557cf2359f",
+      "at": "2026-08-13T07:37:38.117282+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «A Julio lo vieron en Maldonado en el 78, pero eso me lo contaron, yo n…»",
+      "target_id": "turn_f63f0584c1",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_b9e5133f7f",
+      "at": "2026-08-13T07:37:38.117293+00:00",
+      "actor": "sistema",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «¿Quién te lo contó?»",
+      "target_id": "turn_e212166929",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_73a5b81aa4",
+      "at": "2026-08-13T07:37:38.117304+00:00",
+      "actor": "participante",
+      "action": "turno_registrado",
+      "summary": "Turno preservado: «Mi vieja decía que no, que era otro, que se parecía nomás. Quedó así.»",
+      "target_id": "turn_61f145b065",
+      "target_kind": "turn",
+      "detail": {}
+    },
+    {
+      "id": "ev_19806db83a",
+      "at": "2026-08-13T07:37:40.800165+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (person): «Julio»",
+      "target_id": "item_4fe5c5a36f",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_f63f0584c1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      }
+    },
+    {
+      "id": "ev_b059d4b4b8",
+      "at": "2026-08-13T07:37:40.800182+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (place): «Maldonado»",
+      "target_id": "item_bc7c540fa5",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_f63f0584c1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      }
+    },
+    {
+      "id": "ev_2df482085c",
+      "at": "2026-08-13T07:37:40.800194+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (time): «el 78»",
+      "target_id": "item_3a2a0717ce",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_f63f0584c1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      }
+    },
+    {
+      "id": "ev_e05d1edba0",
+      "at": "2026-08-13T07:37:40.800206+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (hearsay): «me lo contaron»",
+      "target_id": "item_6c4be23247",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_f63f0584c1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      }
+    },
+    {
+      "id": "ev_cce0a6ce5f",
+      "at": "2026-08-13T07:37:40.800219+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «yo no lo vi»",
+      "target_id": "item_6458df9bf6",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_f63f0584c1"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_0e4d1cedd8"
+      }
+    },
+    {
+      "id": "ev_28562ab8df",
+      "at": "2026-08-13T07:37:41.776012+00:00",
+      "actor": "modelo",
+      "action": "interpretacion_creada",
+      "summary": "El modelo creó una interpretación provisional (uncertainty): «decía que no, que era otro, que se parecía nomás»",
+      "target_id": "item_b1f8f759ae",
+      "target_kind": "derived",
+      "detail": {
+        "source_turn_ids": [
+          "turn_61f145b065"
+        ],
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "endpoint": "http://127.0.0.1:11434",
+        "local": true,
+        "context_tokens": 8192,
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 1536,
+        "run_id": "run_f9a200e0c3"
+      }
+    }
+  ],
+  "audio_records": [],
+  "status": "active",
+  "is_recorded": true,
+  "session_kind": "demo_seed",
+  "storage_policy": "persistent",
+  "demo_run_id": ""
+}
