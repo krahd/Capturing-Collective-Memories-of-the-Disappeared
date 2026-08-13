@@ -1,231 +1,244 @@
 # Prototype test report
 
-**Status:** implementation complete and mechanically verified. A first informal
-live-model check has been run; the full ten-scenario scored protocol has **not**
-been run and remains the final evidence gate.
+**Updated:** 13 August 2026  
+**Status:** implementation mechanically verified; informal local-model checks exist; the revised conversational policy and real voice path still require fresh sustained human testing.  
+**Participant evidence:** none. All current scenarios are researcher-authored/synthetic.
+
+This report records actual evidence and observed failures. Design requirements derived from the evidence are maintained separately in [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md), [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md), [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md), and [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md).
 
 ## Conversational-move rhythm smoke check — 12 August 2026
 
-The first constrained controller over-specified surface language: every allowed
-action required a question and every acknowledgement was rewritten as `Te sigo`.
-That controller result is superseded. The router and deterministic off-topic /
-participant-control barrier remain, while the interviewer now emits one complete
-utterance tagged as `BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, or
-`ACKNOWLEDGE` and grounded in the latest participant turn.
+The first constrained controller over-specified surface language: every allowed action required a question and every acknowledgement was rewritten as `Te sigo`. That controller result is superseded.
 
-The revised controller was exercised against
-`qwen3:30b-a3b-instruct-2507-q4_K_M` over Ollama using the three scripted
-four-turn conversations in `evaluation/rhythm-scenarios.json`:
+The router and deterministic off-topic/participant-control barrier remain, while the interviewer now emits one complete utterance tagged as:
+
+- `BACKCHANNEL`;
+- `INVITE_CONTINUE`;
+- `FOLLOW_UP`;
+- `CLARIFY`;
+- `ACKNOWLEDGE`.
+
+Every accepted model move is grounded in the latest participant source turn. Questions are required only for follow-up/clarification.
+
+The revised controller was exercised against `qwen3:30b-a3b-instruct-2507-q4_K_M` over Ollama using the three scripted four-turn conversations in `evaluation/rhythm-scenarios.json`:
 
 - 12 assistant replies total;
 - one reply contained a question;
-- move distribution: five `ACKNOWLEDGE`, four `BACKCHANNEL`, one `FOLLOW_UP`,
-  and two `INVITE_CONTINUE` fallbacks;
+- move distribution: five `ACKNOWLEDGE`, four `BACKCHANNEL`, one `FOLLOW_UP`, and two `INVITE_CONTINUE` fallbacks;
 - ten model utterances passed the guard unchanged;
-- `Entendido.` was rejected because an acknowledgement must ground in concrete
-  participant content;
-- `Contame cómo era esa bolsa.` was rejected because a content-directed prompt
-  cannot be labelled as a floor-yielding invitation;
+- `Entendido.` was rejected because an acknowledgement must ground in concrete participant content;
+- `Contame cómo era esa bolsa.` was rejected because a content-directed prompt cannot be labelled as a floor-yielding invitation;
 - fallback selection did not repeat a recent assistant phrase.
 
-This run confirms that the controller no longer forces acknowledgement-plus-
-question cadence. It does not establish naturalness. One accepted acknowledgement
-said the mother `recordaba bien`, a stronger inference than the participant's
-hearsay warranted, and the single follow-up (`¿Qué tipo de ruido era, el de la
-radio?`) remains stylistically awkward. Those are model/policy review findings,
-not reasons to restore controller-authored prose.
+This run confirms that the controller no longer forces acknowledgement-plus-question cadence. It does not establish naturalness.
+
+One accepted acknowledgement said the mother `recordaba bien`, a stronger inference than the participant's hearsay warranted, and the single follow-up (`¿Qué tipo de ruido era, el de la radio?`) remained stylistically awkward. Those findings motivated the current guard against certainty-hardening over uncertain/hearsay material.
 
 ## First live local-model check — 12 August 2026
 
-The first actual conversational exchange with a local model was executed on the
-target machine. This is an informal check, not the scored protocol.
+An informal conversational check was executed on the target machine.
 
 - **Model:** `qwen3:30b-a3b-instruct-2507-q4_K_M` (Ollama, Q4_K_M, 18.56 GB)
 - **Endpoint:** `http://127.0.0.1:11434/v1/chat/completions`, unauthenticated, local
 - **Sampling:** `temperature 0.7`, `top_p 0.8`, `max_tokens 256`
 - **Extent:** one four-turn conversation plus one single-turn scenario check
-- **Not done:** the ten scenarios, repetitions, scoring against the rubric, and
-  any runtime/TTFT measurement
+- **Not done in this run:** the complete executable scenario set, repeated runs/scoring, full runtime benchmark, or voice round trip
 
-No `<think>` content leaked into the transcript, confirming that the
-`2507-Instruct` build behaves as a non-thinking conversational model over the
-OpenAI-compatible endpoint. The previously pulled `qwen3:30b` alias is the
-hybrid-thinking variant and should not be used for conversational runs.
+No `<think>` content leaked into the transcript, confirming that the tested `2507-Instruct` deployment behaved as a non-thinking conversational model over the configured endpoint. The previously pulled `qwen3:30b` alias is a different hybrid-thinking deployment and should not be treated as equivalent evidence.
 
 ### What went well
 
-- Held the approximate date without asking for an exact one or computing a birth year.
+- Held an approximate date without demanding an exact one or computing a birth year.
 - Accepted a correction of place several turns later without arguing or erasing.
-- Followed the topic the participant offered after a refusal instead of returning
-  to the declined subject.
-- Turns were short, with a single question.
+- Followed the topic the participant offered after a refusal instead of returning to the declined subject.
+- Turns were short.
 
 ### Observed failures
 
-1. **Presuppositional follow-up after a hearsay disclaimer.** The participant said
-   *«Del Flaco yo no me acuerdo. Lo que sé es porque mi vieja contaba…»* and the
-   model asked *«¿Y cómo te sonaba él, cuando hablaba con tu tío?»*, which assumes
-   direct experience the participant had just disclaimed. This fails **no
-   conducción** and **incertidumbre**.
-2. **Stilted acknowledgement.** After the refusal it replied *«Acepto.»*, which
-   reads as a form response rather than Uruguayan conversation. Fails **naturalidad**.
+1. **Presuppositional follow-up after hearsay disclaimer.** The participant said *«Del Flaco yo no me acuerdo. Lo que sé es porque mi vieja contaba…»* and the model asked *«¿Y cómo te sonaba él, cuando hablaba con tu tío?»* This assumed direct experience the participant had just disclaimed.
+2. **Stilted acknowledgement.** After a refusal it replied *«Acepto.»*, which reads as a form response rather than ordinary Uruguayan conversation.
 3. **Repetitive question frame.** Three of four turns used *«¿Y cómo era/eran…?»*.
-   Fails **economía** and reads as a script.
 
-The interaction policy in `model.py` was revised in direct response to these three
-observations. The observations above describe the pre-revision policy.
+The interaction policy was revised in response.
 
-### Re-test after the policy revision
+### Re-test after that policy revision
 
-The same material was run again against the revised policy. The result is partial
-and should not be read as a fix.
+The same material was run again. The result was partial rather than a clean fix.
 
-Resolved:
+Resolved in that check:
 
-1. **Presupposition after hearsay** — resolved. The model now attributes to the
-   declared source: *«¿alguna vez te contó por qué venía, o cómo era cuando
-   estaba?»* asks what the mother said rather than what the participant witnessed.
-2. **Stilted acknowledgement** — resolved. It moves directly to the topic the
-   participant offered, with no "Acepto"-style acknowledgement.
+1. the presupposition after hearsay disappeared; the model attributed to what the mother said rather than asking for direct participant perception;
+2. the `Acepto.` acknowledgement disappeared and the model followed the participant-offered topic directly.
 
-Not resolved, and newly introduced:
+Not resolved/newly exposed:
 
-- **Repetitive frame** — not resolved, only changed shape. It now opens turns by
-  echoing the participant's own words (*«Al fondo a jugar…»*, *«Las reuniones en
-  casa de tu abuela…»*) as a repeated formula.
-- **New: paired questions.** Two of three turns asked two questions at once
-  (*«¿por qué venía, o cómo era cuando estaba?»*), which the policy already
-  prohibits. Adding prohibitions did not increase compliance with an existing one.
-- **New: automatic reformulation.** The echo opening is the reformulation the
-  policy explicitly warns against, and it risks hardening an uncertain memory by
-  restating it.
+- repeated echo/reformulation of participant wording became a new formula;
+- two turns packed paired questions into one intervention despite an existing instruction not to do this;
+- automatic reformulation risked hardening uncertain memory by restating it more flatly.
 
-This is the central methodological finding so far: **adding rules to the policy
-did not produce proportional compliance, and relieving one failure mode surfaced
-others.** Whether that is a limit of prompt-level control at this model scale, or
-of this policy's formulation, is exactly what the scored protocol should
-establish. Native-speaker judgement of Uruguayan naturalness remains outside what
-the automated harness can decide.
+The important methodological finding is that adding prompt prohibitions did not produce proportional compliance; relieving one failure mode surfaced others. This is why the project now combines model policy with structural routing/guards and human review rather than treating prompt text as the safety mechanism.
 
-### Extraction check
+The current policy/guard has changed further since these observations and has not yet been re-tested through a sustained human conversation. Do not report these older outputs as evidence that the current policy is now successful.
 
-Model extraction over the four participant turns produced eleven provisional
-items with correct source-turn references and preserved the participant's exact
-wording. It correctly typed hearsay, uncertainty and the correction. It
-mis-typed the refusal *«De la detención no quiero hablar»* as `uncertainty`
-rather than a refusal; there is currently no refusal type in the extraction
-vocabulary. This was withdrawn with a reason during the check, which is the
-behaviour the audit layer exists to make possible.
+## Extraction check
 
-A defect was found and fixed during this run: extraction inherited the
-conversational `max_tokens=256` cap and truncated its JSON mid-string, so
-extraction silently produced nothing. Conversation and analysis now have separate
-token budgets.
+Model extraction over the four participant turns produced eleven provisional items with correct source-turn references and preserved the participant's exact wording. It correctly typed hearsay, uncertainty and correction.
+
+It mis-typed the refusal *«De la detención no quiero hablar»* as `uncertainty` rather than a refusal; there is currently no refusal type in the extraction vocabulary. This was withdrawn with a reason during the check, demonstrating why the audit/revision layer matters.
+
+A defect was found and fixed during this run: extraction inherited the conversational `max_tokens=256` cap and truncated its JSON mid-string. Conversation and analysis now have separate token budgets.
+
+## Performance changes after the first live check
+
+The prototype was subsequently revised to remove avoidable latency:
+
+- optional small `LLM_ROUTER_MODEL` for turn classification;
+- extraction defaults to the small router model when configured and may be overridden separately;
+- background extraction is queued, waits for conversational quiet and can be pre-empted by a new conversational call;
+- configured Ollama models are warmed/kept resident;
+- one HTTP client is reused;
+- interview working context is bounded;
+- aggregate field/chronology views are cached;
+- browser field updates use server-sent change events rather than timed polling bursts;
+- resident `whisper-server` can keep ASR weights loaded across turns;
+- the microphone stream/analyser are retained across continuous half-duplex turns;
+- current endpointing is 1.7 seconds of detected silence;
+- turn/voice stages expose latency timings.
+
+These implementation changes are mechanically covered where deterministic. Their actual end-to-end perceptual benefit still needs to be measured in the target spoken interaction.
 
 ## Automated verification
 
-The repository's GitHub Actions workflow verifies:
+The GitHub Actions workflow verifies Python/browser syntax and deterministic pytest coverage including:
 
-- Python compilation for the prototype;
-- browser JavaScript syntax;
-- deterministic pytest coverage of transcript preservation, provenance, correction relations, editable derived material, exports, interaction-policy invariants, configuration, and the end-to-end API flow.
+- transcript/source preservation;
+- model/researcher provenance;
+- revision/withdrawal/deletion behaviour;
+- correction relations;
+- exports;
+- interaction-policy and guard invariants;
+- local unauthenticated model configuration;
+- router/extraction model separation;
+- resident HTTP-client behaviour;
+- bounded interviewer history;
+- quoted control speech;
+- extraction/conversation gating and pre-emption;
+- cached aggregate views;
+- API flow;
+- mocked resident-Whisper request handling;
+- evaluation-runner/tooling integrity.
 
-On 9 August 2026 the model connector was revised so that an API key is required for the default OpenAI endpoint but not for unauthenticated local OpenAI-compatible servers. The corresponding configuration tests are included in the deterministic suite.
+Mechanical passing does not establish naturalness, usability, cultural validity, safety or memory-capture efficacy.
 
-A reproducible live-evaluation harness was also added. Its tests verify that the ten researcher-authored scenarios are machine-readable and that the runner itself starts without requiring credentials.
+## Executable and manual scenario sets
 
-## Implemented prototype
+`evaluation/scenarios.json` currently contains **11 executable researcher-authored conversational scenarios**:
 
-The disposable prototype provides the two intended coordinated views.
+1. uncertain date;
+2. hearsay;
+3. later correction;
+4. refusal/redirection;
+5. digression;
+6. ambiguous local reference;
+7. natural voseo;
+8. contradiction;
+9. emotionally charged memory;
+10. participant-led topic return;
+11. reported speech that resembles a control instruction.
+
+Application-level off-topic/prompt-injection and participant-control checks are exercised separately because they should bypass the interviewer model.
+
+`docs/MANUAL-TESTS.md` has now been expanded beyond the executable corpus with additional research-derived cases for:
+
+- suggestion resistance;
+- affirmation resistance;
+- multiple-question packing;
+- premature closure;
+- participant correction of an interviewer error;
+- archive blindness/cross-session leakage;
+- deferred collective significance;
+- derived-summary preservation.
+
+These additions are requirements for the next evaluation pass. They have not yet produced evidence.
+
+## Current prototype views
 
 ### Conversation
 
+Current capabilities include:
+
 - exact participant-turn preservation;
-- OpenAI-compatible live model integration through environment configuration;
-- direct use of authenticated hosted or unauthenticated local OpenAI-compatible endpoints;
-- a dedicated Uruguayan-Spanish interaction policy;
-- participant-led conversational framing rather than a fixed questionnaire;
-- preservation of a participant turn even when model generation fails.
+- local/hosted OpenAI-compatible live model integration;
+- natural-Uruguayan-Spanish policy;
+- participant-led framing rather than fixed questionnaire;
+- structural separation of testimony, participant controls and off-topic commands;
+- preservation of a participant turn when model generation fails.
 
-### Mesa de trabajo
+### Campo de memoria
 
-- turn selection;
-- annotations and uncertainty/hearsay/correction/withdrawal/significance labels;
-- manually created provisional entities/events/places/times/themes and other derived material;
-- optional model extraction linked to exact source turns;
-- editing and deletion of provisional derived material without changing the transcript;
-- relations such as `corrects`, `qualifies`, and `contradicts`;
-- JSON and readable Markdown export with provenance.
+The earlier on-screen `Mesa de trabajo` was removed. Manual annotation/derived operations remain in the API/data model/exports, but the second interface view is now the accumulated memory field.
 
-## Live conversational validation
+The field:
 
-`docs/MANUAL-TESTS.md` defines ten researcher-authored scenarios. Their executable counterparts are stored in `evaluation/scenarios.json` and can be run against the configured model with:
+- represents recollections as first-class nodes;
+- attaches provisional extraction to exact recollections;
+- uses weak `menciona` relations;
+- retains disagreement;
+- makes interpretation arrive after preservation;
+- exposes source wording through node inspection;
+- feeds a chronology view without first resolving contradictory dates.
 
-```bash
-python scripts/run_live_scenarios.py
+Prototype limitation: extracted nodes with the same conservatively normalised label converge visually. This is possible label-level convergence, not production identity resolution and not evidence that two mentions necessarily refer to the same historical entity.
+
+The `campo de memoria` should not be described as collective memory itself.
+
+## Voice status
+
+The browser voice path is implemented as continuous local half duplex:
+
+```text
+microphone → 1.7 s endpointing heuristic → ffmpeg → resident whisper.cpp where configured
+→ router/interviewer → Piper → speakers → microphone again
 ```
 
-The runner records raw model responses and complete HTTP round-trip latency under ignored local files in `evaluation/results/`. It does not judge the responses automatically. Conversational quality must be reviewed using the human-authored rubric in `docs/MANUAL-TESTS.md`.
+The microphone stream/analyser remain allocated; the track is disabled during system speech. The participant cannot barge in.
 
-The recorded `round_trip_ms` value is not time to first token. The current disposable prototype uses a non-streaming request and therefore cannot by itself establish TTFT, warm-prefix behaviour, interruption handling, server-side cancellation, or duplex turn-taking. Those runtime properties should be measured independently with Modelito's local conversational benchmark on the target machine.
+The voice path is still the largest empirical gap. The automated suite does not exercise a real microphone → Whisper → model → Piper → speaker round trip.
 
-The previous absence of a hosted-model credential is no longer the main blocker: the prototype can now be pointed directly at an unauthenticated local OpenAI-compatible runtime. No target-runtime/model run has yet been recorded in this repository, so that experiment must not be retroactively inferred from mechanical tests.
+Required next check:
 
-Until the test round is recorded, the correct description is **implemented, runnable, mechanically verified, and ready for live local-model evaluation**, not “validated with Uruguayan speakers”.
+- one real 10–15-turn spoken conversation;
+- ordinary reflective pauses and self-restarts;
+- ASR errors on names, nicknames, places and dates;
+- endpointing cuts;
+- VAD/ASR/router/interviewer timings;
+- TTS timing when instrumented;
+- moments when half duplex prevents a natural interruption.
 
-## Evaluation protocol for the RTCA submission
+Production is intended to be mobile-first and full duplex. The current voice implementation is evidence-gathering infrastructure, not the final interaction architecture.
 
-The RTCA evidence should be kept in two distinct layers.
+## Design requirements exposed by implementation and research
 
-### Conversational layer
+The consolidated requirements are maintained in the long-lived design docs rather than duplicated exhaustively here. The most important are:
 
-For each of the ten scenarios, retain the exact model output and manually score 0–2 on:
-
-- seguimiento;
-- naturalidad;
-- no conducción;
-- incertidumbre;
-- agencia;
-- economía.
-
-A response should not be treated as passing when it receives a zero in no conducción, incertidumbre, or agencia even if its aggregate score is high. Representative failures are more informative for the paper than an aggregate score without examples.
-
-### Runtime layer
-
-On the same target machine and with comparable model families/configuration where practical, record separately:
-
-- first-request TTFT;
-- warm-prefix TTFT across repeated conversational context;
-- context-growth latency;
-- first useful streamed phrase;
-- decode tokens/s;
-- cancellation/stream-close behaviour;
-- approximate memory pressure, with the known limitations of process RSS on Apple unified memory.
-
-This layer is intended to determine whether a runtime is suitable for sustained conversational interaction. It does not establish linguistic naturalness or epistemic adequacy.
-
-## Requirements exposed by implementation
-
-0. An interpretation must carry its author. Before the audit layer existed, a
-   model-extracted item and a researcher-written item were indistinguishable in
-   storage and on screen. Attribution is a representational requirement, not a
-   logging convenience.
-0b. Removal has at least two distinct meanings — *retirar* (retain, mark, keep the
-   reason) and *eliminar* (destroy) — and a memory system must not collapse them.
-   Purging also has to redact the text this system quoted about the item in its
-   own record, otherwise "eliminar" is a false promise; that redaction must itself
-   be recorded.
-1. The production system must separate immutable/raw conversational turns from editable derived interpretation.
-2. Every derived interpretation needs explicit source-turn provenance.
-3. Correction cannot be implemented as destructive replacement; both utterances and the relation between them matter.
-4. Model failure must not discard a participant turn.
-5. Conversational orchestration and post-conversation analysis are distinct operations even if the prototype uses the same model provider.
-6. Participant language should remain untouched in the transcript; normalisation belongs, if anywhere, in a derived and revisable layer.
-7. Provisional interpretation must be genuinely disposable: deleting it cannot damage the transcript or leave invalid structural references.
-8. Model/provider configuration should remain replaceable until interaction tests identify concrete latency and language-quality requirements.
-9. Real-time optimisation is not automatically an epistemic good. A future voice system must not treat hesitation, silence, refusal, correction, or participant-led topic shifts merely as latency defects.
-10. Production consent, authentication, archival stewardship, access control, ownership, security, and retention cannot be inferred from this prototype and require separate design.
+1. The project objective is collective-memory capture, not an interviewer benchmark.
+2. Preserve contribution before requiring successful interpretation.
+3. Participant source, machine mediation and derived interpretation remain distinguishable.
+4. For voice, original audio is source and ASR text is a machine-derived representation.
+5. Generated testimony is prohibited in the participant source layer.
+6. Corrections/qualifications do not destructively replace earlier source.
+7. The live interviewer is session-local and archive-blind by default.
+8. Not pursued in the current dialogue does not imply discarded or historically insignificant.
+9. Historical significance may emerge only across later contributions; immediate relevance selection must therefore not become irreversible filtering.
+10. Production needs participant-owned local refusal, protocol/consent information, scoped consent, relational privacy, differentiated access and a threat model.
+11. Production cross-session identity linking must be provisional and provenance-bearing rather than silent string merging.
+12. Mobile full-duplex speech is the intended participant interaction direction; participant interruption should be easy and system interruption conservative.
 
 ## Next evidence gate
 
-Run all ten scenarios with the intended local model, score them using the rubric, retain representative failures, revise the interaction policy only in response to observed failures, and repeat. Run the runtime benchmark separately. After the interaction is stable enough for expert/researcher testing, design the production architecture from the resulting requirements rather than from this codebase.
+1. Run sustained human/researcher conversation against the current policy/guard, not the superseded one recorded above.
+2. Validate the small router on adversarial and ordinary Uruguayan-Spanish input.
+3. Run the 11 executable scenarios and the expanded manual cases, retaining representative failures.
+4. Run the real 10–15-turn voice conversation with resident Whisper confirmed.
+5. Record actual latency breakdown including TTS when available.
+6. Use these results to decide the next prototype/production architecture rather than treating the current code as the starting point by default.
