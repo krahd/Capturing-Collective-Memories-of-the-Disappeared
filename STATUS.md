@@ -3,8 +3,8 @@
 **Date:** 12 August 2026  
 **Phase:** disposable interaction prototype  
 **Implementation:** complete for the current interaction-discovery goal, plus capture/audit, constrained-controller and memory-field layers
-**Mechanical verification:** passing (47 deterministic tests)
-**Live-model Uruguayan-Spanish evaluation:** first informal check run on the target machine; the scored ten-scenario protocol is still pending
+**Mechanical verification:** passing (57 deterministic tests)
+**Live-model Uruguayan-Spanish evaluation:** informal single- and multi-turn checks run on the target machine; the scored protocol is still pending
 
 ## Implemented
 
@@ -53,8 +53,12 @@
 - **structural scope control:** a JSON-schema router separates testimony,
   uncertainty, correction, participant controls and off-topic commands;
   explicit controls are recognized before any model call, off-topic turns get a
-  fixed redirect, and only `ELICIT`, `CLARIFY` and `ACK_ELICIT` can pass the
-  post-generation guard;
+  fixed redirect, while the interviewer is limited to `BACKCHANNEL`,
+  `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY` and `ACKNOWLEDGE` moves;
+- each interview move carries one complete model-written utterance plus an exact
+  participant source turn. The guard does not compose or rewrite the prose,
+  permits zero-question turns, requires concrete content grounding for
+  content-bearing moves, and rejects repetition against recent assistant turns;
 - control/off-topic turns remain preserved as `non_testimony/control` while
   being excluded from interviewer context and automatic/manual derived memory;
 - deterministic `STOP`, `PAUSE`, `WITHDRAW` and `REVOKE_DELETE` protocol
@@ -85,6 +89,7 @@ It creates one ignored timestamped evidence directory under `evaluation/results/
 
 - `manifest.json`: machine/configuration metadata, exact model/runtime identity and fixed conversational sampling fields;
 - `conversation-scenarios.json`: exact researcher-authored scenario contexts and raw model responses;
+- `rhythm-scenarios.json`: generated multi-turn exchanges with move metadata and question counts;
 - `runtime-benchmark.json`: independent Modelito first-request/warm-prefix/context/cancellation measurements.
 
 The conversational runs default to `temperature=0.7`, `top_p=0.8`, `max_tokens=256`; the Modelito timing benchmark independently uses deterministic sampling for timing comparability. These outputs must not be merged into one score.
@@ -95,13 +100,18 @@ Complete HTTP round-trip latency from the prototype is not TTFT and does not est
 
 GitHub Actions is green on the current main branch. The suite verifies Python/browser syntax and deterministic tests covering transcript preservation, source traceability, derived editing/deletion, correction relations, export, policy invariants, local model configuration, explicit generation settings, scenario-corpus integrity, both evaluation runners and the end-to-end API flow.
 
-The constrained controller was also smoke-tested locally against the selected
-Qwen/Ollama deployment on 12 August 2026. An on-topic uncertain memory produced
-the guarded `ACK_ELICIT` response `Te sigo. ¿Qué hacían juntos en esas tardes?`;
-both an explicit prompt injection and the semantic off-topic request `Escribime
-un poema sobre el océano` produced the application-owned redirect and were
-labelled non-testimonial. This is an engineering smoke check, not interaction
-validation.
+The earlier three-action controller was smoke-tested locally against the selected
+Qwen/Ollama deployment on 12 August 2026, but that result is superseded: the
+controller itself forced a question and hard-coded `Te sigo` for every
+acknowledgement. The conversational-move revision removes that surface-language
+constraint. A three-conversation/12-reply rhythm smoke run produced one question,
+five acknowledgements, four backchannels, one follow-up and two guarded fallback
+invitations. Ten model utterances passed unchanged; the guard rejected
+`Entendido.` as an ungrounded acknowledgement and a content-directed invitation
+mislabelled as floor-yielding. The run still exposed wording for human review,
+including one acknowledgement that inferred the mother `recordaba bien`.
+Off-topic and participant-control barriers remain unchanged. This is engineering
+evidence, not conversational or cultural validation.
 
 ## Remaining goal gate
 

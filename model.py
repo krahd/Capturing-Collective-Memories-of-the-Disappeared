@@ -12,9 +12,10 @@ from controller import (
     FIXED_REDIRECT,
     INTENTS,
     OFF_TOPIC,
-    InterviewAction,
+    InterviewMove,
     deterministic_intent,
-    guard_interview_action,
+    guard_interview_move,
+    safe_interview_fallback,
 )
 
 
@@ -29,7 +30,8 @@ Hablá en español rioplatense natural para Uruguay. Usá voseo cuando correspon
 
 Reglas de interacción:
 - Priorizá lo último que la persona eligió contar. No recorras una lista de preguntas.
-- La mayoría de tus intervenciones deben ser breves: una observación o reconocimiento y, cuando sirva, una sola pregunta abierta. No hace falta terminar cada turno con una pregunta.
+- Ajustá tu iniciativa a lo que la persona aporta. Si ya está narrando, salí del medio: indicá atención o cedé el turno sin fabricar una pregunta. Si se detiene, invitá a seguir. Si introduce algo concreto que vale la pena seguir, podés preguntar por eso. Aclará sólo cuando una ambigüedad realmente impida entender.
+- La mayoría de tus intervenciones deben ser breves. No hace falta terminar cada turno con una pregunta y no debés preferir una pregunta por defecto.
 - No reformules ni resumas automáticamente lo que la persona acaba de decir. Repetirlo con palabras más categóricas puede endurecer una memoria incierta.
 - No hagas dos o tres preguntas juntas.
 - No preguntes fecha, lugar, parentesco o identidad por rutina. Preguntá sólo si el dato se volvió importante para entender lo que la persona está diciendo.
@@ -51,12 +53,21 @@ Reglas de interacción:
 - Si cuenta algo importante y no hace falta preguntar enseguida, podés simplemente dejar espacio con una respuesta breve.
 - No hables de "capturar datos", "archivar", "etiquetar" ni del workbench mientras la persona está contando, salvo que pregunte por el sistema.
 
-Sólo podés producir una de estas acciones estructuradas: ELICIT, CLARIFY o ACK_ELICIT. ELICIT y CLARIFY contienen únicamente una pregunta. ACK_ELICIT contiene un reconocimiento mínimo y una pregunta. Nunca produzcas más de una pregunta sustantiva.
+Elegí exactamente un movimiento conversacional:
+- BACKCHANNEL: indicá atención y cedé el turno. No lleva pregunta. Ejemplos de escala, no fórmulas obligatorias: "Ajá.", "Claro." Esas expresiones mínimas son BACKCHANNEL, no ACKNOWLEDGE.
+- INVITE_CONTINUE: dejá abierta la continuación sin dirigirla. No lleva pregunta. Ejemplos: "Contame.", "Cuando quieras." Debe ser genérico: "Contame cómo...", "decime qué..." o "seguí con..." son seguimientos dirigidos y no pertenecen a este movimiento.
+- FOLLOW_UP: seguí un elemento concreto introducido por la persona. Lleva exactamente una pregunta breve.
+- CLARIFY: resolvé una ambigüedad que realmente impide entender. Lleva exactamente una pregunta breve.
+- ACKNOWLEDGE: reconocé brevemente algo concreto de lo que la persona acaba de decir y cedé el turno. No lleva pregunta; debe nombrar o retomar ese contenido, no ser sólo "Claro" o "Ajá".
+
+BACKCHANNEL, INVITE_CONTINUE y ACKNOWLEDGE son respuestas completas: no les agregues una pregunta. Alterná movimientos según el ritmo; no encadenes reconocimiento + interrogatorio. Nunca produzcas más de una pregunta sustantiva.
 
 En la salida JSON:
-- `question` contiene exactamente una pregunta breve y termina en `?`.
-- `acknowledgement` queda vacío para ELICIT y CLARIFY; para ACK_ELICIT contiene una sola frase breve, sin pregunta.
-- `references_to_previous_turns` usa únicamente ids exactos suministrados. CLARIFY debe citar por lo menos un turno. No inventes ids.
+- `move` contiene uno de los cinco movimientos permitidos.
+- `utterance` contiene una única intervención completa, lista para mostrar sin reescritura.
+- `grounded_in` contiene el id exacto del turno participante más reciente. No inventes ids ni vuelvas por tu cuenta a un turno anterior.
+- FOLLOW_UP debe retomar contenido concreto de `grounded_in`, no frases genéricas como "qué más recordás de ese momento". "¿Y después?" sirve cuando la persona está narrando una secuencia; si nombró libros, patio, reuniones u otro elemento concreto, referite a ese elemento.
+- Antes de responder, mirá los últimos turnos del sistema y no repitas su frase ni la misma fórmula con apenas otro sustantivo.
 
 La conversación no debe parecer un cuestionario. La calidad se mide por si un adulto uruguayo podría sentir que el sistema está siguiendo lo que dice, no ejecutando un guion.
 """.strip()
@@ -100,12 +111,14 @@ ROUTE_SCHEMA = {
 INTERVIEW_SCHEMA = {
     "type": "object",
     "properties": {
-        "action": {"type": "string", "enum": ["ELICIT", "CLARIFY", "ACK_ELICIT"]},
-        "acknowledgement": {"type": "string"},
-        "question": {"type": "string"},
-        "references_to_previous_turns": {"type": "array", "items": {"type": "string"}},
+        "move": {
+            "type": "string",
+            "enum": ["BACKCHANNEL", "INVITE_CONTINUE", "FOLLOW_UP", "CLARIFY", "ACKNOWLEDGE"],
+        },
+        "utterance": {"type": "string"},
+        "grounded_in": {"type": "string"},
     },
-    "required": ["action", "acknowledgement", "question", "references_to_previous_turns"],
+    "required": ["move", "utterance", "grounded_in"],
     "additionalProperties": False,
 }
 
@@ -219,6 +232,10 @@ class LLMClient:
         The live application invokes ``classify`` and ``interview`` separately so
         off-topic text never reaches the interviewing call.
         """
+        return (await self.respond(turns))["utterance"]
+
+    async def respond(self, turns: list[dict[str, str]]) -> dict[str, Any]:
+        """Run router, move generation and guard while retaining move metadata."""
         self._require_configuration()
         normalized = [
             {**turn, "id": turn.get("id") or f"turn_{index}"}
@@ -227,12 +244,38 @@ class LLMClient:
         latest = normalized[-1]["text"]
         intent = deterministic_intent(latest) or await self.classify(normalized)
         if intent == OFF_TOPIC:
-            return FIXED_REDIRECT
+            return {"intent": intent, "move": "REDIRECT", "utterance": FIXED_REDIRECT}
         if intent in FIXED_PROTOCOL_RESPONSES:
-            return FIXED_PROTOCOL_RESPONSES[intent]
-        action = await self.interview(normalized)
-        guarded = guard_interview_action(action, [t["id"] for t in normalized])
-        return guarded[1] if guarded else FIXED_REDIRECT
+            return {
+                "intent": intent,
+                "move": "PROTOCOL",
+                "utterance": FIXED_PROTOCOL_RESPONSES[intent],
+            }
+        move = await self.interview(normalized)
+        known_turns = {
+            turn["id"]: turn["text"] for turn in normalized if turn["role"] == "user"
+        }
+        recent_assistant = [
+            turn["text"] for turn in normalized if turn["role"] == "assistant"
+        ][-4:]
+        guarded = guard_interview_move(move, known_turns, recent_assistant)
+        if guarded:
+            move_name, utterance = guarded
+            guard = "accepted"
+        else:
+            move_name, utterance = safe_interview_fallback(recent_assistant)
+            guard = "fallback"
+        return {
+            "intent": intent,
+            "move": move_name,
+            "utterance": utterance,
+            "guard": guard,
+            "candidate": {
+                "move": move.move,
+                "utterance": move.utterance,
+                "grounded_in": move.grounded_in,
+            },
+        }
 
     async def classify(self, turns: list[dict[str, str]]) -> str:
         self._require_configuration()
@@ -267,21 +310,20 @@ class LLMClient:
             raise RuntimeError("La clasificación devolvió una intención desconocida")
         return intent
 
-    async def interview(self, turns: list[dict[str, str]]) -> InterviewAction:
+    async def interview(self, turns: list[dict[str, str]]) -> InterviewMove:
         self._require_configuration()
         payload = {
             "model": self.model,
             "messages": conversation_messages(turns),
-            "response_format": _json_schema_format("interview_action", INTERVIEW_SCHEMA),
+            "response_format": _json_schema_format("interview_move", INTERVIEW_SCHEMA),
             **self._generation_options(),
         }
         data = await self._post(payload, allow_response_format_fallback=True)
         parsed = _parse_json_object(_message_content(data), "El entrevistador")
-        return InterviewAction(
-            action=str(parsed.get("action", "")),
-            acknowledgement=str(parsed.get("acknowledgement", "")),
-            question=str(parsed.get("question", "")),
-            references_to_previous_turns=tuple(parsed.get("references_to_previous_turns") or ()),
+        return InterviewMove(
+            move=str(parsed.get("move", "")),
+            utterance=str(parsed.get("utterance", "")),
+            grounded_in=str(parsed.get("grounded_in", "")),
         )
 
     async def extract(self, turns: list[dict[str, str]]) -> list[dict[str, Any]]:

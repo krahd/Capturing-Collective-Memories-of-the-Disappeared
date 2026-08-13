@@ -143,6 +143,7 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=False)
 
     scenario_output = output_dir / "conversation-scenarios.json"
+    rhythm_output = output_dir / "rhythm-scenarios.json"
     benchmark_output = output_dir / "runtime-benchmark.json"
 
     scenario_env = os.environ.copy()
@@ -165,6 +166,21 @@ def main() -> int:
     ]
     scenario_result = subprocess.run(
         scenario_command,
+        cwd=ROOT,
+        env=scenario_env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    rhythm_command = [
+        sys.executable,
+        "scripts/run_rhythm_scenarios.py",
+        "--output",
+        str(rhythm_output),
+    ]
+    rhythm_result = subprocess.run(
+        rhythm_command,
         cwd=ROOT,
         env=scenario_env,
         capture_output=True,
@@ -232,6 +248,16 @@ def main() -> int:
                 "require manual rubric review. They are not participant-validation data."
             ),
         },
+        "conversation_rhythm": {
+            "output": str(rhythm_output),
+            "returncode": rhythm_result.returncode,
+            "stdout": rhythm_result.stdout.strip(),
+            "stderr": rhythm_result.stderr.strip(),
+            "note": (
+                "Generated assistant replies feed subsequent participant turns. Review move "
+                "variation, question frequency, grounding and rhythm manually."
+            ),
+        },
         "runtime_benchmark": {
             "output": str(benchmark_output),
             "returncode": benchmark_result.returncode,
@@ -249,7 +275,11 @@ def main() -> int:
     )
 
     print(output_dir)
-    if scenario_result.returncode != 0 or benchmark_result.returncode != 0:
+    if (
+        scenario_result.returncode != 0
+        or rhythm_result.returncode != 0
+        or benchmark_result.returncode != 0
+    ):
         return 1
     return 0
 

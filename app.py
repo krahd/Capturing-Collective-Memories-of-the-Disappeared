@@ -15,9 +15,10 @@ from controller import (
     FIXED_REDIRECT,
     OFF_TOPIC,
     deterministic_intent,
-    guard_interview_action,
+    guard_interview_move,
     protocol_status,
     record_kind_for_intent,
+    safe_interview_fallback,
 )
 from memory_field import build_memory_field
 from model import LLMClient, opening_message
@@ -38,7 +39,25 @@ store = SessionStore(ROOT / "data" / "sessions")
 llm = LLMClient()
 voice = VoiceService()
 app = FastAPI(title="Collective Memories Prototype", version="0.1.0")
-app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
+
+
+class RevalidatedStatics(StaticFiles):
+    """Serve static files that must always be revalidated.
+
+    The markup, script and stylesheet change together. A browser holding a
+    cached script against fresh markup throws on the first missing element and
+    the page silently stops initialising, which is a miserable thing to discover
+    during a demo. `no-cache` still allows a 304 via ETag, so this costs a
+    conditional request rather than a re-download.
+    """
+
+    def file_response(self, *args: Any, **kwargs: Any) -> Response:
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+        return response
+
+
+app.mount("/static", RevalidatedStatics(directory=ROOT / "static"), name="static")
 
 
 class SessionCreate(BaseModel):
@@ -214,18 +233,19 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
             actor=ACTOR_SYSTEM,
             record_kind="protocol_response" if intent != OFF_TOPIC else "redirect",
             intent=intent,
+            move="REDIRECT" if intent == OFF_TOPIC else "PROTOCOL",
         )
         store.save(session)
         return {
             "intent": intent,
-            "action": "REDIRECT" if intent == OFF_TOPIC else intent,
+            "move": "REDIRECT" if intent == OFF_TOPIC else intent,
             "user_turn": user_turn.__dict__,
             "assistant_turn": assistant_turn.__dict__,
             "session": session.to_dict(),
         }
 
     try:
-        action = await llm.interview(_interview_history(session))
+        candidate = await llm.interview(_interview_history(session))
     except Exception as exc:
         store.save(session)
         return JSONResponse(
@@ -242,30 +262,38 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         for turn in session.turns
         if turn.role == "user" and turn.record_kind == "testimony"
     }
-    guarded = guard_interview_action(action, known_turns)
+    recent_assistant = [
+        turn.text
+        for turn in session.turns
+        if turn.role == "assistant"
+        and turn.record_kind in {"system_intervention", "interview_action", "interview_move", "interview_fallback"}
+    ][-4:]
+    guarded = guard_interview_move(candidate, known_turns, recent_assistant)
     if guarded:
-        action_name, assistant_text = guarded
+        move_name, assistant_text = guarded
         actor = ACTOR_MODEL
-        turn_kind = "interview_action"
+        turn_kind = "interview_move"
+        grounded_in = [candidate.grounded_in]
     else:
-        action_name, assistant_text = "REDIRECT", FIXED_REDIRECT
+        move_name, assistant_text = safe_interview_fallback(recent_assistant)
         actor = ACTOR_SYSTEM
-        turn_kind = "redirect"
+        turn_kind = "interview_fallback"
+        grounded_in = [user_turn.id]
         session.record(
             ACTOR_SYSTEM,
             "operacion_protocolo",
-            "La salida del entrevistador fue rechazada por el guard y sustituida por un redirect fijo",
+            "La salida del entrevistador fue rechazada por el guard y sustituida por una cesión mínima del turno",
             target_id=user_turn.id,
             target_kind="turn",
             detail={
                 "intent": intent,
                 "guard": "rejected",
                 "candidate": {
-                    "action": action.action,
-                    "acknowledgement": action.acknowledgement,
-                    "question": action.question,
-                    "references_to_previous_turns": list(action.references_to_previous_turns),
+                    "move": candidate.move,
+                    "utterance": candidate.utterance,
+                    "grounded_in": candidate.grounded_in,
                 },
+                "fallback": {"move": move_name, "utterance": assistant_text},
             },
         )
 
@@ -274,12 +302,13 @@ async def add_turn(session_id: str, body: TurnCreate, background: BackgroundTask
         assistant_text,
         actor=actor,
         record_kind=turn_kind,
-        intent=action_name,
+        move=move_name,
+        grounded_in=grounded_in,
     )
     store.save(session)
     return {
         "intent": intent,
-        "action": action_name,
+        "move": move_name,
         "user_turn": user_turn.__dict__,
         "assistant_turn": assistant_turn.__dict__,
         "session": session.to_dict(),
@@ -296,7 +325,12 @@ def _interview_history(session) -> list[dict[str, str]]:
         )
         or (
             turn.role == "assistant"
-            and turn.record_kind in {"system_intervention", "interview_action"}
+            and turn.record_kind in {
+                "system_intervention",
+                "interview_action",  # sessions written before conversational moves
+                "interview_move",
+                "interview_fallback",
+            }
         )
     ]
 

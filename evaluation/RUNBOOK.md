@@ -6,11 +6,16 @@
 
 ## Evidence boundary
 
-This protocol uses only the ten researcher-authored scenarios in `evaluation/scenarios.json`. It is not a participant study and must not be described as one.
+This protocol uses only the ten researcher-authored cases in
+`evaluation/scenarios.json` and the three researcher-authored multi-turn scripts
+in `evaluation/rhythm-scenarios.json`. It is not a participant study and must
+not be described as one.
 
 Two independent evidence layers are produced:
 
-1. **Conversation evidence:** exact model responses to the ten scenarios, manually reviewed with the existing rubric.
+1. **Conversation evidence:** exact model responses to the ten cases plus three
+   generated multi-turn exchanges, manually reviewed with the existing rubric
+   and rhythm criteria.
 2. **Runtime evidence:** latency, context-growth, decoding and cancellation measurements from Modelito.
 
 Do not collapse them into a single score. A fast model/runtime may be conversationally unsuitable; an appropriate conversational model may be too slow for sustained interaction.
@@ -120,6 +125,16 @@ The recorded round-trip time is **not TTFT** and must not be used as a substitut
 Repeat the scenario run if needed to detect obvious stochastic instability, but preserve each run separately. Do not select only the best-looking outputs.
 
 ## 6. Manual conversational review
+
+Before scoring, also run the multi-turn rhythm corpus:
+
+```bash
+python scripts/run_rhythm_scenarios.py
+```
+
+Unlike the isolated cases, each generated assistant response becomes context for
+the next participant turn. Review the full exchange for question frequency,
+move variation, concrete grounding, proportional initiative, and repetition.
 
 Review every raw output against `docs/MANUAL-TESTS.md` using the six 0–2 dimensions:
 
@@ -241,7 +256,8 @@ If these conditions are not met by submission time, retain the manuscript as a s
 
 The disposable prototype phase is sufficiently informative to move to architectural design when:
 
-1. at least one local model/runtime can complete all ten scenarios without systematic critical failures;
+1. at least one local model/runtime can complete all ten cases and the three
+   multi-turn rhythm conversations without systematic critical failures;
 2. the remaining failures are characterised rather than hidden by prompt iteration;
 3. latency/context-growth behaviour is known well enough to determine whether text streaming is viable;
 4. observed conversational requirements are written independently of this prototype's code;

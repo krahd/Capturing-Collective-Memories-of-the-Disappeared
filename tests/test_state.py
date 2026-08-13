@@ -28,6 +28,29 @@ def test_session_preserves_exact_transcript_and_roundtrips(tmp_path):
     assert data["turns"][0]["text"] == "Yo dije 'por el 78', no 1978 seguro."
 
 
+def test_interview_move_metadata_roundtrips_and_exports(tmp_path):
+    store = SessionStore(tmp_path)
+    session = store.create("Ritmo")
+    participant = session.add_turn("user", "Una vez llegó con una bolsa de libros.")
+    assistant = session.add_turn(
+        "assistant",
+        "¿Qué pasó con esos libros?",
+        move="FOLLOW_UP",
+        grounded_in=[participant.id],
+        record_kind="interview_move",
+    )
+    store.save(session)
+
+    loaded = SessionStore(tmp_path).get(session.id)
+    loaded_assistant = next(turn for turn in loaded.turns if turn.id == assistant.id)
+    assert loaded_assistant.move == "FOLLOW_UP"
+    assert loaded_assistant.grounded_in == [participant.id]
+
+    markdown = export_markdown(loaded)
+    assert "Conversación · FOLLOW_UP" in markdown
+    assert f"Movimiento fundamentado en: `{participant.id}`" in markdown
+
+
 def test_annotations_and_derived_material_require_source_turns(tmp_path):
     store = SessionStore(tmp_path)
     session = store.create()

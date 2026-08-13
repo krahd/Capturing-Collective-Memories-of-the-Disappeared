@@ -71,6 +71,8 @@ class Turn:
     # being treated as testimony by extraction or the interviewing model.
     record_kind: str = "testimony"
     intent: str = ""
+    move: str = ""
+    grounded_in: list[str] = field(default_factory=list)
     input_mode: str = "text"
     audio_id: str = ""
     transcription_detail: dict[str, Any] = field(default_factory=dict)
@@ -202,6 +204,8 @@ class Session:
         *,
         record_kind: str | None = None,
         intent: str = "",
+        move: str = "",
+        grounded_in: list[str] | None = None,
         input_mode: str = "text",
         audio_id: str = "",
         transcription_detail: dict[str, Any] | None = None,
@@ -217,6 +221,8 @@ class Session:
             text=text,
             record_kind=kind,
             intent=intent,
+            move=move,
+            grounded_in=list(grounded_in or []),
             input_mode=input_mode,
             audio_id=audio_id,
             transcription_detail=dict(transcription_detail or {}),
@@ -644,9 +650,14 @@ def export_markdown(session: Session) -> str:
     for turn in session.turns:
         if turn.role == "user" and turn.record_kind == "non_testimony/control":
             speaker = f"Participante · control/no testimonial · {turn.intent or 'sin clasificar'}"
+        elif turn.role == "assistant" and turn.move:
+            speaker = f"Conversación · {turn.move}"
         else:
             speaker = "Participante" if turn.role == "user" else "Conversación"
         lines.extend([f"### {speaker} · `{turn.id}`", "", turn.text, ""])
+        if turn.role == "assistant" and turn.grounded_in:
+            refs = ", ".join(f"`{turn_id}`" for turn_id in turn.grounded_in)
+            lines.extend([f"> Movimiento fundamentado en: {refs}.", ""])
         if turn.audio_id:
             lines.extend(
                 [

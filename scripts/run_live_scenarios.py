@@ -31,10 +31,12 @@ def load_scenarios(path: Path) -> list[dict[str, Any]]:
 async def run_scenario(client: LLMClient, scenario: dict[str, Any]) -> dict[str, Any]:
     started = time.perf_counter()
     try:
-        response = await client.chat(scenario["turns"])
+        controller = await client.respond(scenario["turns"])
+        response = controller["utterance"]
         error = None
     except Exception as exc:  # retain failures as evaluation evidence
         response = None
+        controller = None
         error = f"{type(exc).__name__}: {exc}"
     elapsed_ms = (time.perf_counter() - started) * 1000.0
     return {
@@ -42,6 +44,7 @@ async def run_scenario(client: LLMClient, scenario: dict[str, Any]) -> dict[str,
         "label": scenario.get("label", scenario["id"]),
         "turns": scenario["turns"],
         "response": response,
+        "controller": controller,
         "round_trip_ms": round(elapsed_ms, 3),
         "error": error,
     }

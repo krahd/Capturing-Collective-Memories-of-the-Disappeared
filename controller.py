@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 import re
+import unicodedata
 from typing import Any, Iterable, Mapping
 
 
@@ -25,7 +27,13 @@ INTENTS = {
     OFF_TOPIC,
 }
 
-INTERVIEW_ACTIONS = {"ELICIT", "CLARIFY", "ACK_ELICIT"}
+INTERVIEW_MOVES = {
+    "BACKCHANNEL",
+    "INVITE_CONTINUE",
+    "FOLLOW_UP",
+    "CLARIFY",
+    "ACKNOWLEDGE",
+}
 
 FIXED_REDIRECT = (
     "Esta conversación está destinada a recoger memorias vinculadas con las personas "
@@ -48,11 +56,10 @@ FIXED_PROTOCOL_RESPONSES = {
 
 
 @dataclass(frozen=True)
-class InterviewAction:
-    action: str
-    question: str
-    acknowledgement: str = ""
-    references_to_previous_turns: tuple[str, ...] = ()
+class InterviewMove:
+    move: str
+    utterance: str
+    grounded_in: str
 
 
 def deterministic_intent(text: str) -> str | None:
@@ -100,122 +107,175 @@ def protocol_status(intent: str) -> str | None:
     return None
 
 
-def coerce_interview_action(raw: InterviewAction | dict[str, Any]) -> InterviewAction:
-    if isinstance(raw, InterviewAction):
+def coerce_interview_move(raw: InterviewMove | dict[str, Any]) -> InterviewMove:
+    if isinstance(raw, InterviewMove):
         return raw
-    return InterviewAction(
-        action=str(raw.get("action", "")),
-        question=str(raw.get("question", "")),
-        acknowledgement=str(raw.get("acknowledgement", "")),
-        references_to_previous_turns=tuple(raw.get("references_to_previous_turns") or ()),
+    return InterviewMove(
+        move=str(raw.get("move", "")),
+        utterance=str(raw.get("utterance", "")),
+        grounded_in=str(raw.get("grounded_in", "")),
     )
 
 
-def guard_interview_action(
-    raw: InterviewAction | dict[str, Any],
-    known_turn_ids: Iterable[str] | Mapping[str, str],
+def guard_interview_move(
+    raw: InterviewMove | dict[str, Any],
+    known_turns: Mapping[str, str],
+    recent_assistant_turns: Iterable[str] = (),
 ) -> tuple[str, str] | None:
-    """Render the small action language or reject it.
+    """Validate a conversational move without rewriting the model's prose.
 
-    Returning ``None`` tells the application to use its deterministic redirect.
-    The guard deliberately accepts less than natural language in general: the
-    interviewing model gets one question and, optionally, one short acknowledgement.
+    The constrained surface is the move, not a compulsory sentence template.
+    ``None`` means the application must use a safe interview fallback, never the
+    off-topic scope redirect.
     """
 
-    action = coerce_interview_action(raw)
-    kind = action.action.strip().upper()
-    question = " ".join(action.question.split())
-    acknowledgement = " ".join(action.acknowledgement.split())
-    context = dict(known_turn_ids) if isinstance(known_turn_ids, Mapping) else {}
-    known = set(context) if context else set(known_turn_ids)
-    refs = set(action.references_to_previous_turns)
+    candidate = coerce_interview_move(raw)
+    move = candidate.move.strip().upper()
+    utterance = " ".join(candidate.utterance.split())
+    grounded_in = candidate.grounded_in.strip()
+    context = dict(known_turns)
 
-    if kind not in INTERVIEW_ACTIONS:
+    if move not in INTERVIEW_MOVES:
         return None
-    if refs - known:
+    if not grounded_in or grounded_in not in context:
         return None
-    if kind == "CLARIFY" and not refs:
+    if grounded_in != next(reversed(context)):
         return None
-    if not question or len(question) > 260 or question.count("?") != 1 or not question.endswith("?"):
+    if not utterance or len(utterance) > 260 or "\n" in candidate.utterance:
         return None
-    if "\n" in action.question or re.search(r"https?://|```|<script", question, re.I):
+    if re.search(r"https?://|```|<script", utterance, re.I):
         return None
+    if len(utterance.split()) > 42:
+        return None
+
+    question_count = utterance.count("?")
+    if move in {"FOLLOW_UP", "CLARIFY"}:
+        if question_count != 1 or not utterance.endswith("?"):
+            return None
+        if not _utterance_is_grounded(
+            utterance,
+            context[grounded_in],
+            move,
+            grounded_in == next(reversed(context)),
+        ):
+            return None
+    elif question_count:
+        return None
+
+    if move == "BACKCHANNEL" and len(utterance.split()) > 8:
+        return None
+    if move == "INVITE_CONTINUE" and len(utterance.split()) > 14:
+        return None
+    if move == "INVITE_CONTINUE" and re.search(
+        r"\b(contame|decime|hablame|seguí)\s+(cómo|qué|cuándo|dónde|quién|sobre|con)\b",
+        utterance,
+        re.I,
+    ):
+        return None
+    if move == "INVITE_CONTINUE" and _has_content_overlap(utterance, context[grounded_in]):
+        # An invitation yields the floor. A content-specific imperative such as
+        # "Contame cómo era esa espera" is functionally a follow-up evading `?`.
+        return None
+    if move == "ACKNOWLEDGE":
+        if len(utterance.split()) > 26:
+            return None
+        if not _has_content_overlap(utterance, context[grounded_in]):
+            return None
+
     # Common signatures of answering a request or turning into a general assistant.
     if re.search(
         r"\b(aquí (tenés|tienes)|la respuesta es|paso a paso|código|programa|receta|"
         r"como modelo de lenguaje|no puedo cumplir|quantum|cuántic[oa])\b",
-        question,
+        utterance,
         re.I,
     ):
         return None
-    if context and not _question_is_grounded(question, context.values()):
+    if is_repetitive(utterance, recent_assistant_turns):
         return None
-
-    if kind == "ACK_ELICIT":
-        if not acknowledgement or len(acknowledgement) > 110 or "?" in acknowledgement:
-            return None
-        if len(re.findall(r"[.!]", acknowledgement)) > 1:
-            return None
-        if re.search(r"https?://|```|<script", acknowledgement, re.I):
-            return None
-        # The action is model-selected, but the acknowledgement is rendered by
-        # the application. This prevents a short, plausible-sounding model
-        # assertion from hardening or embellishing what the person said.
-        return kind, f"Te sigo. {question}"
-
-    if acknowledgement:
-        return None
-    return kind, question
+    return move, utterance
 
 
-_GROUNDING_WORDS = {
-    "acordás",
-    "contar",
-    "contarte",
-    "después",
-    "decir",
-    "desaparecida",
-    "desaparecidas",
-    "desaparecido",
-    "desaparecidos",
-    "detenida",
-    "detenido",
-    "escuchaste",
-    "familia",
-    "historia",
-    "imagen",
-    "memoria",
-    "pasó",
-    "recordás",
-    "recordar",
-    "recuerdo",
-    "relato",
-    "testimonio",
-    "viviste",
-}
+SAFE_INTERVIEW_FALLBACKS = (
+    ("INVITE_CONTINUE", "Contame."),
+    ("BACKCHANNEL", "Ajá."),
+    ("INVITE_CONTINUE", "Cuando quieras."),
+    ("INVITE_CONTINUE", "Seguí."),
+    ("INVITE_CONTINUE", "Podés seguir."),
+)
 
-_DEICTIC_WORDS = {"ahí", "aquello", "esa", "ese", "eso", "esta", "este", "esto", "momento", "época"}
+
+def safe_interview_fallback(recent_assistant_turns: Iterable[str]) -> tuple[str, str]:
+    """Choose a minimal floor-yielding fallback after a rejected model move."""
+    recent = tuple(recent_assistant_turns)
+    for move, utterance in SAFE_INTERVIEW_FALLBACKS:
+        if not is_repetitive(utterance, recent):
+            return move, utterance
+    return SAFE_INTERVIEW_FALLBACKS[0]
 
 _STOPWORDS = {
-    "algo", "como", "cómo", "cuando", "cuándo", "donde", "dónde", "ella", "ellos", "para",
-    "pero", "porque", "podés", "quien", "quién", "sobre", "tenés", "tuya", "tuyo", "usted",
+    "algo", "aquello", "como", "cómo", "cuando", "cuándo", "donde", "dónde", "para",
+    "pero", "porque", "podés", "quien", "quién", "que", "qué", "sobre", "tenés", "tuya", "tuyo", "usted",
     "ustedes", "querés", "quisieras", "gusta", "gustaría", "más", "menos", "también", "había",
+    "acordás", "contar", "contame", "contarte", "después", "historia", "memoria", "momento",
+    "recordás", "recordar", "recuerdo", "relato", "época",
+    "con", "del", "desde", "eso", "esa", "ese", "esta", "este", "estos", "esas", "esos",
+    "fue", "las", "los", "muy", "por", "sin", "toda", "todo", "una", "uno", "veces", "vos",
+}
+
+_AMBIGUOUS_REFERENCES = {"aquel", "aquella", "aquellos", "aquellas", "él", "ella", "ellos", "ellas", "eso", "esto"}
+
+_MINIMAL_FOLLOW_UPS = {
+    "y despues",
+    "que paso despues",
+    "y que paso despues",
 }
 
 
 def _words(text: str) -> set[str]:
     return {
-        word
-        for word in re.findall(r"[a-záéíóúüñ]{3,}", text.lower())
+        _normalize(word)
+        for word in re.findall(r"[a-záéíóúüñ]{3,}|\d{2,4}", text.lower())
         if word not in _STOPWORDS
     }
 
 
-def _question_is_grounded(question: str, context: Iterable[str]) -> bool:
-    question_words = _words(question)
-    if question_words & (_GROUNDING_WORDS | _DEICTIC_WORDS):
+def _normalize(text: str) -> str:
+    decomposed = unicodedata.normalize("NFKD", text.lower())
+    unaccented = "".join(char for char in decomposed if not unicodedata.combining(char))
+    return " ".join(re.findall(r"[a-z0-9ñ]+", unaccented))
+
+
+def _has_content_overlap(utterance: str, source: str) -> bool:
+    return bool(_words(utterance) & _words(source))
+
+
+def _utterance_is_grounded(
+    utterance: str,
+    source: str,
+    move: str,
+    grounded_in_latest: bool,
+) -> bool:
+    if _has_content_overlap(utterance, source):
         return True
-    context_words: set[str] = set()
-    for text in context:
-        context_words.update(_words(text))
-    return bool(question_words & context_words)
+    normalized = _normalize(utterance)
+    if move == "FOLLOW_UP" and grounded_in_latest and normalized in _MINIMAL_FOLLOW_UPS:
+        return True
+    source_words = set(re.findall(r"[a-záéíóúüñ]+", source.lower()))
+    if move == "CLARIFY" and source_words & _AMBIGUOUS_REFERENCES:
+        return bool(re.search(r"\b(a quién|a quiénes|quién|quiénes|te referís|decís)\b", utterance, re.I))
+    return False
+
+
+def is_repetitive(utterance: str, recent_assistant_turns: Iterable[str]) -> bool:
+    candidate = _normalize(utterance)
+    if not candidate:
+        return True
+    for previous in list(recent_assistant_turns)[-4:]:
+        normalized_previous = _normalize(previous)
+        if not normalized_previous:
+            continue
+        if candidate == normalized_previous:
+            return True
+        if SequenceMatcher(None, candidate, normalized_previous).ratio() >= 0.82:
+            return True
+    return False

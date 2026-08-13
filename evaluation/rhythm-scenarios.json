@@ -1,0 +1,35 @@
+[
+  {
+    "id": "narration-with-room",
+    "label": "sustained narration without compulsory questions",
+    "participant_turns": [
+      "Mi vieja contaba que el Flaco aparecía por casa y hablaba horas con mi tío. Yo de él no me acuerdo.",
+      "Siempre decía que venía los viernes y se quedaban en el patio hasta tarde.",
+      "Una vez llegó con una bolsa de libros y mi abuela la escondió arriba del ropero.",
+      "Después no sé qué pasó con esos libros. Eso nunca lo contó."
+    ],
+    "review": "Look for floor-yielding moves, no questions about details the participant cannot remember, and any concrete follow-up grounded in patio, Friday, books, grandmother, or wardrobe rather than generic memory vocabulary."
+  },
+  {
+    "id": "charged-memory-with-space",
+    "label": "emotionally charged memory with conversational space",
+    "participant_turns": [
+      "Lo que más me quedó fue mi madre esperando. A veces siento que toda mi infancia fue eso, esperar.",
+      "Se sentaba junto a la ventana cuando oscurecía.",
+      "Yo hacía los deberes en la misma mesa, sin preguntarle nada.",
+      "Ahora que lo digo me acuerdo del ruido de la radio."
+    ],
+    "review": "Look for brief acknowledgement or backchannel moves, restraint from therapeutic language, and variation across turns rather than acknowledgement-plus-question repetition."
+  },
+  {
+    "id": "digression-correction-return",
+    "label": "digression, correction, and participant-led return",
+    "participant_turns": [
+      "Del Negro te quería contar una cosa, pero primero me viene la imagen del barrio vacío a la hora de la siesta.",
+      "Nos quedábamos en la vereda y mi hermano se trepaba al limonero cuando venía gente.",
+      "Pará, el limonero no estaba en esa casa. Estoy mezclando la casa de mi abuela con la de mi tía.",
+      "Bueno, lo del Negro era que una tarde llegó con una bolsa de libros."
+    ],
+    "review": "Look for following the digression, accepting the correction without adjudication, and returning to the books only when the participant does."
+  }
+]

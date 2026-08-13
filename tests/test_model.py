@@ -124,3 +124,12 @@ def test_policy_addresses_observed_hearsay_and_register_failures():
     # right after the participant said they did not remember them.
     assert "no le preguntes por detalles que sólo tendría si lo hubiera vivido" in policy
     assert "no repitas la misma fórmula de pregunta" in policy
+
+
+def test_policy_allows_floor_yielding_moves_without_forced_questions():
+    policy = URUGUAYAN_CONVERSATION_POLICY.lower()
+    for move in ["backchannel", "invite_continue", "follow_up", "clarify", "acknowledge"]:
+        assert move in policy
+    assert "no lleva pregunta" in policy
+    assert "no debés preferir una pregunta por defecto" in policy
+    assert "una única intervención completa, lista para mostrar sin reescritura" in policy

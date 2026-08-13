@@ -169,6 +169,7 @@ The command creates one ignored timestamped directory under
 
 - a manifest with machine/configuration metadata;
 - raw responses to all ten researcher-authored scenarios;
+- three generated multi-turn rhythm conversations;
 - the independent Modelito conversational runtime benchmark.
 
 It does **not** score conversational quality automatically. Manual review remains
@@ -205,10 +206,24 @@ Participant utterances are treated as data, never application instructions.
 Before interviewing, a router classifies memory/testimony, uncertainty,
 correction, participant-control operations, and off-topic commands. Off-topic
 commands receive a fixed application-owned redirect and never enter the
-interviewing model. Model output is JSON-schema constrained to `ELICIT`,
-`CLARIFY`, or `ACK_ELICIT`, then checked again before display. Control material
-remains in the immutable transcript with a `non_testimony/control` label and is
-excluded from automatic extraction.
+interviewing model. Model output is JSON-schema constrained to one conversational
+move — `BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, or
+`ACKNOWLEDGE` — plus one complete utterance and an exact participant turn id.
+The controller validates the move without rewriting its prose. Questions are
+required only for follow-up and clarification; content-bearing moves must ground
+in what the cited turn actually introduced, and recent assistant wording cannot
+simply repeat. Control material remains in the immutable transcript with a
+`non_testimony/control` label and is excluded from automatic extraction.
+
+The original ten cases remain in `evaluation/scenarios.json`. A separate
+multi-turn rhythm corpus in `evaluation/rhythm-scenarios.json` feeds every
+generated assistant reply into the following turn so question frequency,
+initiative, grounding and repetition can be reviewed as conversation rather than
+as isolated outputs:
+
+```bash
+python scripts/run_rhythm_scenarios.py
+```
 
 ## Optional local voice
 

@@ -33,6 +33,24 @@ def test_live_scenario_runner_starts_without_model_configuration():
     assert "Uruguayan-Spanish" in result.stdout
 
 
+def test_rhythm_scenarios_are_multi_turn_and_runner_is_executable():
+    scenarios = json.loads(
+        (ROOT / "evaluation" / "rhythm-scenarios.json").read_text(encoding="utf-8")
+    )
+    assert len(scenarios) >= 3
+    assert all(len(scenario["participant_turns"]) >= 3 for scenario in scenarios)
+
+    result = subprocess.run(
+        [sys.executable, "scripts/run_rhythm_scenarios.py", "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "multi-turn conversational-rhythm" in result.stdout
+
+
 def test_target_machine_wrapper_exposes_evidence_arguments():
     result = subprocess.run(
         [sys.executable, "scripts/run_target_machine_evaluation.py", "--help"],

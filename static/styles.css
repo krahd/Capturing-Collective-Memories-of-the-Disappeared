@@ -154,8 +154,8 @@ p { margin: .15rem 0; line-height: 1.45; }
 }
 .detail-quote.current { border-left-color: #d9bf62; background: #fbf6e3; }
 
-.field-strips { border-top: 1px solid var(--rule-soft); padding: .6rem 1rem .7rem; background: var(--paper-2); }
-.strip { display: flex; align-items: baseline; gap: .5rem; margin-bottom: .35rem; flex-wrap: wrap; }
+.field-strips { border-top: 1px solid var(--rule-soft); padding: .75rem 1rem .85rem; background: var(--paper-2); }
+.strip { display: flex; align-items: baseline; gap: .5rem; margin-bottom: .45rem; flex-wrap: wrap; }
 .strip-label { font-size: .64rem; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-faint); font-weight: 650; min-width: 5.6rem; }
 .chips { display: flex; gap: .3rem; flex-wrap: wrap; }
 .chip { font-size: .68rem; border: 1px solid var(--rule); background: var(--card); border-radius: .3rem; padding: .1rem .4rem; color: var(--ink-soft); }
@@ -165,7 +165,7 @@ p { margin: .15rem 0; line-height: 1.45; }
 /* Not yet built. Present to show the material is computationally productive. */
 .chip-future { border-style: dashed; color: var(--ink-faint); }
 .record-link {
-  border: 0; background: none; padding: .2rem 0 0; font-size: .7rem; color: var(--ink-faint);
+  border: 0; background: none; padding: 0; margin-top: .5rem; font-size: .7rem; color: var(--ink-faint);
   text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
 }
 .record-link:hover { color: var(--ink-soft); background: none; }

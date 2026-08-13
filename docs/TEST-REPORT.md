@@ -4,6 +4,37 @@
 live-model check has been run; the full ten-scenario scored protocol has **not**
 been run and remains the final evidence gate.
 
+## Conversational-move rhythm smoke check — 12 August 2026
+
+The first constrained controller over-specified surface language: every allowed
+action required a question and every acknowledgement was rewritten as `Te sigo`.
+That controller result is superseded. The router and deterministic off-topic /
+participant-control barrier remain, while the interviewer now emits one complete
+utterance tagged as `BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, or
+`ACKNOWLEDGE` and grounded in the latest participant turn.
+
+The revised controller was exercised against
+`qwen3:30b-a3b-instruct-2507-q4_K_M` over Ollama using the three scripted
+four-turn conversations in `evaluation/rhythm-scenarios.json`:
+
+- 12 assistant replies total;
+- one reply contained a question;
+- move distribution: five `ACKNOWLEDGE`, four `BACKCHANNEL`, one `FOLLOW_UP`,
+  and two `INVITE_CONTINUE` fallbacks;
+- ten model utterances passed the guard unchanged;
+- `Entendido.` was rejected because an acknowledgement must ground in concrete
+  participant content;
+- `Contame cómo era esa bolsa.` was rejected because a content-directed prompt
+  cannot be labelled as a floor-yielding invitation;
+- fallback selection did not repeat a recent assistant phrase.
+
+This run confirms that the controller no longer forces acknowledgement-plus-
+question cadence. It does not establish naturalness. One accepted acknowledgement
+said the mother `recordaba bien`, a stronger inference than the participant's
+hearsay warranted, and the single follow-up (`¿Qué tipo de ruido era, el de la
+radio?`) remains stylistically awkward. Those are model/policy review findings,
+not reasons to restore controller-authored prose.
+
 ## First live local-model check — 12 August 2026
 
 The first actual conversational exchange with a local model was executed on the

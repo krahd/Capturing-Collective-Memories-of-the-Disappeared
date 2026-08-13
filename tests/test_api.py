@@ -3,7 +3,7 @@ import asyncio
 import httpx
 
 import app as app_module
-from controller import InterviewAction
+from controller import InterviewMove
 from state import SessionStore
 
 
@@ -15,10 +15,10 @@ def test_two_view_api_flow(tmp_path, monkeypatch):
         return "CLARIFICATION_UNCERTAINTY"
 
     async def fake_interview(turns):
-        return InterviewAction(
-            action="CLARIFY",
-            question="¿Qué es lo que te hace ubicarlo más o menos por esa época?",
-            references_to_previous_turns=(turns[-1]["id"],),
+        return InterviewMove(
+            move="FOLLOW_UP",
+            utterance="¿Qué te hace ubicarlo más o menos por el 78?",
+            grounded_in=turns[-1]["id"],
         )
 
     monkeypatch.setattr(app_module.llm, "classify", fake_classify)
@@ -40,7 +40,9 @@ def test_two_view_api_flow(tmp_path, monkeypatch):
             assert reply.status_code == 200
             session = reply.json()["session"]
             user_turn = [t for t in session["turns"] if t["role"] == "user"][0]
-            assert session["turns"][-1]["text"] == "¿Qué es lo que te hace ubicarlo más o menos por esa época?"
+            assert session["turns"][-1]["text"] == "¿Qué te hace ubicarlo más o menos por el 78?"
+            assert session["turns"][-1]["move"] == "FOLLOW_UP"
+            assert session["turns"][-1]["grounded_in"] == [user_turn["id"]]
 
             annotation = await client.post(
                 f"/api/sessions/{session_id}/annotations",
@@ -152,7 +154,7 @@ def test_prompt_command_is_redirected_without_reaching_either_model_stage(tmp_pa
             assert response.status_code == 200
             payload = response.json()
             assert payload["intent"] == "OFF_TOPIC_COMMAND"
-            assert payload["action"] == "REDIRECT"
+            assert payload["move"] == "REDIRECT"
             assert "detenidas-desaparecidas" in payload["assistant_turn"]["text"]
             assert payload["user_turn"]["record_kind"] == "non_testimony/control"
 
@@ -196,5 +198,65 @@ def test_pause_is_application_control_and_can_be_resumed(tmp_path, monkeypatch):
             resumed = await client.post(f"/api/sessions/{session_id}/resume")
             assert resumed.status_code == 200
             assert resumed.json()["status"] == "active"
+
+    asyncio.run(run_flow())
+
+
+def test_multi_turn_rhythm_allows_two_turns_without_questions(tmp_path, monkeypatch):
+    app_module.store = SessionStore(tmp_path)
+    generated = iter(
+        [
+            ("BACKCHANNEL", "Ajá."),
+            ("INVITE_CONTINUE", "Contame."),
+            ("FOLLOW_UP", "¿Qué pasó con esos libros?"),
+        ]
+    )
+
+    async def fake_classify(_turns):
+        return "MEMORY_TESTIMONY"
+
+    async def fake_interview(turns):
+        move, utterance = next(generated)
+        return InterviewMove(move, utterance, turns[-1]["id"])
+
+    async def fake_extract(_turns):
+        return []
+
+    monkeypatch.setattr(app_module.llm, "classify", fake_classify)
+    monkeypatch.setattr(app_module.llm, "interview", fake_interview)
+    monkeypatch.setattr(app_module.llm, "extract", fake_extract)
+
+    participant_turns = [
+        "Mi vieja contaba que aparecía por casa y hablaba horas con mi tío.",
+        "Siempre decía que venía los viernes y se quedaban en el patio.",
+        "Una vez llegó con una bolsa de libros.",
+    ]
+
+    async def run_flow():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            session_id = (await client.post("/api/sessions", json={})).json()["id"]
+            replies = []
+            for text in participant_turns:
+                response = await client.post(
+                    f"/api/sessions/{session_id}/turns", json={"text": text}
+                )
+                assert response.status_code == 200
+                replies.append(response.json())
+
+            assert [reply["move"] for reply in replies] == [
+                "BACKCHANNEL",
+                "INVITE_CONTINUE",
+                "FOLLOW_UP",
+            ]
+            utterances = [reply["assistant_turn"]["text"] for reply in replies]
+            assert utterances == ["Ajá.", "Contame.", "¿Qué pasó con esos libros?"]
+            assert [utterance.count("?") for utterance in utterances] == [0, 0, 1]
+
+            session = replies[-1]["session"]
+            assistant_turns = [turn for turn in session["turns"] if turn["role"] == "assistant"]
+            assert assistant_turns[-1]["grounded_in"] == [
+                replies[-1]["user_turn"]["id"]
+            ]
 
     asyncio.run(run_flow())

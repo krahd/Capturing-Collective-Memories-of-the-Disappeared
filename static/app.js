@@ -132,6 +132,15 @@ function renderConversation() {
       badge.textContent = "voz · transcripción ASR";
       meta.appendChild(badge);
     }
+    if (turn.role === "assistant" && turn.move) {
+      const badge = document.createElement("span");
+      badge.className = "turn-kind";
+      badge.textContent = turn.move.toLowerCase();
+      if (turn.grounded_in?.length) {
+        badge.title = `Basado en ${turn.grounded_in.join(", ")}`;
+      }
+      meta.appendChild(badge);
+    }
 
     node.querySelector(".turn-text").textContent = turn.text;
     root.appendChild(node);

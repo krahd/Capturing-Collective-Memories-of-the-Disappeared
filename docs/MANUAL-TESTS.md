@@ -153,6 +153,26 @@ With **Prototype: Voice Doctor** reporting both layers ready:
 5. say Scenario 11 and verify the redirect is spoken rather than an answer;
 6. say a correction, a pause, and a stop, verifying each intent in the audit log.
 
+## Multi-turn rhythm test
+
+Single final-turn scenarios do not establish conversational rhythm. Run:
+
+```bash
+python scripts/run_rhythm_scenarios.py
+```
+
+The runner feeds each generated system reply into the next participant turn and
+records move metadata and question counts. Review the complete exchanges for:
+
+- stretches of participant narration in which the system yields the floor
+  through `BACKCHANNEL`, `INVITE_CONTINUE`, or `ACKNOWLEDGE` rather than forcing
+  a question every turn;
+- initiative proportional to the material offered;
+- follow-ups grounded in concrete words or referents from the cited participant
+  turn, not generic memory vocabulary;
+- no repeated phrase or question frame across the previous few assistant turns;
+- correction, digression and participant-led return handled without steering.
+
 ## Workbench test
 
 For at least one completed scenario:
