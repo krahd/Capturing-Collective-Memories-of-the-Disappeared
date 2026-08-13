@@ -8,6 +8,25 @@ from controller import InterviewMove
 from state import SessionStore
 
 
+def test_ui_shell_is_never_served_stale_and_names_its_required_controls():
+    async def check_shell():
+        transport = httpx.ASGITransport(app=app_module.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+            page = await client.get("/")
+            assert page.status_code == 200
+            assert page.headers["cache-control"] == "no-store"
+            assert 'id="app-status"' in page.text
+            assert 'id="new-session"' in page.text
+            assert 'id="voice-toggle"' in page.text
+            assert "Conversación por voz" in page.text
+
+            script = await client.get("/static/app.js")
+            assert script.status_code == 200
+            assert "no-cache" in script.headers["cache-control"]
+
+    asyncio.run(check_shell())
+
+
 def test_two_view_api_flow(tmp_path, monkeypatch):
     app_module.store = SessionStore(tmp_path)
 

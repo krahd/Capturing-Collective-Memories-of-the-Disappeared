@@ -107,7 +107,13 @@ class SpeechCreate(BaseModel):
 
 @app.get("/")
 def index() -> FileResponse:
-    return FileResponse(ROOT / "static" / "index.html")
+    response = FileResponse(ROOT / "static" / "index.html")
+    # The page and its script are one UI unit. Serving a cached page against a
+    # newer script (or vice versa) can make the first DOM lookup throw, leaving
+    # every control inert and the placeholder "modelo…" on screen. Always ask
+    # for the current shell; versioned/revalidated static assets remain cheap.
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 @app.get("/api/config")

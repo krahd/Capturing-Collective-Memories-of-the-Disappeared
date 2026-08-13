@@ -844,12 +844,12 @@ function renderVoiceAvailability() {
   const status = $("voice-status");
   if (!config.asr_configured) {
     const missing = config.missing?.asr?.join(", ") || "componentes locales";
-    status.textContent = `voz local no configurada: ${missing}`;
+    status.textContent = `No configurada: ${missing}`;
     return;
   }
   status.textContent = config.tts_configured
-    ? `voz local · ${config.language || "es"} · entrada y salida`
-    : `voz local · ${config.language || "es"} · sólo entrada`;
+    ? `Lista en ${config.language || "es"}. Tocá Hablar, autorizá el micrófono y empezá a contar; termina cada turno con una pausa.`
+    : `Entrada lista en ${config.language || "es"}; la respuesta se mostrará por escrito.`;
 }
 
 function setVoicePhase(phase, label) {
@@ -894,12 +894,22 @@ function rearmMicrophone() {
 
 async function startListening() {
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-    $("voice-status").textContent = "Este navegador no ofrece grabación de micrófono.";
-    return;
+    return endVoiceLoop("Este navegador no ofrece grabación de micrófono.");
   }
   try {
+    setVoicePhase("requesting", "Esperando permiso para usar el micrófono…");
     voiceRuntime.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    voiceRuntime.context = new AudioContext();
+    // The participant may press Terminar while the browser's permission sheet
+    // is still open. If permission arrives afterwards, do not begin a recording
+    // they already cancelled.
+    if (!state.voiceContinuous) {
+      cleanupMicrophone();
+      return endVoiceLoop("");
+    }
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error("el navegador no ofrece análisis de audio");
+    voiceRuntime.context = new AudioContextClass();
+    if (voiceRuntime.context.state === "suspended") await voiceRuntime.context.resume();
     const source = voiceRuntime.context.createMediaStreamSource(voiceRuntime.stream);
     voiceRuntime.analyser = voiceRuntime.context.createAnalyser();
     voiceRuntime.analyser.fftSize = 1024;
@@ -1038,11 +1048,26 @@ async function speakText(text) {
   }
 }
 
-$("new-session").addEventListener("click", async () => {
+async function createFreshSession() {
   state.selectedNode = null;
-  setSession(await api("/api/sessions", { method: "POST", body: JSON.stringify({}) }));
-  loadField();
+  const session = await api("/api/sessions", { method: "POST", body: JSON.stringify({}) });
+  setSession(session);
   $("message").focus();
+  return session;
+}
+
+function reportActionError(error) {
+  $("send-status").textContent = `No se pudo completar la acción: ${error.message}`;
+  console.error(error);
+}
+
+$("new-session").addEventListener("click", async () => {
+  try {
+    await createFreshSession();
+    await loadField();
+  } catch (error) {
+    reportActionError(error);
+  }
 });
 
 $("load-demo").addEventListener("click", async () => {
@@ -1178,8 +1203,8 @@ function renderModelStatus() {
   badge.textContent = !state.config.llm_configured
     ? "modelo sin configurar"
     : local
-      ? "LOCAL"
-      : "remoto";
+      ? "modelo local"
+      : "modelo remoto";
   badge.classList.toggle("status-local", Boolean(local));
   badge.classList.toggle("status-remote", state.config.llm_configured && !local);
   badge.title = state.config.llm_configured
@@ -1207,6 +1232,7 @@ function renderRecordModels() {
 }
 
 async function init() {
+  const startup = $("app-status");
   state.config = await api("/api/config");
   renderModelStatus();
   renderRecordModels();
@@ -1219,18 +1245,26 @@ async function init() {
       setSession(await api(`/api/sessions/${previous}`));
     } catch (_) {
       localStorage.removeItem("ccm-current-session");
-      render();
+      await createFreshSession();
     }
   } else {
-    render();
+    // There is nothing useful to do on a disabled landing screen. A first
+    // visit opens a real conversation immediately; the explicit button above
+    // remains available whenever a clean session is wanted.
+    await createFreshSession();
   }
   await loadField();
   // ?node=place:cerro opens straight to one entity and its recollections.
   const node = params.get("node");
   if (node && sim.byId.has(node)) selectNode(node);
+  startup.hidden = true;
 }
 
 init().catch((error) => {
+  const startup = $("app-status");
+  startup.hidden = false;
+  startup.classList.add("error");
+  startup.textContent = `No se pudo iniciar la interfaz: ${error.message}. Recargá la página; si continúa, revisá la terminal de Prototype: Run.`;
   $("model-status").textContent = "error de inicio";
   console.error(error);
 });

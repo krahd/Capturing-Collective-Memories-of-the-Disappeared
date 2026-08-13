@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from voice import VoiceService, audio_suffix
 
 
@@ -38,3 +40,25 @@ def test_browser_audio_mime_types_get_safe_known_suffixes():
     assert audio_suffix("audio/webm; codecs=opus") == ".webm"
     assert audio_suffix("audio/mp4") == ".m4a"
     assert audio_suffix("anything/untrusted") == ".webm"
+
+
+def test_wav_input_is_converted_to_a_distinct_file(tmp_path, monkeypatch):
+    service = VoiceService()
+    service.ffmpeg = "/fake/ffmpeg"
+    service.whisper_cli = "/fake/whisper-cli"
+    service.whisper_model = str(tmp_path / "model.bin")
+    calls = []
+
+    def fake_run(command, input_text=None):
+        calls.append(command)
+        if command[0] == service.whisper_cli:
+            output = Path(command[command.index("--output-file") + 1])
+            Path(f"{output}.txt").write_text("Una prueba de voz.", encoding="utf-8")
+
+    monkeypatch.setattr(service, "_run", fake_run)
+
+    transcript, _detail = service.transcribe(b"RIFF-test", ".wav")
+
+    ffmpeg = calls[0]
+    assert ffmpeg[ffmpeg.index("-i") + 1] != ffmpeg[-1]
+    assert transcript == "Una prueba de voz."

@@ -87,8 +87,11 @@ class VoiceService:
 
         with tempfile.TemporaryDirectory(prefix="ccm-voice-") as directory:
             root = Path(directory)
-            source = root / f"input{suffix}"
-            wav = root / "input.wav"
+            # Browsers may submit WAV directly. Keep source and conversion
+            # names distinct even then: ffmpeg refuses an input and output that
+            # resolve to the same file.
+            source = root / f"source{suffix}"
+            wav = root / "converted.wav"
             output_prefix = root / "transcript"
             source.write_bytes(audio)
 

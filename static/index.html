@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Memorias — prototipo conversacional</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260812-1" />
 </head>
 <body>
   <header class="topbar">
@@ -15,11 +15,18 @@
     <div class="toolbar">
       <!-- Running on this machine is the claim worth showing. The model id is
            an implementation detail and lives in the record. -->
-      <button id="model-status" class="status" type="button">modelo…</button>
+      <button id="model-status" class="status" type="button">comprobando modelo…</button>
       <button id="new-session">Nueva conversación</button>
       <button id="load-demo" class="ghost">Sesión de ejemplo</button>
     </div>
   </header>
+
+  <div id="app-status" class="startup-banner" role="status">
+    Cargando la interfaz… Si este mensaje no desaparece, recargá la página una vez.
+  </div>
+  <noscript>
+    <div class="startup-banner error">Esta interfaz necesita JavaScript habilitado.</div>
+  </noscript>
 
   <main class="layout">
     <section class="conversation-panel">
@@ -37,9 +44,14 @@
       <form id="composer" class="composer">
         <textarea id="message" rows="3" placeholder="Escribí acá…" disabled></textarea>
         <div class="voice-row">
-          <button id="voice-toggle" type="button" disabled>Hablar</button>
+          <button id="voice-toggle" class="voice-button" type="button" disabled>
+            <span aria-hidden="true">●</span> Hablar
+          </button>
+          <div class="voice-copy">
+            <strong>Conversación por voz</strong>
+            <span id="voice-status" class="muted">Comprobando micrófono y modelos de voz…</span>
+          </div>
           <button id="resume-session" type="button" hidden>Reanudar</button>
-          <span id="voice-status" class="muted">voz local no configurada</span>
         </div>
         <div class="composer-row">
           <span id="send-status" class="muted"></span>
@@ -124,6 +136,6 @@
     </article>
   </template>
 
-  <script src="/static/app.js" defer></script>
+  <script src="/static/app.js?v=20260812-1" defer></script>
 </body>
 </html>
