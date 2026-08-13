@@ -3,7 +3,7 @@
 **Date:** 13 August 2026  
 **Phase:** disposable interaction prototype plus production-design synthesis  
 **Current implementation baseline:** speed-improved local prototype (`9017bb1`, followed by documentation-only commits)  
-**Mechanical verification:** GitHub Actions was green on the implementation baseline; verify again after the documentation sync  
+**Mechanical verification:** GitHub Actions is green on the implementation baseline and through the audited documentation sync (`e27fed7`, run 74); this status-only update does not change code  
 **Live-model Uruguayan-Spanish evaluation:** informal single- and multi-turn checks have been run; the revised policy still needs a fresh sustained human review  
 **Voice:** continuous local half duplex implemented; real 10–15-turn spoken verification still pending  
 **Participant data:** none; current evaluation uses researcher-authored/synthetic material
