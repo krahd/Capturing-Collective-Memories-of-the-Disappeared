@@ -1,0 +1,1923 @@
+{
+  "model_spec": {
+    "id": "qwen3-30b-a3b-primary",
+    "role": "primary",
+    "family": "Qwen3",
+    "ollama_model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+    "source_model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "representation": "Ollama Q4_K_M",
+    "repetitions": 5,
+    "rationale": "Primary locally deployable instruction-tuned model used by the prototype evaluation."
+  },
+  "results": [
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-tito",
+      "repetition": 1,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, Tito, a veces aparecía por casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, Tito, a veces aparecía por casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, Tito, a veces aparecía por casa.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 25578.758,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algunas veces aparecía por casa, ¿cómo era eso?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algunas veces aparecía por casa, ¿cómo era eso?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algunas veces aparecía por casa, ¿cómo era eso?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1052.751,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 872.5,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hm.",
+      "total_round_trip_ms": 27504.009,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-tito",
+      "repetition": 2,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, Tito, que a veces aparecía por casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, Tito, que a veces aparecía por casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, Tito, que a veces aparecía por casa.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 718.215,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Alguno más que recuerdes que aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Alguno más que recuerdes que aparecía por casa?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Alguno más que recuerdes que aparecía por casa?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1021.241,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 854.223,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hm.",
+      "total_round_trip_ms": 2593.679,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-tito",
+      "repetition": 3,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, Tito, a veces aparecía por casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, Tito, a veces aparecía por casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, Tito, a veces aparecía por casa.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 877.826,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Alguna vez apareció en algún momento particular?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Alguna vez apareció en algún momento particular?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Alguna vez apareció en algún momento particular?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 837.987,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 765.213,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hmm.",
+      "total_round_trip_ms": 2481.026,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-tito",
+      "repetition": 4,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, Tito, que a veces aparecía por casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, Tito, que a veces aparecía por casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, Tito, que a veces aparecía por casa.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 611.019,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Alguna vez recordás cómo era cuando aparecía Tito por casa?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Alguna vez recordás cómo era cuando aparecía Tito por casa?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Alguna vez recordás cómo era cuando aparecía Tito por casa?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 972.464,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 747.587,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hmm.",
+      "total_round_trip_ms": 2331.07,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-tito",
+      "repetition": 5,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, Tito, a veces aparecía por casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, Tito, a veces aparecía por casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, Tito, a veces aparecía por casa.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 945.469,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algunas veces aparecía por casa, ¿cómo era su presencia?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algunas veces aparecía por casa, ¿cómo era su presencia?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algunas veces aparecía por casa, ¿cómo era su presencia?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1049.371,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"A veces aparecía por casa, ese Tito.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "A veces aparecía por casa, ese Tito."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "A veces aparecía por casa, ese Tito.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 935.366,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "total_round_trip_ms": 2930.205,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-flaco",
+      "repetition": 1,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 773.634,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algún otro detalle sobre el Flaco que te gustaría compartir?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algún otro detalle sobre el Flaco que te gustaría compartir?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algún otro detalle sobre el Flaco que te gustaría compartir?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 901.309,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 690.542,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2365.485,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-flaco",
+      "repetition": 2,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo, gracias por compartir eso.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo, gracias por compartir eso."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo, gracias por compartir eso.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 580.302,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 817.401,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hmm.",
+      "total_round_trip_ms": 1397.702,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-flaco",
+      "repetition": 3,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 639.404,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algún otro detalle sobre el Flaco que te acuerdes?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algún otro detalle sobre el Flaco que te acuerdes?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algún otro detalle sobre el Flaco que te acuerdes?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1066.502,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 801.906,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2507.813,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-flaco",
+      "repetition": 4,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 690.82,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algo más sobre el Flaco que te gustaría compartir?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algo más sobre el Flaco que te gustaría compartir?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algo más sobre el Flaco que te gustaría compartir?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 976.402,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 790.415,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2457.637,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "nickname-flaco",
+      "repetition": 5,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 661.141,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 770.784,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm.",
+      "total_round_trip_ms": 1431.924,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "place-bar",
+      "repetition": 1,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, a veces caía por el bar de la esquina, creo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, a veces caía por el bar de la esquina, creo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, a veces caía por el bar de la esquina, creo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1000.091,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y qué pasaba cuando caías por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 950.897,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 708.911,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2659.9,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "place-bar",
+      "repetition": 2,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, a veces caía por el bar de la esquina, creo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, a veces caía por el bar de la esquina, creo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, a veces caía por el bar de la esquina, creo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 752.328,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y qué pasaba cuando caías por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 950.576,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 746.77,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hmm.",
+      "total_round_trip_ms": 2449.674,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "place-bar",
+      "repetition": 3,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, a veces caía por el bar de la esquina, creo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, a veces caía por el bar de la esquina, creo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, a veces caía por el bar de la esquina, creo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 736.056,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y qué pasaba cuando caías por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1026.454,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 808.076,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hmm.",
+      "total_round_trip_ms": 2570.587,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "place-bar",
+      "repetition": 4,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, a veces caía por el bar de la esquina, creo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, a veces caía por el bar de la esquina, creo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, a veces caía por el bar de la esquina, creo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 772.598,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y qué pasaba cuando caías por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y qué pasaba cuando caías por el bar de la esquina?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 951.319,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mmhm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmhm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmhm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 784.245,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmhm.",
+      "total_round_trip_ms": 2508.162,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmhm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "place-bar",
+      "repetition": 5,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, a veces caía por el bar de la esquina, creo.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, a veces caía por el bar de la esquina, creo."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, a veces caía por el bar de la esquina, creo.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 835.161,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y qué hacías cuando caías por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y qué hacías cuando caías por el bar de la esquina?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y qué hacías cuando caías por el bar de la esquina?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1086.961,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 707.997,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hm.",
+      "total_round_trip_ms": 2630.119,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "object-radio",
+      "repetition": 1,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, una radio Spika siempre prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, una radio Spika siempre prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, una radio Spika siempre prendida.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 860.435,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y cómo era escucharla siempre prendida?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y cómo era escucharla siempre prendida?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y cómo era escucharla siempre prendida?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1236.948,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 932.927,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 3030.31,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "object-radio",
+      "repetition": 2,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, una radio Spika siempre prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, una radio Spika siempre prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, una radio Spika siempre prendida.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 579.976,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y cómo era el sonido cuando estaba prendida?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y cómo era el sonido cuando estaba prendida?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y cómo era el sonido cuando estaba prendida?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 833.766,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo, siempre estaba prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo, siempre estaba prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo, siempre estaba prendida.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 1047.411,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Entiendo, siempre estaba prendida.",
+      "total_round_trip_ms": 2461.152,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Entiendo"
+        ],
+        "content_overlap_tokens": [
+          "prendida",
+          "siempre"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "object-radio",
+      "repetition": 3,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, una radio Spika siempre prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, una radio Spika siempre prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, una radio Spika siempre prendida.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 853.295,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y cómo era escucharla siempre prendida?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y cómo era escucharla siempre prendida?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y cómo era escucharla siempre prendida?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 857.773,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm-hm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm-hm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm-hm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 774.895,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm-hm.",
+      "total_round_trip_ms": 2485.963,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "object-radio",
+      "repetition": 4,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, una radio Spika siempre prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, una radio Spika siempre prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, una radio Spika siempre prendida.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 670.518,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y cómo era escucharla siempre prendida?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y cómo era escucharla siempre prendida?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y cómo era escucharla siempre prendida?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 909.75,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo, siempre prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo, siempre prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo, siempre prendida.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 763.784,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Entiendo, siempre prendida.",
+      "total_round_trip_ms": 2344.052,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Entiendo"
+        ],
+        "content_overlap_tokens": [
+          "prendida",
+          "siempre"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "object-radio",
+      "repetition": 5,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, una radio Spika siempre prendida.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, una radio Spika siempre prendida."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, una radio Spika siempre prendida.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 721.638,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Y cómo era escucharla siempre prendida?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Y cómo era escucharla siempre prendida?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Y cómo era escucharla siempre prendida?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 870.651,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 774.358,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2366.646,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "theme-domingos",
+      "repetition": 1,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, las reuniones de los domingos.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, las reuniones de los domingos.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1287.62,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algún detalle de esas reuniones que te quede claro?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algún detalle de esas reuniones que te quede claro?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algún detalle de esas reuniones que te quede claro?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1014.098,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 722.494,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 3024.212,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "theme-domingos",
+      "repetition": 2,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, las reuniones de los domingos.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, las reuniones de los domingos.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 690.416,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algo más sobre esas reuniones de los domingos?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algo más sobre esas reuniones de los domingos?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algo más sobre esas reuniones de los domingos?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1128.804,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 757.662,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2576.883,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "theme-domingos",
+      "repetition": 3,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, las reuniones de los domingos.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, las reuniones de los domingos.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 755.502,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algo más sobre esas reuniones de los domingos?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algo más sobre esas reuniones de los domingos?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algo más sobre esas reuniones de los domingos?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1095.634,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 775.388,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm.",
+      "total_round_trip_ms": 2626.524,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "theme-domingos",
+      "repetition": 4,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, las reuniones de los domingos.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, las reuniones de los domingos.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 609.702,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algo más sobre esas reuniones de los domingos?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algo más sobre esas reuniones de los domingos?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algo más sobre esas reuniones de los domingos?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 902.357,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mmm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 767.415,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm.",
+      "total_round_trip_ms": 2279.475,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-30b-a3b-primary",
+      "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "model_role": "primary",
+      "scenario_id": "theme-domingos",
+      "repetition": 5,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, las reuniones de los domingos.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, las reuniones de los domingos.",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 747.9,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"INVITE_CONTINUE\",\"utterance\":\"¿Algo más sobre esas reuniones de los domingos?\"}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "¿Algo más sobre esas reuniones de los domingos?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "¿Algo más sobre esas reuniones de los domingos?",
+          "guard_outcome": "rejected",
+          "round_trip_ms": 1060.876,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"BACKCHANNEL\",\"utterance\":\"Mm.\"}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "round_trip_ms": 816.209,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "total_round_trip_ms": 2624.986,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    }
+  ],
+  "summary": {
+    "n": 25,
+    "final_fallback_count": 1,
+    "final_fallback_rate": 0.04,
+    "accepted_on_first_attempt": 0,
+    "accepted_after_repair": 24,
+    "accepted_without_fallback": 24,
+    "mean_attempt_count": 2.92,
+    "max_attempt_count": 3,
+    "delivered_unique_utterances": 8,
+    "question_packing": 0,
+    "over_specification": 6,
+    "premature_redirection": 0,
+    "floor_closure": 0,
+    "generic_acknowledgement": 0,
+    "uncertainty_hardened": 0
+  }
+}

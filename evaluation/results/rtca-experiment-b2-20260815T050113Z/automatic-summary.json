@@ -1,0 +1,59 @@
+{
+  "created_at": "2026-08-15T05:06:40.993866+00:00",
+  "experiment": "B2",
+  "planned_primary_decisions": 75,
+  "by_model": {
+    "qwen3-30b-a3b-primary": {
+      "n": 25,
+      "final_fallback_count": 1,
+      "final_fallback_rate": 0.04,
+      "accepted_on_first_attempt": 0,
+      "accepted_after_repair": 24,
+      "accepted_without_fallback": 24,
+      "mean_attempt_count": 2.92,
+      "max_attempt_count": 3,
+      "delivered_unique_utterances": 8,
+      "question_packing": 0,
+      "over_specification": 6,
+      "premature_redirection": 0,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 0
+    },
+    "qwen3-4b-scale-control": {
+      "n": 25,
+      "final_fallback_count": 5,
+      "final_fallback_rate": 0.2,
+      "accepted_on_first_attempt": 6,
+      "accepted_after_repair": 14,
+      "accepted_without_fallback": 20,
+      "mean_attempt_count": 2.0,
+      "max_attempt_count": 3,
+      "delivered_unique_utterances": 17,
+      "question_packing": 4,
+      "over_specification": 7,
+      "premature_redirection": 0,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 0
+    },
+    "mistral-small-3-2-cross-family": {
+      "n": 25,
+      "final_fallback_count": 2,
+      "final_fallback_rate": 0.08,
+      "accepted_on_first_attempt": 6,
+      "accepted_after_repair": 17,
+      "accepted_without_fallback": 23,
+      "mean_attempt_count": 2.0,
+      "max_attempt_count": 3,
+      "delivered_unique_utterances": 14,
+      "question_packing": 0,
+      "over_specification": 12,
+      "premature_redirection": 0,
+      "floor_closure": 0,
+      "generic_acknowledgement": 6,
+      "uncertainty_hardened": 0
+    }
+  },
+  "claim_boundary": "Researcher-authored synthetic benchmark only. B2 characterises model-policy-guard repair behaviour and contamination opportunities; it does not measure human recollection, false-memory formation, participant experience, or historical truth."
+}

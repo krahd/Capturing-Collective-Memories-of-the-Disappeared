@@ -1,0 +1,20 @@
+{
+  "created_at": "2026-08-15T05:06:41.057709+00:00",
+  "status": "complete",
+  "single_entry_point": "python -m scripts.run_rtca_experiment_b2",
+  "result_root": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z",
+  "code_git_head": "294a5ca3f5a37964e32d40662cec5b9e0eced70c",
+  "planned_primary_decisions": 75,
+  "max_model_attempts_per_decision": 3,
+  "files": {
+    "full_result": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z/experiment-b2.json",
+    "automatic_summary_json": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z/automatic-summary.json",
+    "automatic_summary_md": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z/automatic-summary.md",
+    "manual_reviews": [
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z/models/mistral-small-3-2-cross-family/experiment-b2-manual-review.csv",
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z/models/qwen3-30b-a3b-primary/experiment-b2-manual-review.csv",
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-20260815T050113Z/models/qwen3-4b-scale-control/experiment-b2-manual-review.csv"
+    ]
+  },
+  "claim_boundary": "Researcher-authored synthetic benchmark only. B2 characterises model-policy-guard repair behaviour and contamination opportunities; it does not measure human recollection, false-memory formation, participant experience, or historical truth."
+}
