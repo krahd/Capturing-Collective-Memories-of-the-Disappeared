@@ -10,10 +10,10 @@ This protocol separates two evidence levels.
 **Runs anywhere:** yes.  
 **Requires an LLM:** no.
 
-Run:
+Run from the repository root:
 
 ```bash
-python scripts/run_deferred_significance_experiment.py
+python -m scripts.run_deferred_significance_experiment
 ```
 
 Inputs are the researcher-authored cases in `evaluation/deferred-significance-scenarios.json`. Outputs are written to:
