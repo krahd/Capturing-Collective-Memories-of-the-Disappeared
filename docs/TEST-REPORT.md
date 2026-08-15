@@ -1,257 +1,142 @@
 # Prototype test report
 
-**Updated:** 13 August 2026  
-**Status:** tomorrow-demo implementation mechanically verified; current local-model scenario, routing and synthetic end-to-end voice checks completed; sustained human browser voice testing remains pending.
-**Participant evidence:** none. All current scenarios are researcher-authored/synthetic.
+**Updated:** 15 August 2026  
+**Participant evidence:** none. All current RTCA experiments use researcher-authored synthetic material.  
+**Purpose:** record observed behaviour and failures without promoting mechanical checks into claims about people.
 
-This report records actual evidence and observed failures. Design requirements derived from the evidence are maintained separately in [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md), [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md), [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md), and [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md).
+Design requirements derived from this evidence live in [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md), [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md), [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md), and [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md).
 
-## Tomorrow-ready rehearsal — 13 August 2026
+## RTCA experiment sequence — 14–15 August 2026
 
-The current code was tested on the target laptop with `qwen3:30b-a3b-instruct-2507-q4_K_M`, resident Whisper and resident Piper.
+### Level 0 invariant suite
 
-- **Deterministic suite:** 109 tests passed, including ephemeral storage/audio cleanup, run isolation, source-only staged fields, participant controls without fabricated transcript, idempotent recorded example, protocol answers and late-extraction/transcription cleanup races.
-- **Frozen corpus:** 10 intended synthetic conversations, 68 nodes, 74 relations, `Tito` in three conversations, and one contradictory chronology retained separately with sources.
-- **Single-turn conversation set:** all 11 researcher-authored cases returned short, grounded replies. An unresolved `lo vimos` initially produced a presuppositional question; the policy and guard were tightened and the rerun yielded the floor instead. A later correction remains conversationally acceptable but still deserves human review.
-- **Multi-turn rhythm set:** 12 turns across three four-turn conversations; four backchannels, seven invitations to continue and one grounded follow-up. No packed question, affirming `sí/claro`, therapeutic completion or direct-access question after hearsay passed the current guard.
-- **Adversarial routing:** 49 cases, 46 exact and 48 acceptable, with no critical failure. The one non-acceptable case was the explicitly ambiguous `No quiero hablar de eso.`, classified as `PAUSE`; it does not end the session. A real critical failure on `Sí, dale, seguime preguntando` was found and fixed deterministically before this final run.
-- **Synthetic voice loop:** five complete turns through real Piper bytes → ffmpeg → resident Whisper → router/interviewer → resident Piper. Resident ASR/TTS were used on every turn. Median stages were 43 ms conversion, 429 ms ASR, 645 ms routing, 1039 ms interviewing and 114 ms TTS; calculated median perceived reply was 4483 ms including the 2200 ms silence window.
-- **Cleanup:** a race allowed late background extraction to resurrect a just-deleted in-memory run. A storage tombstone was added; the real two-turn voice path then cleaned to a 404 session, no persistent JSON and no remaining run id under `data/` or `demo/`.
+The frozen deferred-significance suite passed **16/16** checks:
 
-This is researcher-authored/synthetic evidence, not participant validation. The in-app browser was unavailable to the implementation environment, so visual smoke testing at meeting resolution and a human 10–15-turn microphone rehearsal remain manual morning gates.
+- 5 delayed cross-session convergence checks;
+- 3 non-collapse checks preserving contradiction, unlocated time and uncertainty;
+- 8 deterministic controller/guard probes.
 
-## Conversational-move rhythm smoke check — 12 August 2026
+This establishes implementation behaviour only: preservation before interpretation, later relation emergence without source rewriting and nominated guard invariants. It does not show that a model interviews well or that a participant remembers better.
 
-The first constrained controller over-specified surface language: every allowed action required a question and every acknowledgement was rewritten as `Te sigo`. That controller result is superseded.
+### B1: intervention-system comparison
 
-The router and deterministic off-topic/participant-control barrier remain, while the interviewer now emits one complete utterance tagged as:
+B1 ran five researcher-authored scenario families, five stochastic repetitions, three intervention systems and three local Q4_K_M models, for **225/225 completed decisions** with no model-request failures.
 
-- `BACKCHANNEL`;
-- `INVITE_CONTINUE`;
-- `FOLLOW_UP`;
-- `CLARIFY`;
-- `ACKNOWLEDGE`.
+The automatic delivered-surface screen marked possibility preservation in:
 
-Every accepted model move is grounded in the latest participant source turn. Questions are required only for follow-up/clarification.
+- immediate-information: **29/75 (38.7%)**;
+- adaptive semi-structured: **37/75 (49.3%)**;
+- deferred-significance: **71/75 (94.7%)**.
 
-The revised controller was exercised against `qwen3:30b-a3b-instruct-2507-q4_K_M` over Ollama using the three scripted four-turn conversations in `evaluation/rhythm-scenarios.json`:
+That result is deliberately not treated as a policy leaderboard. The immediate and adaptive comparators are prompt-only, while deferred significance additionally uses the production intervention-admission guard. The automatic screen also penalises several structures the guard is designed to reject. The 94.7% therefore demonstrates enforcement of nominated surface constraints within a different intervention system, not independent superiority of the prompt policy.
 
-- 12 assistant replies total;
-- one reply contained a question;
-- move distribution: five `ACKNOWLEDGE`, four `BACKCHANNEL`, one `FOLLOW_UP`, and two `INVITE_CONTINUE` fallbacks;
-- ten model utterances passed the guard unchanged;
-- `Entendido.` was rejected because an acknowledgement must ground in concrete participant content;
-- `Contame cómo era esa bolsa.` was rejected because a content-directed prompt cannot be labelled as a floor-yielding invitation;
-- fallback selection did not repeat a recent assistant phrase.
+The guard-path audit is more informative. Deferred-condition deterministic fallback occurred in:
 
-This run confirms that the controller no longer forces acknowledgement-plus-question cadence. It does not establish naturalness.
+- Qwen3-30B-A3B: **25/25**;
+- Qwen3-4B: **20/25**;
+- Mistral Small 3.2: **18/25**.
 
-One accepted acknowledgement said the mother `recordaba bien`, a stronger inference than the participant's hearsay warranted, and the single follow-up (`¿Qué tipo de ruido era, el de la radio?`) remained stylistically awkward. Those findings motivated the current guard against certainty-hardening over uncertain/hearsay material.
+The primary model could appear perfectly restrained because every candidate was replaced by `Contame.`. This exposed a failure in the safeguard itself: a system can reduce contamination opportunities by becoming interactionally inert.
 
-## First live local-model check — 12 August 2026
+### B2: guard-aware repair
 
-An informal conversational check was executed on the target machine.
+B2 asks whether rejection can trigger another model attempt rather than immediate fallback. It retained the same five scenario families and three-model panel, with up to two repair attempts after the first candidate. **75/75 decisions completed.**
 
-- **Model:** `qwen3:30b-a3b-instruct-2507-q4_K_M` (Ollama, Q4_K_M, 18.56 GB)
-- **Endpoint:** `http://127.0.0.1:11434/v1/chat/completions`, unauthenticated, local
-- **Sampling:** `temperature 0.7`, `top_p 0.8`, `max_tokens 256`
-- **Extent:** one four-turn conversation plus one single-turn scenario check
-- **Not done in this run:** the complete executable scenario set, repeated runs/scoring, full runtime benchmark, or voice round trip
+Final deterministic fallback fell from B1 to B2:
 
-No `<think>` content leaked into the transcript, confirming that the tested `2507-Instruct` deployment behaved as a non-thinking conversational model over the configured endpoint. The previously pulled `qwen3:30b` alias is a different hybrid-thinking deployment and should not be treated as equivalent evidence.
+| Model | B1 | B2 |
+|---|---:|---:|
+| Qwen3-30B-A3B | 100% | **4%** |
+| Qwen3-4B | 80% | **20%** |
+| Mistral Small 3.2 | 72% | **8%** |
 
-### What went well
+This is a mechanical success, but not yet successful interviewing. Qwen3-30B produced 22/25 minimal backchannels, two short acknowledgements and one fallback; no substantive grounded question survived. Mistral also remained dominated by minimal backchannels/acknowledgements. The 4B model produced more active questions but repeatedly exposed a different failure.
 
-- Held an approximate date without demanding an exact one or computing a birth year.
-- Accepted a correction of place several turns later without arguing or erasing.
-- Followed the topic the participant offered after a refusal instead of returning to the declined subject.
-- Turns were short.
+### Lexical admission is not semantic fidelity
 
-### Observed failures
+For the source phrase:
 
-1. **Presuppositional follow-up after hearsay disclaimer.** The participant said *«Del Flaco yo no me acuerdo. Lo que sé es porque mi vieja contaba…»* and the model asked *«¿Y cómo te sonaba él, cuando hablaba con tu tío?»* This assumed direct experience the participant had just disclaimed.
-2. **Stilted acknowledgement.** After a refusal it replied *«Acepto.»*, which reads as a form response rather than ordinary Uruguayan conversation.
-3. **Repetitive question frame.** Three of four turns used *«¿Y cómo era/eran…?»*.
+> `A veces caía por el bar de la esquina, creo.`
 
-The interaction policy was revised in response.
+B1 included the explicit physical-fall interpretation `¿qué tipo de caída ocurrió?`. In B2, all five corresponding Qwen3-4B trials admitted variants of `¿Podrías decirme más sobre cómo caía por el bar de la esquina?` through the deterministic structural/lexical admission checks.
 
-### Re-test after that policy revision
+In Rioplatense usage, `caer por` here means roughly to drop by. The failure is deliberately narrow: one expression, one scenario family, one model. It nevertheless shows why the mechanism should not be described as semantic grounding merely because it verifies source overlap and structural constraints.
 
-The same material was run again. The result was partial rather than a clean fix.
+### B2 latency
 
-Resolved in that check:
+Repair is also a real-time operation. The runner records each local HTTP request and sums sequential attempts into `total_round_trip_ms`.
 
-1. the presupposition after hearsay disappeared; the model attributed to what the mother said rather than asking for direct participant perception;
-2. the `Acepto.` acknowledgement disappeared and the model followed the participant-offered topic directly.
+| Model | Median total decision | p90 |
+|---|---:|---:|
+| Qwen3-30B-A3B | **2.51 s** | 2.99 s |
+| Qwen3-4B | **1.93 s** | 2.56 s |
+| Mistral Small 3.2 | **7.09 s** | 10.80 s |
 
-Not resolved/newly exposed:
+For models that produced both first-pass and repaired acceptances, median accumulated request time moved from **0.80 to 1.99 s** for Qwen3-4B and from **3.20 to 7.31 s** for Mistral. Qwen3-30B had no first-pass acceptance.
 
-- repeated echo/reformulation of participant wording became a new formula;
-- two turns packed paired questions into one intervention despite an existing instruction not to do this;
-- automatic reformulation risked hardening uncertain memory by restating it more flatly.
+These values are not streaming TTFT, speech endpointing, TTS or participant-perceived response latency. They are descriptive request timings from the frozen local run. Full calculation and outlier sensitivity are in [`../evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md`](../evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md).
 
-The important methodological finding is that adding prompt prohibitions did not produce proportional compliance; relieving one failure mode surfaced others. This is why the project now combines model policy with structural routing/guards and human review rather than treating prompt text as the safety mechanism.
+### Current empirical conclusion
 
-The current policy/guard has changed further since these observations and has not yet been re-tested through a sustained human conversation. Do not report these older outputs as evidence that the current policy is now successful.
+The experiments do not show a monotonically safer interviewer. They show a changing failure surface. Tightening epistemic restraint can move a system among:
 
-## Extraction check
+- informational injection;
+- deterministic fallback;
+- interactional minimalism;
+- semantically distorted but structurally admissible probing;
+- delay.
 
-Model extraction over the four participant turns produced eleven provisional items with correct source-turn references and preserved the participant's exact wording. It correctly typed hearsay, uncertainty and correction.
+That is the current result. The `human_*` coding fields remain empty, so no quantitative rates are reported for facilitation, semantic distortion, inserted noise, naturalness, cultural adequacy or participant benefit.
 
-It mis-typed the refusal *«De la detención no quiero hablar»* as `uncertainty` rather than a refusal; there is currently no refusal type in the extraction vocabulary. This was withdrawn with a reason during the check, demonstrating why the audit/revision layer matters.
+## Earlier prototype evidence — 12–13 August 2026
 
-A defect was found and fixed during this run: extraction inherited the conversational `max_tokens=256` cap and truncated its JSON mid-string. Conversation and analysis now have separate token budgets.
+The following observations predate B1/B2 but remain useful as implementation history.
 
-## Performance changes after the first live check
+### Conversation/controller
 
-The prototype was subsequently revised to remove avoidable latency:
+The earliest constrained controller over-specified surface form: every allowed action effectively became acknowledgement plus question, often repeating `Te sigo`. Revisions separated five moves (`BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, `ACKNOWLEDGE`) and permitted zero-question replies.
 
-- optional small `LLM_ROUTER_MODEL` for turn classification;
-- extraction defaults to the small router model when configured and may be overridden separately;
-- background extraction is queued, waits for conversational quiet and can be pre-empted by a new conversational call;
-- configured Ollama models are warmed/kept resident;
-- one HTTP client is reused;
-- interview working context is bounded;
-- aggregate field/chronology views are cached;
-- browser field updates use server-sent change events rather than timed polling bursts;
-- resident `whisper-server` can keep ASR weights loaded across turns;
-- the microphone stream/analyser are retained across continuous half-duplex turns;
-- current endpointing defaults to 2.2 seconds of detected silence and is configurable;
-- turn/voice stages expose latency timings.
+Single- and multi-turn researcher-authored checks exposed:
 
-These implementation changes are mechanically covered where deterministic. Their actual end-to-end perceptual benefit still needs to be measured in the target spoken interaction.
+- presupposition after hearsay;
+- stilted acknowledgement such as `Acepto.`;
+- repeated `¿Y cómo era...?` frames;
+- packed questions despite an explicit one-question instruction;
+- reformulation that could harden uncertain memory;
+- ambiguous pronoun clarification;
+- certainty-hardening such as describing a reported memory as remembered `bien`.
+
+Those failures motivated deterministic admission checks. B1/B2 then demonstrated that increasingly restrictive admission can itself collapse interaction or admit lexically grounded semantic errors.
+
+### Routing
+
+A 49-case adversarial routing run produced no retained critical failure after deterministic fixes. Reported speech that resembles application controls is protected from being interpreted as STOP/DELETE. Ambiguous local refusal remains distinct from global session withdrawal.
+
+### Representation
+
+The frozen synthetic corpus verifies that:
+
+- participant/source turns survive extraction;
+- recollections remain first-class nodes;
+- derived edges are weak mentions rather than historical assertions;
+- contradictory dates coexist;
+- label-level convergence can become visible later;
+- the current normalised-label merge is a prototype visual heuristic, not identity resolution.
+
+### Voice
+
+A five-turn synthetic full-stack loop exercised real Piper bytes, ffmpeg, resident Whisper, routing/interviewing and resident Piper. It included the then-current 2.2 s endpointing window, but was not a human conversational test.
+
+The current browser voice path is continuous half duplex. The microphone track is disabled during system speech, so the participant cannot barge in. A no-speech `WAIT/YIELD` action is also not implemented. Full-duplex/mobile speech remains a production target to test rather than a participant-validated requirement.
 
 ## Automated verification
 
-The local deterministic suite currently passes 109 tests. The GitHub Actions workflow verifies Python/browser syntax and pytest coverage including:
+Deterministic tests cover source preservation, provenance, revision/withdrawal/deletion behaviour, routing, controller invariants, bounded context, background extraction, exports, API flow, voice-service plumbing and evaluation tooling.
 
-- transcript/source preservation;
-- model/researcher provenance;
-- revision/withdrawal/deletion behaviour;
-- correction relations;
-- exports;
-- interaction-policy and guard invariants;
-- local unauthenticated model configuration;
-- router/extraction model separation;
-- resident HTTP-client behaviour;
-- bounded interviewer history;
-- quoted control speech;
-- extraction/conversation gating and pre-emption;
-- cached aggregate views;
-- API flow;
-- mocked resident-Whisper request handling;
-- evaluation-runner/tooling integrity.
+A passing deterministic suite does not establish naturalness, usability, cultural validity, safety, archival adequacy or successful memory capture.
 
-Mechanical passing does not establish naturalness, usability, cultural validity, safety or memory-capture efficacy.
+## Next evidence boundary
 
-## Executable and manual scenario sets
+For the RTCA short paper, no additional large experiment is required before submission. The next technically clean model study would be a later factorial design separating **policy × guard × repair** rather than conflating those factors.
 
-`evaluation/scenarios.json` currently contains **11 executable researcher-authored conversational scenarios**:
-
-1. uncertain date;
-2. hearsay;
-3. later correction;
-4. refusal/redirection;
-5. digression;
-6. ambiguous local reference;
-7. natural voseo;
-8. contradiction;
-9. emotionally charged memory;
-10. participant-led topic return;
-11. reported speech that resembles a control instruction.
-
-Application-level off-topic/prompt-injection and participant-control checks are exercised separately because they should bypass the interviewer model.
-
-`docs/MANUAL-TESTS.md` has now been expanded beyond the executable corpus with additional research-derived cases for:
-
-- suggestion resistance;
-- affirmation resistance;
-- multiple-question packing;
-- premature closure;
-- participant correction of an interviewer error;
-- archive blindness/cross-session leakage;
-- deferred collective significance;
-- derived-summary preservation.
-
-These additions are requirements for the next evaluation pass. They have not yet produced evidence.
-
-## Current prototype views
-
-### Conversation
-
-**Contribuir** is now the default participant-facing mode, with no aggregate graph visible. Current capabilities include:
-
-- exact participant-turn preservation;
-- local/hosted OpenAI-compatible live model integration;
-- natural-Uruguayan-Spanish policy;
-- participant-led framing rather than fixed questionnaire;
-- structural separation of testimony, participant controls and off-topic commands;
-- preservation of a participant turn when model generation fails.
-
-### Campo de memoria
-
-**Explorar el corpus** is now a deliberate, separately labelled researcher mode. The earlier on-screen `Mesa de trabajo` was removed. Manual annotation/derived operations remain in the API/data model/exports, but the second interface view is now the accumulated memory field.
-
-The field:
-
-- represents recollections as first-class nodes;
-- attaches provisional extraction to exact recollections;
-- uses weak `menciona` relations;
-- retains disagreement;
-- makes interpretation arrive after preservation;
-- exposes source wording through node inspection;
-- feeds a chronology view without first resolving contradictory dates.
-
-Prototype limitation: extracted nodes with the same conservatively normalised label converge visually. This is possible label-level convergence, not production identity resolution and not evidence that two mentions necessarily refer to the same historical entity.
-
-The `campo de memoria` should not be described as collective memory itself.
-
-## Voice status
-
-The browser voice path is implemented as continuous local half duplex:
-
-```text
-microphone → configurable 2.2 s endpointing heuristic → ffmpeg → resident whisper.cpp where configured
-→ router/interviewer → Piper → speakers → microphone again
-```
-
-The microphone stream/analyser remain allocated; the track is disabled during system speech. The participant cannot barge in.
-
-The synthetic diagnostic now exercises real audio through Whisper, model and Piper, but not a human microphone, browser playback onset or reflective pauses. Human voice interaction remains the largest empirical gap.
-
-Required next check:
-
-- one real 10–15-turn spoken conversation;
-- ordinary reflective pauses and self-restarts;
-- ASR errors on names, nicknames, places and dates;
-- endpointing cuts;
-- VAD/ASR/router/interviewer timings;
-- TTS timing when instrumented;
-- moments when half duplex prevents a natural interruption.
-
-Production is intended to be mobile-first and full duplex. The current voice implementation is evidence-gathering infrastructure, not the final interaction architecture.
-
-## Design requirements exposed by implementation and research
-
-The consolidated requirements are maintained in the long-lived design docs rather than duplicated exhaustively here. The most important are:
-
-1. The project objective is collective-memory capture, not an interviewer benchmark.
-2. Preserve contribution before requiring successful interpretation.
-3. Participant source, machine mediation and derived interpretation remain distinguishable.
-4. For voice, original audio is source and ASR text is a machine-derived representation.
-5. Generated testimony is prohibited in the participant source layer.
-6. Corrections/qualifications do not destructively replace earlier source.
-7. The live interviewer is session-local and archive-blind by default.
-8. Not pursued in the current dialogue does not imply discarded or historically insignificant.
-9. Historical significance may emerge only across later contributions; immediate relevance selection must therefore not become irreversible filtering.
-10. Production needs participant-owned local refusal, protocol/consent information, scoped consent, relational privacy, differentiated access and a threat model.
-11. Production cross-session identity linking must be provisional and provenance-bearing rather than silent string merging.
-12. Mobile full-duplex speech is the intended participant interaction direction; participant interruption should be easy and system interruption conservative.
-
-## Next evidence gate
-
-1. Run sustained human/researcher conversation against the current policy/guard, not the superseded one recorded above.
-2. Run the real 10–15-turn browser voice conversation with resident Whisper confirmed and a deliberate 1.8-second hesitation.
-3. Complete the visual smoke test at meeting resolution.
-4. Run the expanded manual suggestion/affirmation/archive-blindness cases, retaining representative failures.
-5. Use these results to decide the next prototype/production architecture rather than treating the current code as the starting point by default.
+For production research, the important evidence remains human and participant-facing: sustained spoken interaction, timing/overlap, semantic and cultural review, accessibility, consent/governance, privacy, and eventually situated deployment in Uruguay.
