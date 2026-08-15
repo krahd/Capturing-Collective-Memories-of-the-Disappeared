@@ -2,7 +2,7 @@
 
 This document records the production direction discovered through the disposable prototype and the research reviews. It is deliberately more stable than the current code and deliberately less specific about technologies that have not yet been tested.
 
-The production target is a mobile-first, speech-first system for capturing collective memories of the disappeared. The final interaction should be full duplex and natural enough that contributors do not have to learn the mechanics of a recording application in order to speak.
+The current production target to test is a mobile-first, speech-first system for capturing collective memories of the disappeared. Full-duplex interaction is a plausible direction because participant interruption and continuation matter, but it is not yet a participant-validated requirement.
 
 The current desktop, browser-based, continuous half-duplex prototype is an experimental instrument. It should not be incrementally hardened into production by default.
 
@@ -10,8 +10,9 @@ See also:
 
 - [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md)
 - [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md)
-- [State of the Art Review](https://github.com/krahd/academic-writing/blob/main/my_papers_2026/2026%20-%20NeurIPS%20RTCA%20-%20Collective%20Memories/STATE-OF-THE-ART-REVIEW.md)
-- [Collective-memory capture review](https://github.com/krahd/academic-writing/blob/main/my_papers_2026/2026%20-%20NeurIPS%20RTCA%20-%20Collective%20Memories/COLLECTIVE-MEMORY-CAPTURE-REVIEW.md)
+- [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md)
+
+Private manuscript and literature-review material is maintained outside this public repository. Production claims recorded here should remain understandable from self-contained project evidence and public primary references.
 
 ## Production interaction target
 
@@ -77,7 +78,7 @@ Capabilities can be allocated according to device, connectivity and policy. For 
 No option is currently selected. Future experiments should compare them using the actual requirements of this project:
 
 - conversational latency and naturalness;
-- full-duplex capability;
+- interruption/overlap capability, including whether full duplex is useful;
 - privacy and threat model;
 - model quality in Uruguayan Spanish;
 - accessibility across realistic phones;
@@ -87,11 +88,11 @@ No option is currently selected. Future experiments should compare them using th
 - reproducibility and model governance;
 - long-term maintainability.
 
-## Full duplex is a production requirement
+## Full duplex is a production hypothesis
 
-[Full-Duplex-Bench-v2](https://aclanthology.org/2026.acl-short.4/) confirms that simultaneous listening/speaking, correction and entity continuity remain active technical problems. For this project, full duplex is required primarily because the interaction should feel like conversation, not because low latency is an end in itself.
+[Full-Duplex-Bench-v2](https://aclanthology.org/2026.acl-short.4/) confirms that simultaneous listening/speaking, correction and entity continuity remain active technical problems. For this project, the reason to test full duplex is not latency as an end in itself. It is whether the participant can retain control of the floor when the system is wrong, late or premature.
 
-A participant should be able to:
+A production interaction should investigate whether participants need to be able to:
 
 - interrupt immediately;
 - correct the system before it finishes a mistaken question;
@@ -100,12 +101,12 @@ A participant should be able to:
 - overlap naturally;
 - change direction without waiting for a synthetic turn to finish.
 
-The authority should be asymmetric:
+If full duplex is used, the authority should be asymmetric:
 
 - participant interruption of the system should be easy and immediate;
 - system interruption of the participant should be conservative.
 
-This asymmetry follows both from naturalness and from capture fidelity. A system that occupies the floor can prevent material or self-repair from being articulated.
+This proposed asymmetry follows from capture fidelity as much as naturalness. A system that occupies the floor can prevent material or self-repair from being articulated. Whether full duplex is the best way to realise that asymmetry remains an empirical question.
 
 ## System latency and participant-owned time are different quantities
 
@@ -113,14 +114,14 @@ Technical latency should generally be reduced after a participant turn is actual
 
 Participant silence should not automatically be treated as technical latency to eliminate. [OHA evaluation guidance](https://oralhistory.org/oha-guidelines-for-the-evaluation-of-oral-historians/) recognises the role of silence, and [Kubo et al.](https://aclanthology.org/2026.sigdial-1.2/) demonstrate why turn shifts are not uniquely determined binary events.
 
-Future full-duplex evaluation should therefore measure separately:
+Future speech evaluation should therefore measure separately:
 
 - time from usable end-of-turn evidence to model response;
 - time to first audible system speech;
 - participant pause duration;
 - probability of participant continuation;
 - system floor claims that cut off continuation;
-- participant barge-in latency;
+- participant barge-in latency, where supported;
 - cancellation latency after barge-in;
 - overlapping speech;
 - whether system speech caused or obstructed repair.
@@ -391,7 +392,7 @@ The following are open research/design decisions, not omissions to fill with def
 
 - local versus remote model placement;
 - iOS/Android/native/web implementation strategy;
-- exact full-duplex speech stack;
+- whether and how to use full-duplex speech;
 - authentication model;
 - institutional host/steward;
 - encryption/key management;
