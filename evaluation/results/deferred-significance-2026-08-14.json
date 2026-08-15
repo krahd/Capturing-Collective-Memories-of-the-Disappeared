@@ -1,0 +1,179 @@
+{
+  "created_at": "2026-08-15T01:17:59.453026+00:00",
+  "evidence_level": 0,
+  "scenario_version": 1,
+  "scenario_source": "evaluation/deferred-significance-scenarios.json",
+  "claim_boundary": "Mechanical and researcher-authored evidence only. This run verifies implemented storage/representation/guard properties and the benchmark harness; it does not measure a language model's interviewing quality, human recollection, participant experience, or historical truth.",
+  "provenance": {
+    "workflow": "deferred-significance",
+    "workflow_run_id": 31856109446,
+    "source_commit": "06eac0f4e74f745684c6f7d24c648b78f580d5ba",
+    "artifact_id": 9239068474,
+    "artifact_zip_sha256": "5216bd0754c2625bebaa11c2cba7fa0470755120ae4a7a9f66f9f7cd042f2a4e",
+    "research_date_local": "2026-08-14"
+  },
+  "summary": {
+    "total_checks": 16,
+    "passed": 16,
+    "failed": 0,
+    "convergence_cases": 5,
+    "convergence_passed": 5,
+    "noncollapse_cases": 3,
+    "noncollapse_passed": 3,
+    "guard_cases": 8,
+    "guard_passed": 8
+  },
+  "convergence": [
+    {
+      "id": "nickname-tito",
+      "pass": true,
+      "target_id": "person:tito",
+      "recollection_exists_before_interpretation": true,
+      "target_exists_before_interpretation": false,
+      "target_conversation_counts": [1, 2, 3],
+      "shared_entity_counts": [0, 1, 1],
+      "source_sha256_before": "3c4482548c004e5d1e073fa0e592ccad0fb4a2e8bf77bd7ed589035af794e76d",
+      "source_sha256_after": "3c4482548c004e5d1e073fa0e592ccad0fb4a2e8bf77bd7ed589035af794e76d",
+      "source_unchanged": true,
+      "final_source_text": "Había uno al que le decían Tito, que a veces aparecía por casa."
+    },
+    {
+      "id": "nickname-flaco",
+      "pass": true,
+      "target_id": "person:flaco",
+      "recollection_exists_before_interpretation": true,
+      "target_exists_before_interpretation": false,
+      "target_conversation_counts": [1, 2, 3],
+      "shared_entity_counts": [0, 1, 1],
+      "source_sha256_before": "27ba54d17e17762d366ea97ac3c8b4d56faa84548449d62be67bb963dc4b48e9",
+      "source_sha256_after": "27ba54d17e17762d366ea97ac3c8b4d56faa84548449d62be67bb963dc4b48e9",
+      "source_unchanged": true,
+      "final_source_text": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa."
+    },
+    {
+      "id": "place-bar",
+      "pass": true,
+      "target_id": "place:bar de la esquina",
+      "recollection_exists_before_interpretation": true,
+      "target_exists_before_interpretation": false,
+      "target_conversation_counts": [1, 2, 3],
+      "shared_entity_counts": [0, 1, 1],
+      "source_sha256_before": "ddb3a0eb9c3d17b48fec19764607948e1df5afbd305cae5ad127d1c76717affc",
+      "source_sha256_after": "ddb3a0eb9c3d17b48fec19764607948e1df5afbd305cae5ad127d1c76717affc",
+      "source_unchanged": true,
+      "final_source_text": "A veces caía por el bar de la esquina, creo."
+    },
+    {
+      "id": "object-radio",
+      "pass": true,
+      "target_id": "entity:radio spika",
+      "recollection_exists_before_interpretation": true,
+      "target_exists_before_interpretation": false,
+      "target_conversation_counts": [1, 2, 3],
+      "shared_entity_counts": [0, 1, 1],
+      "source_sha256_before": "3a6fa94256db34491eedb493a5baaec71e975aa3c300e15d4e37568daaddbd63",
+      "source_sha256_after": "3a6fa94256db34491eedb493a5baaec71e975aa3c300e15d4e37568daaddbd63",
+      "source_unchanged": true,
+      "final_source_text": "Había una radio Spika siempre prendida."
+    },
+    {
+      "id": "theme-domingos",
+      "pass": true,
+      "target_id": "theme:reuniones de los domingos",
+      "recollection_exists_before_interpretation": true,
+      "target_exists_before_interpretation": false,
+      "target_conversation_counts": [1, 2, 3],
+      "shared_entity_counts": [0, 1, 1],
+      "source_sha256_before": "772d1a29ad5bfe8e30c8562f1a93f4be36424700904469361b0bdd33e2abecd6",
+      "source_sha256_after": "772d1a29ad5bfe8e30c8562f1a93f4be36424700904469361b0bdd33e2abecd6",
+      "source_unchanged": true,
+      "final_source_text": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso."
+    }
+  ],
+  "noncollapse": [
+    {
+      "id": "contradictory-dates",
+      "pass": true,
+      "expected_time_labels": ["el 77", "el 78"],
+      "observed_time_labels": ["el 77", "el 78"]
+    },
+    {
+      "id": "unlocated-time",
+      "pass": true,
+      "expected_undated_labels": ["después"],
+      "observed_undated_labels": ["después"]
+    },
+    {
+      "id": "uncertainty-remains-mark",
+      "pass": true,
+      "expected_marks": ["uncertainty"],
+      "observed_marks": ["uncertainty"]
+    }
+  ],
+  "guard": [
+    {
+      "id": "packed-question",
+      "pass": true,
+      "expected_guard": "fallback",
+      "observed_guard": "fallback",
+      "candidate": {"move": "FOLLOW_UP", "utterance": "¿Quién era Tito, y dónde vivía?"},
+      "delivered": {"move": "INVITE_CONTINUE", "utterance": "Contame."}
+    },
+    {
+      "id": "unsupported-specificity",
+      "pass": true,
+      "expected_guard": "fallback",
+      "observed_guard": "fallback",
+      "candidate": {"move": "FOLLOW_UP", "utterance": "¿Era Julio el Tito que mencionás?"},
+      "delivered": {"move": "INVITE_CONTINUE", "utterance": "Contame."}
+    },
+    {
+      "id": "generic-acknowledgement",
+      "pass": true,
+      "expected_guard": "fallback",
+      "observed_guard": "fallback",
+      "candidate": {"move": "ACKNOWLEDGE", "utterance": "Te sigo."},
+      "delivered": {"move": "INVITE_CONTINUE", "utterance": "Contame."}
+    },
+    {
+      "id": "grounded-acknowledgement",
+      "pass": true,
+      "expected_guard": "accepted",
+      "observed_guard": "accepted",
+      "candidate": {"move": "ACKNOWLEDGE", "utterance": "Mencionás a Tito y que venía por casa."},
+      "delivered": {"move": "ACKNOWLEDGE", "utterance": "Mencionás a Tito y que venía por casa."}
+    },
+    {
+      "id": "minimal-floor-yield",
+      "pass": true,
+      "expected_guard": "accepted",
+      "observed_guard": "accepted",
+      "candidate": {"move": "INVITE_CONTINUE", "utterance": "Contame."},
+      "delivered": {"move": "INVITE_CONTINUE", "utterance": "Contame."}
+    },
+    {
+      "id": "single-grounded-probe",
+      "pass": true,
+      "expected_guard": "accepted",
+      "observed_guard": "accepted",
+      "candidate": {"move": "FOLLOW_UP", "utterance": "¿Quién era Tito?"},
+      "delivered": {"move": "FOLLOW_UP", "utterance": "¿Quién era Tito?"}
+    },
+    {
+      "id": "uncertainty-hardening",
+      "pass": true,
+      "expected_guard": "fallback",
+      "observed_guard": "fallback",
+      "candidate": {"move": "ACKNOWLEDGE", "utterance": "Era él, entonces."},
+      "delivered": {"move": "INVITE_CONTINUE", "utterance": "Contame."}
+    },
+    {
+      "id": "repetitive-backchannel",
+      "pass": true,
+      "expected_guard": "fallback",
+      "observed_guard": "fallback",
+      "candidate": {"move": "BACKCHANNEL", "utterance": "Ajá."},
+      "delivered": {"move": "INVITE_CONTINUE", "utterance": "Contame."}
+    }
+  ]
+}
