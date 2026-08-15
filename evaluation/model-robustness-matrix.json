@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "description": "Frozen local-model matrix for RTCA Experiment B. All models use the same Ollama serving stack so model-family/scale effects are not confounded with runtime changes. Runtime measurements are recorded separately with Modelito.",
+  "provider": "ollama",
+  "chat_url": "http://127.0.0.1:11434/v1/chat/completions",
+  "benchmark_base_url": "http://127.0.0.1:11434/v1",
+  "models": [
+    {
+      "id": "qwen3-30b-a3b-primary",
+      "role": "primary",
+      "family": "Qwen3",
+      "ollama_model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "source_model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "representation": "Ollama Q4_K_M",
+      "repetitions": 5,
+      "rationale": "Primary locally deployable instruction-tuned model used by the prototype evaluation."
+    },
+    {
+      "id": "qwen3-4b-scale-control",
+      "role": "scale-control",
+      "family": "Qwen3",
+      "ollama_model": "qwen3:4b-instruct-2507-q4_K_M",
+      "source_model": "Qwen/Qwen3-4B-Instruct-2507",
+      "representation": "Ollama Q4_K_M",
+      "repetitions": 5,
+      "rationale": "Within-family scale control testing whether lower latency/smaller capacity changes restraint, grounding and policy compliance."
+    },
+    {
+      "id": "mistral-small-3-2-cross-family",
+      "role": "cross-family-control",
+      "family": "Mistral Small 3.2",
+      "ollama_model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "source_model": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+      "representation": "Ollama Q4_K_M",
+      "repetitions": 5,
+      "rationale": "Cross-family multilingual instruction-tuned control; selected to test whether findings are Qwen-specific rather than to establish a model leaderboard."
+    }
+  ]
+}
