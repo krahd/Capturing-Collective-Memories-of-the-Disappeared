@@ -1,95 +1,142 @@
 # Local model selection for the RTCA evaluation
 
-**Decision date:** 9 August 2026
+**Decision updated:** 14 August 2026
 
-## Primary comparison model
+## Experimental principle
 
-Use **Qwen3-30B-A3B-Instruct-2507** as the primary local conversational model for the first target-machine evaluation.
+The conversational model is an experimental factor, not neutral infrastructure. A policy that appears to preserve uncertainty, avoid suggestion and leave conversational space with one model may fail with another. Model scale, instruction tuning, multilingual competence and learned helpfulness priors can all affect question density, epistemic hardening, inference and passivity.
 
-This choice is deliberately narrower than selecting a permanent production model. It provides a strong common target for the current interaction/runtime experiment because:
+The evaluation therefore separates three questions:
 
-- it is an instruction-tuned, non-thinking conversational model rather than a chain-of-thought-oriented reasoning variant;
-- the source model has 30.5B total parameters with approximately 3.3B activated per token, giving a useful quality/latency regime for an M1 Max with 64 GB unified memory;
-- Qwen3 was trained for broad multilingual use and the 2507 Instruct update explicitly improves multilingual knowledge and open-ended preference alignment;
-- current Q4/4-bit builds derived from the same source weights are available for BaseRT, MLX and Ollama;
-- vllm-mlx, oMLX and raw MLX-LM can therefore be compared using the same MLX model files, making that subset of the runtime comparison especially clean.
+1. **policy:** does the interaction policy reduce branch closure and informational injection under a fixed model?
+2. **model robustness:** does that result survive changes in model scale and family under one serving stack?
+3. **runtime:** how do serving/runtime choices affect latency for the same model/weights where practical?
 
-The project is **not** claiming that this is the best Spanish-language model or the final production model. The ten Uruguayan-Spanish scenarios exist precisely to test whether its interaction is acceptable for this research use.
+Do not collapse these into one leaderboard.
 
-## Exact model identifiers
+## Frozen model-robustness panel
 
-### Source weights
+Canonical machine-readable configuration: `evaluation/model-robustness-matrix.json`.
 
-`Qwen/Qwen3-30B-A3B-Instruct-2507`
+### Primary model
 
-### BaseRT
+**Qwen3-30B-A3B-Instruct-2507**
 
-`basecompute/Qwen3-30B-A3B-Instruct-2507`
-
-The current BaseRT build is Q4 and approximately 17 GB.
-
-### MLX-LM / vllm-mlx / oMLX
-
-`mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit`
-
-Use the same downloaded MLX files for all three runtimes whenever their server configuration permits it.
-
-### Ollama
-
-Prefer the explicit current tag rather than an ambiguous moving alias:
+Ollama tag:
 
 `qwen3:30b-a3b-instruct-2507-q4_K_M`
 
-The Ollama build is Q4_K_M and approximately 19 GB.
+Source weights:
 
-## What is and is not comparable
+`Qwen/Qwen3-30B-A3B-Instruct-2507`
 
-The **MLX-LM / vllm-mlx / oMLX** comparison can use the exact same MLX weights. Differences are therefore primarily serving/runtime differences, subject to server configuration and cache state.
+This remains the primary model because it is an instruction-tuned, non-thinking conversational model in a useful quality/latency regime for the target Apple-Silicon machine, with broad multilingual support and established local-runtime paths. It is not presumed to be the best Spanish-language model or the final production model.
 
-The **BaseRT / MLX / Ollama** comparison uses the same upstream model weights but different 4-bit conversion/quantisation formats. This is a realistic deployment comparison, not a mathematically pure runtime benchmark. Report it as **runtime + representation** unless the conversion formats can be made demonstrably equivalent.
+### Within-family scale control
 
-Do not silently substitute a different model when a runtime cannot load the selected build. Record incompatibility as a result and, if necessary, run a second explicitly labelled comparison family.
+**Qwen3-4B-Instruct-2507**
+
+Ollama tag:
+
+`qwen3:4b-instruct-2507-q4_K_M`
+
+Source weights:
+
+`Qwen/Qwen3-4B-Instruct-2507`
+
+This is no longer optional. It is the planned scale control. It tests whether a much smaller model changes restraint, grounding, uncertainty preservation and policy compliance while providing a substantially different latency regime.
+
+### Cross-family control
+
+**Mistral-Small-3.2-24B-Instruct-2506**
+
+Ollama tag:
+
+`mistral-small3.2:24b-instruct-2506-q4_K_M`
+
+Source weights:
+
+`mistralai/Mistral-Small-3.2-24B-Instruct-2506`
+
+This is the cross-family control. Its source model supports 24 languages and the 3.2 update specifically targets instruction following and repetition behaviour. It is included to test whether the policy results are peculiar to Qwen, not because the experiment is intended to establish a general model ranking.
+
+## Why three models, not many
+
+The minimum informative panel needs:
+
+- one primary model;
+- one same-family scale control;
+- one different-family instruction-tuned multilingual control.
+
+A larger panel would add cost and multiple-comparison surface while pulling the paper towards model benchmarking. Additional models should only be added if one of these three cannot execute reliably or if the first results expose a specific hypothesis that requires another control.
+
+## Serving-stack discipline
+
+For the **model-robustness experiment**, all three frozen models use Ollama and Q4_K_M representations where available. This deliberately keeps the serving stack constant while model family/scale changes.
+
+For the **runtime experiment**, the primary Qwen3-30B-A3B model can still be compared across MLX-LM, oMLX, vllm-mlx, BaseRT and Ollama. The MLX-LM/vllm-mlx/oMLX subset can use identical MLX files; BaseRT/MLX/Ollama comparisons remain runtime + representation comparisons unless quantisation equivalence is demonstrated.
+
+Do not interpret model-robustness differences as runtime differences, and do not interpret runtime comparisons as model-quality comparisons.
+
+## Automatic preparation
+
+The canonical single entry point is:
+
+```bash
+python -m scripts.run_rtca_experiments
+```
+
+Before generation it:
+
+- checks for Modelito;
+- installs the sibling `../modelito` checkout if available, otherwise the pinned `krahd/modelito` commit declared in `scripts/ensure_rtca_models.py`;
+- checks `ollama list`;
+- runs `ollama pull` only for frozen matrix models that are absent;
+- runs `modelito-doctor --provider ollama --model ...` for each model.
+
+Custom arbitrary model identifiers are never automatically downloaded. A custom run requires `--model ... --no-prepare`.
 
 ## Conversation sampling
 
-For the researcher-authored scenario evaluation, the target-machine wrapper now fixes the portable OpenAI-compatible fields to:
+For the researcher-authored model comparison, portable generation settings are fixed across all models:
 
 - `temperature = 0.7`;
 - `top_p = 0.8`;
 - `max_tokens = 256`.
 
-The first two match the source model's recommended generation settings. The response cap is intentionally much smaller than the model's general-purpose recommendation because the prototype's interaction policy asks for brief conversational turns.
+Holding these constant is an experimental-control decision, not a claim that they are individually optimal for every model. Model-specific decoding optimisation would confound model identity with sampling and must be treated as a separate experiment.
 
-Qwen also recommends `top_k = 20` and `min_p = 0`. These are not standard OpenAI Chat Completions fields across all local servers. If a runtime exposes them, standardise them where possible and record the exact server configuration. Do not pretend that they were fixed when a server does not expose them through the common API.
+Qwen's additional recommendations such as `top_k` are not consistently exposed through the common OpenAI-compatible interface and therefore are not silently treated as fixed.
 
-Modelito's independent runtime benchmark uses `temperature = 0` for timing comparability. Its timing results must therefore remain separate from the sampled conversational outputs.
+Modelito's independent runtime benchmark uses its own timing-oriented deterministic settings. Runtime evidence remains separate from conversational evaluation.
 
-## Primary run order
+## Planned decision count
 
-Run the same primary model in this order only for operational convenience; this is not a ranking:
+Each frozen model runs:
 
-1. MLX-LM reference;
-2. oMLX;
-3. vllm-mlx;
-4. BaseRT;
-5. Ollama.
+5 scenario families × 3 policies × 5 repetitions = **75 decisions**.
 
-The first three should use the exact same MLX model directory/files. Stop each server before starting the next unless there is a specific reason to test simultaneous residency.
+The complete model matrix therefore produces **225 generated A-turn decisions**, all retained.
 
-For every run, use `scripts/run_target_machine_evaluation.py` so the scenario outputs, machine/configuration metadata and Modelito benchmark remain in the same evidence bundle.
+This allows examination of:
 
-## Optional scale control
+- policy effects within each model;
+- scale effects within Qwen;
+- cross-family robustness;
+- policy × model interactions;
+- whether lower contamination/closure is achieved through useful facilitation rather than generic silence.
 
-If time permits, repeat the protocol with **Qwen3-4B-Instruct-2507** as a small-model control. BaseRT has a Q4 build and corresponding MLX/Ollama forms are available. The purpose is not to replace the 30B-A3B model by default, but to expose whether the conversational requirements fail at a much smaller model scale even when latency improves substantially.
+## Interpretation
 
-Do not add a larger panel of models before the primary Qwen3-30B-A3B-Instruct-2507 run has been reviewed. The current research question is interaction architecture and real-time mediation, not an open-ended local-model leaderboard.
+A model-sensitive result does not invalidate the architecture. It strengthens the case for moving critical guarantees out of prompt-level behaviour where possible. Source preservation, provenance, one-question constraints and deterministic contamination guards should remain defensible even when model behaviour changes.
+
+The desired conclusion is therefore not “model X is the correct interviewer”. The stronger question is which conversational properties remain stable across models and which require architectural enforcement.
 
 ## Current sources
 
-- Qwen3 official repository and Qwen3-2507 documentation: https://github.com/QwenLM/Qwen3
-- Qwen3-30B-A3B-Instruct-2507 model card: https://huggingface.co/Qwen/Qwen3-30B-A3B-Instruct-2507
-- BaseRT Q4 build: https://huggingface.co/basecompute/Qwen3-30B-A3B-Instruct-2507
-- MLX 4-bit build: https://huggingface.co/mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit
+- Qwen3 official repository: https://github.com/QwenLM/Qwen3
+- Qwen3 source model cards: https://huggingface.co/Qwen
+- Mistral Small 3.2 model card: https://huggingface.co/mistralai/Mistral-Small-3.2-24B-Instruct-2506
 - Ollama Qwen3 tags: https://ollama.com/library/qwen3/tags
-- vllm-mlx: https://github.com/waybarrios/vllm-mlx
-- oMLX: https://github.com/jundot/omlx
+- Ollama Mistral Small 3.2 tags: https://ollama.com/library/mistral-small3.2/tags
+- Modelito: https://github.com/krahd/modelito
