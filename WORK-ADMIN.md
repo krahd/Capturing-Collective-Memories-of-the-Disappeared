@@ -4,9 +4,23 @@ Global repository registry, cross-domain status, and the master calendar are mai
 
 This repository remains canonical for **Capturing Collective Memories of the Disappeared with Artificial Intelligence** implementation, prototype and production-system development, technical documentation, tests, data-model and stewardship design, and project-specific research/technical state.
 
-Paper manuscripts and publication artefacts remain canonical in `krahd/academic-writing`. Professional/artistic submission packages belong in `krahd/professional-opportunities`; grant/funding/compute application packages and evidence belong in `krahd/grant-applications`.
+Paper manuscripts and private publication research are canonical in `krahd/research` under `academic-writing/`. Professional/artistic submission packages belong in `krahd/professional-opportunities`; grant/funding/compute application packages and evidence belong in `krahd/grant-applications`.
 
 This project is distinct from `krahd/desaparecidos.uy`.
+
+## Current evaluation state — 14 August 2026
+
+The Level-0 deferred-significance benchmark is documented in `evaluation/DEFERRED-SIGNIFICANCE-EXPERIMENT.md` and has been executed and audited.
+
+Final retained evidence:
+
+- `evaluation/results/deferred-significance-2026-08-14.json`;
+- `evaluation/results/deferred-significance-2026-08-14.md`;
+- `evaluation/results/deferred-significance-2026-08-14-AUDIT.md`.
+
+Final workflow run `31856109446` at source commit `06eac0f4e74f745684c6f7d24c648b78f580d5ba` passed 16/16 mechanical checks. Main CI on that source commit also passed (`31856109506`). The benchmark verifies only mechanical/researcher-authored properties: preservation before interpretation, later exact-label cross-session emergence without source rewriting, tested non-collapse invariants, and deterministic controller guards. It does not establish live-model interviewing quality or human-memory effects.
+
+The Level-1 live-model policy comparison specified in the same protocol remains the next evaluation gate and requires a configured model endpoint/runtime.
 
 ## Mandatory synchronisation rule
 
@@ -30,5 +44,5 @@ Before considering a material project-state change complete, verify that:
 
 1. this repository reflects the substantive change;
 2. `krahd/tom-work-admin` reflects any resulting global status, date, relationship, or next-action change;
-3. `krahd/academic-writing` or other domain repositories are updated when the change affects manuscripts, submissions, or grants;
+3. `krahd/research` or other domain repositories are updated when the change affects manuscripts, submissions, or grants;
 4. no stale cross-domain status or date remains in `tom-work-admin`.
