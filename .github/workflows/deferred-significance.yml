@@ -1,0 +1,36 @@
+name: deferred-significance
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deferred-significance.yml'
+      - 'evaluation/deferred-significance-scenarios.json'
+      - 'evaluation/DEFERRED-SIGNIFICANCE-EXPERIMENT.md'
+      - 'scripts/run_deferred_significance_experiment.py'
+      - 'controller.py'
+      - 'memory_field.py'
+      - 'state.py'
+      - 'tests/test_deferred_significance_experiment.py'
+  workflow_dispatch:
+
+jobs:
+  experiment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Run Level-0 retrospective cross-session benchmark
+        run: python scripts/run_deferred_significance_experiment.py
+      - name: Display retained report
+        run: cat evaluation/results/deferred-significance-latest.md
+      - name: Run experiment tests
+        run: pytest -q tests/test_deferred_significance_experiment.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deferred-significance-results
+          path: |
+            evaluation/results/deferred-significance-latest.json
+            evaluation/results/deferred-significance-latest.md
