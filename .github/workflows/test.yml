@@ -20,7 +20,7 @@ jobs:
       - run: python -m json.tool demo/sesion-ejemplo.json > /dev/null
       - run: python scripts/run_live_scenarios.py --help > /dev/null
       - run: python scripts/run_target_machine_evaluation.py --help > /dev/null
-      - run: python scripts/run_deferred_significance_experiment.py --help > /dev/null
+      - run: python -m scripts.run_deferred_significance_experiment --help > /dev/null
       - run: python scripts/check_routing.py --help > /dev/null
       - run: python scripts/check_voice_loop.py --help > /dev/null
       - run: node --check static/app.js
