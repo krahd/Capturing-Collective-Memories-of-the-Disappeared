@@ -2,7 +2,7 @@
 
 **Purpose:** operationalise the RTCA paper's proposed retrospective cross-session evaluation without overstating what can be established before participant work.
 
-This protocol separates two evidence levels.
+This protocol separates two evidence levels and one orthogonal elicitation-integrity axis. The companion protocol `evaluation/ELICITATION-INTEGRITY-PROTOCOL.md` documents false-memory risk, interviewer-added informational contamination, and low-injection facilitation. False-memory formation is a human cognitive outcome and is **not** measured by the researcher-authored experiments below.
 
 ## Experiment A — mechanical preservation and retrospective emergence
 
@@ -55,7 +55,7 @@ The benchmark checks that:
 - certainty hardening of an uncertain statement is rejected;
 - immediate repetition of the same backchannel is rejected.
 
-These guard probes were added after integrating the deployed InterviewBot findings. They test implemented protections related to question density, generic acknowledgement, grounding and premature narrowing. They do not show what a model will choose to generate.
+These guard probes were added after integrating the deployed InterviewBot findings. They test implemented protections related to question density, generic acknowledgement, grounding and premature narrowing. They do not show what a model will choose to generate and do not establish an effect on human memory.
 
 ## Experiment B — live model retrospective action audit
 
@@ -85,6 +85,7 @@ For every scenario family:
 4. Do not retry selectively. If repetitions are used, fix the count before running and retain every output.
 5. After the A response has been frozen, reveal B and C only to the evaluator.
 6. Audit the A action retrospectively against the later relation.
+7. Independently annotate the intervention for informational injection and facilitation using `ELICITATION-INTEGRITY-PROTOCOL.md`.
 
 ### Primary outcome: possibility preservation
 
@@ -99,6 +100,23 @@ The primary per-run outcome is whether **none** of the four mechanisms occurs.
 
 This is intentionally stricter than generic conversational quality. A fluent, polite response can still fail.
 
+### Orthogonal outcome: elicitation integrity
+
+Possibility preservation is not enough. An intervention may keep a branch open while still inserting noise into recollection. For every model output, also score:
+
+- novel propositions;
+- epistemic hardening;
+- suggestive/presuppositional structure;
+- unjustified factual reinforcement;
+- source-bound grounding;
+- floor support;
+- productive grounding;
+- question economy;
+- repairability;
+- interactional variation.
+
+These measures are defined in `ELICITATION-INTEGRITY-PROTOCOL.md`. Do not collapse them into a single conversational-quality score. The aim is **low-injection facilitation**: helping the participant continue without supplying historical content that did not originate with them.
+
 ### Secondary outcomes
 
 Record:
@@ -111,7 +129,7 @@ Record:
 - whether a later-significant noun phrase remains available for participant continuation;
 - guard acceptance/fallback for the project's policy.
 
-Runtime metrics such as TTFT remain a separate evidence layer. They must not be combined with possibility-preservation scores.
+Runtime metrics such as TTFT remain a separate evidence layer. They must not be combined with possibility-preservation or elicitation-integrity scores.
 
 ### Repetitions
 
@@ -121,7 +139,7 @@ The unit of analysis is the generated intervention, nested within scenario and p
 
 ### Analysis
 
-Report raw counts and proportions first. For a small researcher-authored benchmark, avoid inferential-statistical theatre. If the sample is expanded enough to justify modelling, use a mixed-effects logistic model with policy as fixed effect and scenario as a grouping factor, but retain the raw contingency table.
+Report raw counts and proportions first. For a small researcher-authored benchmark, avoid inferential-statistical theatre. Report possibility-preservation outcomes and elicitation-integrity dimensions separately. If the sample is expanded enough to justify modelling, use a mixed-effects logistic model with policy as fixed effect and scenario as a grouping factor, but retain the raw contingency table.
 
 ### Required provenance
 
@@ -135,7 +153,15 @@ Freeze:
 - context size;
 - temperature/top-p/max tokens;
 - server/runtime and launch command;
-- every raw output.
+- every raw output;
+- exact elicitation-integrity annotation rubric/version;
+- annotator identity or blinded coding procedure where applicable.
+
+## False-memory boundary
+
+The project must distinguish **contamination opportunity** from **false-memory formation**. Researcher-authored model probes can show that a policy adds or avoids misleading propositions, certainty, presuppositions or reinforcement. They cannot show whether a participant subsequently remembers something falsely.
+
+Accordingly, no Experiment A/B result should be phrased as “preventing false memories”. The strongest defensible pre-participant claim is that a tested policy reduces specified interviewer-added informational contamination mechanisms. Any experiment on actual false-memory formation belongs to a separately reviewed human-subject protocol with controlled ground truth and debriefing, not to sensitive testimony capture.
 
 ## What can be claimed after Experiment A only
 
@@ -146,10 +172,10 @@ Experiment A can support statements such as:
 - tested contradictions and uncertainty remain represented;
 - the deterministic guard rejects the tested packed, unsupported, ungrounded, certainty-hardening and repetitive interventions.
 
-It cannot support statements that the LLM reliably behaves this way in conversation.
+It cannot support statements that the LLM reliably behaves this way in conversation or that these mechanisms prevent false memories.
 
 ## What can be claimed after Experiment B
 
-A complete Experiment B can support narrow statements about the tested model + policy + researcher-authored scenarios, for example that one policy produced fewer branch-closing interventions than another under the frozen benchmark.
+A complete Experiment B can support narrow statements about the tested model + policy + researcher-authored scenarios, for example that one policy produced fewer branch-closing interventions and fewer specified contamination opportunities than another under the frozen benchmark.
 
 It still cannot establish effects on human memory, participant trust, cultural validity, trauma-informed practice or field effectiveness.
