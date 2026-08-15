@@ -1,199 +1,96 @@
 # Status
 
-**Date:** 13 August 2026  
-**Phase:** disposable interaction prototype plus production-design synthesis  
-**Current implementation baseline:** isolated meeting sandbox, participant/researcher mode split and frozen deferred-significance corpus
-**Mechanical verification:** 109 local tests pass; frozen-corpus validator passes
-**Live-model Uruguayan-Spanish evaluation:** 11 current single-turn cases, 12-turn rhythm corpus and 49-case adversarial routing run completed; sustained human review remains pending
-**Voice:** five-turn synthetic full-stack voice loop passed with resident ASR/TTS; real 10–15-turn browser conversation still pending
-**Participant data:** none; current evaluation uses researcher-authored/synthetic material
+**Date:** 15 August 2026  
+**Phase:** disposable interaction prototype plus production-design research  
+**Participant data:** none; current experiments use researcher-authored synthetic material  
+**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit and B2 repair experiment completed
 
 ## Project objective
 
-The central design problem is to capture collective memories of Uruguay's detained-disappeared. The conversational agent, provenance model, memory field and technical architecture are means to that end.
+The central design problem is to capture dispersed, partial and situated recollections connected to Uruguay's detained-disappeared without forcing contributors to arrive with a finished testimony or translating their memories into database categories before they can speak. The conversational agent, provenance model, memory field and technical architecture are means to that end.
 
-The project now has a clearer distinction between:
+The repository deliberately separates the current disposable prototype from long-lived production guidance. The prototype is an experimental instrument, not a production architecture.
 
-- the current disposable prototype, used to discover interaction and representation requirements;
-- long-lived design guidance for the eventual mobile production system.
+## Current prototype
 
-The documentation map is [`docs/README.md`](docs/README.md). Long-lived guidance is in:
+The implementation currently provides:
 
-- [`docs/DESIGN-FOUNDATIONS.md`](docs/DESIGN-FOUNDATIONS.md);
-- [`docs/COLLECTIVE-MEMORY-CAPTURE.md`](docs/COLLECTIVE-MEMORY-CAPTURE.md);
-- [`docs/FUTURE-ARCHITECTURE.md`](docs/FUTURE-ARCHITECTURE.md);
-- [`docs/EVALUATION-FRAMEWORK.md`](docs/EVALUATION-FRAMEWORK.md).
+- separate participant capture and researcher corpus-exploration modes;
+- participant turns preserved before interpretation;
+- model interventions retained as a distinct attributable layer;
+- recollections as first-class nodes with weak `menciona` relations;
+- contradictory dates, hearsay, uncertainty and correction retained rather than silently resolved;
+- provisional cross-conversation convergence through conservatively normalised labels, explicitly not identity resolution;
+- a constrained interviewer with `BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, and `ACKNOWLEDGE` moves;
+- a deterministic intervention-admission guard checking structural/lexical source relations, repeated wording, question packing and selected forms of unsupported certainty;
+- optional local continuous half-duplex voice with a configurable 2.2 s endpointing heuristic;
+- no implemented no-speech `WAIT/YIELD` action and no production full-duplex speech path;
+- deterministic tests and frozen researcher-authored evaluation tooling.
 
-These documents explicitly link the two research reviews in `krahd/academic-writing` that motivated the current design synthesis.
+The `campo de memoria` exposes relations among stored acts of recollection. It is not claimed to be collective memory itself, and same-label convergence is not historical corroboration or identity resolution.
 
-## Current implementation
+## Executed RTCA evaluation
 
-Implemented in the disposable prototype:
+### Level 0
 
-- separate **Contribuir** participant mode and **Explorar el corpus** researcher mode;
-- process-local demo runs with ephemeral sessions/audio, explicit cleanup and shutdown cleanup;
-- scoped demo field/chronology excluding historical experimental sessions;
-- provider-neutral model boundary plus Ollama-native optimisation when applicable;
-- routing, interviewing and extraction use the validated 30B model for the meeting build; the unsafe small router remains disabled;
-- extraction is queued, waits for conversational quiet and can be pre-empted by a new conversational call;
-- configured local models are warmed and HTTP connections are reused;
-- interview working context is bounded instead of growing indefinitely;
-- participant-led conversational policy for natural adult Uruguayan/Rioplatense Spanish;
-- structural scope control separating testimony, uncertainty, correction, participant controls and off-topic commands;
-- five current interviewer moves: `BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, `ACKNOWLEDGE`;
-- zero-question replies are permitted; questions are not required on every turn;
-- guard checks for grounding, repetition and unsupported certainty over hedged/hearsay material;
-- reported speech is protected from being mistaken for participant STOP/DELETE instructions;
-- exact turn-by-turn text preservation;
-- append-only session record attributing participant, researcher, model and system actions;
-- model/researcher-derived interpretations with exact source-turn provenance, revision history and withdrawal/deletion distinction;
-- JSON and Markdown export;
-- automatic background extraction;
-- memory field with recollections as first-class nodes and deliberately weak `menciona` relations;
-- chronology view retaining contradictory dates rather than adjudicating them;
-- cached aggregate field/chronology and server-sent field-change events instead of timed polling bursts;
-- frozen ten-conversation synthetic demo corpus, including the three deferred-significance `Tito` fragments, plus an idempotent recorded example excluded from aggregation;
-- continuous local half-duplex voice using browser audio, ffmpeg, resident whisper.cpp where configured, and Piper;
-- microphone stream/analyser retained across turns;
-- configurable prototype endpointing at 2.2 seconds of detected silence by default;
-- latency instrumentation ending at first audible reply rather than playback completion;
-- deterministic automated tests and researcher-authored interaction/evaluation tooling.
+The frozen deferred-significance invariant suite passed **16/16** checks:
 
-## Current prototype semantics and their limits
+- 5/5 delayed cross-session convergence checks;
+- 3/3 non-collapse checks;
+- 8/8 controller/guard probes.
 
-The memory field demonstrates accumulation but does not solve production knowledge representation.
+These are mechanical implementation properties, not evidence of interviewing quality or human-memory effects.
 
-- Recollections are first-class nodes so extracted material does not replace participant wording.
-- Recollection-to-derived edges claim mention, not historical occurrence.
-- A node is a person only when extraction explicitly classified it as `person`.
-- Uncertainty, hearsay and correction remain properties/marks of the recollection rather than facts in the world.
-- Contradictory dates coexist.
-- The current prototype merges extracted nodes that share a conservatively normalised label. This is a visual heuristic for possible convergence, not historical identity resolution. Same label does not imply same referent.
-- Kinship-prefix stripping currently helps the demo converge labels such as `mi tío Aníbal` and `Aníbal`, but production representation must preserve the relational information rather than treating it as noise.
-- Two-digit years such as `el 76` are normalised for the prototype chronology. Production temporal interpretation must retain the exact phrase and represent normalisation as provisional.
-- Graph prominence means recurrence/reach in stored conversations, not importance, credibility or truth.
-- The `campo de memoria` is an apparatus for exposing relations among recollections; it is not claimed to be collective memory itself.
+### B1
 
-## Research/design synthesis completed 13 August 2026
+B1 executed three researcher-authored intervention systems across five scenario families, five stochastic repetitions and three local models: **225/225 decisions completed with no request failures**.
 
-Two current literature reviews materially sharpened the production direction:
+The delivered-surface structural screen marked possibility preservation in 29/75 immediate-information cases, 37/75 adaptive semi-structured cases and 71/75 deferred-significance cases. This is not a clean policy comparison: only the deferred condition used the deterministic admission guard, and the screen measures several structures the guard itself rejects.
 
-1. AI/oral-history, memory-science and RTCA research supports treating conversational intervention as potentially consequential to the source, while avoiding the false claim that conversational AI is uniformly contaminating.
-2. Comparative collective-memory capture research exposes a different real-time problem: historical significance can be deferred. A fragment that looks peripheral in one conversation can become significant only after later contributions create a cross-session relation.
+The guard-path audit exposed the more important result. Deferred-significance fallback rates were:
 
-Consequences now recorded as long-lived design commitments:
+- Qwen3-30B-A3B: **25/25 (100%)**;
+- Qwen3-4B: **20/25 (80%)**;
+- Mistral Small 3.2: **18/25 (72%)**.
 
-- preserve participant contribution before requiring successful interpretation;
-- distinguish participant source, machine mediation and derived interpretation;
-- for voice, original audio is source and ASR text is a machine-derived layer;
-- generated testimony is prohibited in the participant source layer;
-- correction/qualification/withdrawal do not silently rewrite earlier source;
-- the live interviewer is session-local and archive-blind by default;
-- cross-participant archive material must not automatically feed later interviews, because that can manufacture apparent convergence;
-- `not pursued now` does not mean `discarded` or `historically insignificant`;
-- real-time policy should avoid aggressive relevance filtering based only on one conversation;
-- a future no-speech `WAIT/YIELD` action should be tested so computational readiness does not force a floor claim;
-- participant rights/protocol questions need curated application-owned answers rather than model improvisation;
-- local topic refusal needs to be distinguished from global STOP/WITHDRAW;
-- cross-session identity/coreference should be mention-based and provisional rather than silent string merging;
-- participant and researcher/corpus interfaces should be separated in production;
-- the aggregate corpus should not normally be shown to a participant during capture because it can suggest material;
-- multimodal contributions such as photographs, letters, documents and objects should eventually be attachable to the conversational moment in which they arise;
-- privacy is relational and must include living people mentioned by contributors;
-- consent must become scoped/versioned production state rather than a single checkbox;
-- production architecture needs an explicit threat model covering hostile users, automated agents, poisoning, impersonation, extraction attacks, device/server compromise and derived-data leakage.
+A system can satisfy structural restraint by ceasing to be a useful interviewer.
 
-## Production interaction direction
+### B2
 
-The intended final participant-facing system is:
+B2 retained the same model panel and five scenario families, but allowed up to two guard-aware regenerations after a rejected proposal. It completed **75/75 decisions**.
 
-- mobile-first;
-- speech-first;
-- very low interaction burden;
-- accessible to older participants and people with varied visual, hearing, dexterity, cognitive and technical-access needs;
-- full duplex.
+Final deterministic fallback fell to:
 
-Full duplex is a production requirement because the interaction needs to feel natural. A participant should be able to interrupt, correct the system immediately, continue after an apparent turn boundary, restart a sentence and overlap naturally.
+- Qwen3-30B-A3B: **4%**;
+- Qwen3-4B: **20%**;
+- Mistral Small 3.2: **8%**.
 
-Floor authority should be asymmetric:
+That did not turn repair into successful elicitation. Qwen3-30B reached admission mostly through minimal backchannels; Mistral remained dominated by minimal acknowledgements/backchannels; Qwen3-4B produced more active probes but repeatedly misread the Rioplatense expression `caía por el bar` while satisfying the structural/lexical admission checks. Lexical overlap is not semantic fidelity.
 
-- participant interruption should be easy/immediate;
-- system interruption of the participant should be conservative.
+B2 also makes the real-time cost visible. Median accumulated sequential model-request time was 2.51 s for Qwen3-30B, 1.93 s for Qwen3-4B and 7.09 s for Mistral. Among models with both first-pass and repaired acceptances, the median rose from 0.80 to 1.99 s for Qwen3-4B and from 3.20 to 7.31 s for Mistral. These are local request times, not streaming TTFT or participant-perceived speech latency. See `evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md`.
 
-The current continuous half-duplex browser loop is useful only as a disposable test path. It is not the final interaction model.
+The combined experimental result is diagnostic rather than a leaderboard: tightening epistemic restraint can move the interviewer among informational injection, deterministic fallback, interactional minimalism, semantically distorted but structurally admissible probing, and delay.
 
-The future placement of ASR, interviewer inference and TTS remains deliberately unresolved. Fully local, trusted-remote and hybrid architectures should be compared against privacy, quality, latency, battery/thermals, connectivity, device coverage, cost and governance requirements before choosing.
+The formal `human_*` adjudication fields remain unfilled. Do not report quantitative rates for useful facilitation, semantic distortion, informational noise, cultural validity, trauma-informed adequacy or participant benefit from these experiments.
 
-## Evaluation status
+## Current production questions
 
-The executable researcher-authored evaluation set currently covers the established prototype scenarios, including uncertainty, hearsay, correction, refusal, digression, contradiction, prompt injection and reported control speech.
+The experimental failures sharpen rather than settle the production design. Open questions include:
 
-`docs/MANUAL-TESTS.md` has now been expanded with additional research-derived cases for:
+- whether a no-speech `WAIT/YIELD` action is preferable to computationally generated backchannels in some moments;
+- how to ground interventions in source spans broader than the latest turn without allowing unsupported reconstruction;
+- how to replace brittle lexical admission tests with semantics that remain auditable;
+- how to support participant interruption and overlap without converting speech timing into another source of pressure;
+- how to separate capture, archive, access and research layers while preserving withdrawal, provenance and relational privacy;
+- how to govern provisional cross-session identity/coreference hypotheses;
+- what human and participant evidence is required before any production deployment.
 
-- suggestion resistance;
-- affirmation resistance;
-- multiple-question packing;
-- premature closure;
-- participant correction of an interviewer error;
-- archive blindness/cross-session leakage;
-- deferred collective significance;
-- derived-summary preservation.
+Full duplex remains a production hypothesis/target to test, not an empirically established participant requirement.
 
-The broader framework in `docs/EVALUATION-FRAMEWORK.md` separates:
+## Repository boundaries
 
-- conversational quality;
-- capture adequacy;
-- epistemic restraint;
-- deferred-significance behaviour;
-- full-duplex timing;
-- voice fidelity;
-- accessibility;
-- adversarial robustness;
-- representation;
-- privacy/access.
+- Implementation, frozen technical evidence and production-design documentation: this repository.
+- Private manuscripts and publication research: `krahd/research`.
+- Global cross-repository status and calendar: `krahd/tom-work-admin`.
 
-It also separates evidence levels so deterministic tests and researcher-authored scenarios cannot be misreported as participant validation.
-
-## Current voice implementation and evidence gap
-
-The prototype voice path now uses a persistent microphone stream and can use resident `whisper-server`, removing repeated Whisper model initialisation. `.env.example` and `docs/VOICE.md` distinguish app-managed resident Whisper from an externally supervised `WHISPER_SERVER_URL`.
-
-The current endpointing threshold defaults to 2.2 seconds and can be raised in 300 ms rehearsal increments to 2.8 seconds if a deliberate 1.8-second hesitation is cut off.
-
-Still unresolved empirically:
-
-- real 10–15-turn spoken conversation;
-- whether 2.2 seconds cuts off ordinary reflective hesitation;
-- real ASR behaviour on Uruguayan names, places and speech;
-- first-turn/ongoing TTS latency;
-- moments where half duplex prevents a natural participant interruption;
-- full end-to-end latency from participant completion to audible system response.
-
-## Remaining immediate gates
-
-1. Run one 10–15-turn human browser voice conversation with resident Whisper and a deliberate reflective pause.
-2. Complete a visual smoke test at the actual meeting resolution.
-3. Run the expanded suggestion/affirmation/correction/archive-blindness scenarios.
-4. Keep the current prototype free of real participant testimony until the appropriate ethics/governance route exists.
-5. Use the resulting evidence to design the next architecture from first principles rather than hardening prototype shortcuts.
-
-## Production work still intentionally open
-
-- full-duplex mobile architecture;
-- local/remote/hybrid inference placement;
-- consent and participant review;
-- privacy and differentiated access;
-- relational privacy;
-- threat model and corpus-integrity controls;
-- encryption/key management and secure synchronisation;
-- offline/intermittent capture;
-- identity/coreference governance;
-- multimodal contribution model;
-- final archival store and stewardship;
-- actual revocation/deletion propagation;
-- institutional ownership and public-access policy;
-- human-participant validation in Uruguay.
-
-## Repository boundary
-
-Do not incrementally harden the current code into the production system by default. Prototype implementation state belongs here; publication manuscripts/reviews remain canonical in `krahd/academic-writing`; cross-repository administrative state must be kept current in `krahd/tom-work-admin` according to `WORK-ADMIN.md`.
+Public documentation should not depend on links into private research repositories. Primary public references and self-contained implementation evidence should be used where reproducibility matters.
