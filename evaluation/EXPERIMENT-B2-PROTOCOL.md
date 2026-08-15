@@ -23,6 +23,31 @@ B2 must retain, unless explicitly versioned otherwise:
 
 This yields 75 primary decisions: 5 scenarios × 3 models × 5 repetitions. Each decision may contain up to three model attempts.
 
+## Single entry point
+
+From the repository root, after pulling the latest `main`:
+
+```bash
+python -m scripts.run_rtca_experiment_b2
+```
+
+The command prepares the frozen Ollama model matrix if necessary, runs all 75 B2 decisions, permits at most two guard-aware repair attempts after the initial candidate, applies the production deterministic guard to every candidate, falls back only after all three candidates fail, and writes the complete evidence bundle under:
+
+```text
+evaluation/results/rtca-experiment-b2-<timestamp>/
+```
+
+The bundle contains:
+
+- `manifest.json`;
+- `experiment-b2.json`, containing the complete matrix and every attempt;
+- `automatic-summary.json`;
+- `automatic-summary.md`;
+- one `models/<model-id>/experiment-b2.json` per model;
+- one `models/<model-id>/experiment-b2-manual-review.csv` per model.
+
+The manual-review CSVs retain all attempts as JSON and reserve explicit fields for semantic distortion, premature redirection, over-specification, question packing, floor closure, facilitation, inserted noise, and reviewer notes.
+
 ## Condition
 
 B2 runs only the deferred-significance policy. It is a follow-up diagnostic, not a replacement for the three-policy B1 comparison.
@@ -55,7 +80,7 @@ Every B2 result must retain:
 - whether the final delivery was model-generated or deterministic fallback;
 - per-attempt and total round-trip latency;
 - parse/request errors;
-- scenario, policy and code-version provenance.
+- scenario, policy, model-matrix and code-version provenance.
 
 ## Primary outcomes
 
