@@ -1,6 +1,6 @@
 # Capturing Collective Memories of the Disappeared
 
-This repository is the dedicated implementation space for **Capturing Collective Memories of the Disappeared with Artificial Intelligence**, a research project on conversational systems for capturing dispersed, partial and situated memories connected to Uruguay's detained-disappeared.
+This repository is the public implementation space for **Capturing Collective Memories of the Disappeared with Artificial Intelligence**, a research project on conversational systems for capturing dispersed, partial and situated recollections connected to Uruguay's detained-disappeared.
 
 It is distinct from `krahd/desaparecidos.uy`, the computational memorial artwork.
 
@@ -20,10 +20,10 @@ Long-lived production guidance is indexed in [`docs/README.md`](docs/README.md):
 
 - [`docs/DESIGN-FOUNDATIONS.md`](docs/DESIGN-FOUNDATIONS.md) — project objective hierarchy, problem families and long-lived invariants;
 - [`docs/COLLECTIVE-MEMORY-CAPTURE.md`](docs/COLLECTIVE-MEMORY-CAPTURE.md) — deferred collective significance and its consequences for live capture;
-- [`docs/FUTURE-ARCHITECTURE.md`](docs/FUTURE-ARCHITECTURE.md) — mobile/full-duplex direction, capture/archive separation, privacy, consent, threat model and deployment questions;
+- [`docs/FUTURE-ARCHITECTURE.md`](docs/FUTURE-ARCHITECTURE.md) — mobile/speech direction, capture/archive separation, privacy, consent, threat model and deployment questions;
 - [`docs/EVALUATION-FRAMEWORK.md`](docs/EVALUATION-FRAMEWORK.md) — conversational, epistemic, accessibility, adversarial and representation evaluation.
 
-The design docs link directly to the two research reviews maintained in `krahd/academic-writing`.
+Private manuscript and literature-review material is maintained separately. This public repository is intended to remain understandable through public primary references, code and self-contained technical evidence rather than links into private research workspaces.
 
 ## What the prototype does
 
@@ -43,9 +43,9 @@ The interviewer is restricted to five current move types:
 - `CLARIFY`
 - `ACKNOWLEDGE`
 
-Questions are not mandatory on every turn. The guard checks grounding, repeated wording and some forms of unsupported certainty without rewriting accepted model prose.
+Questions are not mandatory on every turn. A deterministic intervention-admission guard checks structural/lexical source relations, repeated wording, question packing and selected forms of unsupported certainty without rewriting accepted model prose. The guard is not a semantic validator: the RTCA experiments include a case in which a structurally admissible response misreads a Rioplatense expression.
 
-The current prototype does not yet implement a no-speech `WAIT/YIELD` move. Research/design work now identifies that as an important future experiment.
+The current prototype does not yet implement a no-speech `WAIT/YIELD` move. Research/design work identifies that as an important future experiment because a backchannel is not equivalent to declining the floor.
 
 ### Campo de memoria
 
@@ -109,11 +109,24 @@ The stored model supports:
 
 Manual annotation/derived/relation APIs remain available even though the participant-facing screen does not expose an annotation workflow.
 
+## Current RTCA evaluation
+
+The current frozen evidence uses **researcher-authored synthetic material only**. It is designed to expose intervention mechanisms, not to stand in for participant validation.
+
+- **Level 0:** 16/16 source-preservation, delayed-convergence, non-collapse and controller/guard checks pass.
+- **B1:** 225/225 model decisions completed across three researcher-authored intervention systems, five scenario families, five repetitions and three local models. Audit showed that the apparently strong guarded result was heavily produced by guard rejection and fallback, so it is not treated as a clean policy win.
+- **B2:** 75/75 deferred-significance decisions completed with up to two guard-aware repair attempts. Repair sharply reduced deterministic fallback but often recovered minimal backchannels; one 4B-model scenario repeatedly admitted a semantically wrong reading of `caía por el bar` despite structural/lexical source overlap.
+- **Latency audit:** B2 shows that sequential repair itself consumes conversational time. See [`evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md`](evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md).
+
+The combined result is diagnostic: tightening epistemic restraint can move an interviewer among informational injection, deterministic fallback, interactional minimalism, semantically distorted but structurally admissible probing, and delay.
+
+The human-adjudication fields in the synthetic experiment remain uncoded. No quantitative claims about useful facilitation, semantic distortion, informational noise, naturalness, cultural validity, trauma-informed adequacy or participant benefit should be inferred from these runs.
+
 ## Performance architecture of the current prototype
 
 The current local implementation avoids several unnecessary latency costs:
 
-- routing, interviewing and extraction currently remain on the validated 30B model; an unsafe small router is not used for the meeting prototype;
+- routing, interviewing and extraction can remain on the validated 30B model rather than using an unsafe small router;
 - background extraction yields to live conversation and can be pre-empted;
 - configured Ollama models are warmed/kept resident;
 - interview context is bounded;
@@ -138,7 +151,7 @@ The current end-of-turn heuristic defaults to **2.2 seconds** of detected silenc
 
 The microphone track is disabled while the system speaks, so the participant cannot barge in. That is a known prototype limitation.
 
-The intended production system is **mobile-first, speech-first and full duplex**. Participant interruption should be easy; system interruption should be conservative. See [`docs/FUTURE-ARCHITECTURE.md`](docs/FUTURE-ARCHITECTURE.md).
+A mobile-first, speech-first system with easy participant interruption and conservative system interruption is the current **production target to test**. Full duplex is a design hypothesis, not a participant-validated requirement. See [`docs/FUTURE-ARCHITECTURE.md`](docs/FUTURE-ARCHITECTURE.md).
 
 Voice installation, configuration, source/transcript status and the empirical verification gate are in [`docs/VOICE.md`](docs/VOICE.md).
 
@@ -193,7 +206,7 @@ Additional setup, test, voice installation and voice-doctor tasks are available 
 
 - [`docs/DEMO.md`](docs/DEMO.md) — current prototype demonstration runbook;
 - [`docs/MANUAL-TESTS.md`](docs/MANUAL-TESTS.md) — researcher-authored interaction tests;
-- [`docs/TEST-REPORT.md`](docs/TEST-REPORT.md) — actual observed model evidence/failures;
+- [`docs/TEST-REPORT.md`](docs/TEST-REPORT.md) — observed model evidence/failures;
 - [`evaluation/RUNBOOK.md`](evaluation/RUNBOOK.md) — target-machine model/runtime comparison;
 - [`docs/EVALUATION-FRAMEWORK.md`](docs/EVALUATION-FRAMEWORK.md) — long-term evidence hierarchy and evaluation dimensions.
 
@@ -207,7 +220,7 @@ Naturalness, cultural validity, usability, safety and successful memory capture 
 
 ## Data
 
-Ordinary prototype sessions are written to local JSON under `data/sessions/` and ignored by git. Meeting-demo sessions and audio are ephemeral, run-scoped and removed on explicit cleanup or application shutdown. The frozen synthetic seed corpus lives under `demo/corpus/`; local evaluation evidence is written under ignored `evaluation/results/`.
+Ordinary prototype sessions are written to local JSON under `data/sessions/` and ignored by git. Meeting-demo sessions and audio are ephemeral, run-scoped and removed on explicit cleanup or application shutdown. The frozen synthetic seed corpus lives under `demo/corpus/`. Most local exploratory evaluation output remains ignored; **curated frozen RTCA result bundles are intentionally committed** under `evaluation/results/` so the claims made from those runs can be inspected.
 
 Do not use real participant or sensitive testimony data in this disposable prototype without the appropriate research, consent and governance route.
 
