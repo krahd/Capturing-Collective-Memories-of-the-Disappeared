@@ -8,13 +8,10 @@ These documents guide future implementations and should survive the disposable p
 
 - [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md) — project objective hierarchy, problem families, long-lived invariants and research grounding.
 - [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md) — deferred collective significance, under-formulated recollections, capture policy, archive blindness and cross-session representation cautions.
-- [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md) — mobile-first/full-duplex production direction, capture/archive isolation, source/mediation/interpretation layers, privacy, consent, accessibility, threat model and unresolved deployment choices.
-- [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md) — evidence levels, conversational/capture evaluation, epistemic-interference failures, deferred-significance tests, full-duplex metrics, accessibility and adversarial evaluation.
+- [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md) — mobile/speech production direction, capture/archive isolation, source/mediation/interpretation layers, privacy, consent, accessibility, threat model and unresolved deployment choices.
+- [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md) — evidence levels, conversational/capture evaluation, epistemic-interference failures, deferred-significance tests, speech/timing metrics, accessibility and adversarial evaluation.
 
-The research reviews behind these documents are maintained in `krahd/academic-writing`:
-
-- [State of the Art Review — *The Conversation Is Not the Record*](https://github.com/krahd/academic-writing/blob/main/my_papers_2026/2026%20-%20NeurIPS%20RTCA%20-%20Collective%20Memories/STATE-OF-THE-ART-REVIEW.md)
-- [Collective-memory capture review — *Conditions of Recollection*](https://github.com/krahd/academic-writing/blob/main/my_papers_2026/2026%20-%20NeurIPS%20RTCA%20-%20Collective%20Memories/COLLECTIVE-MEMORY-CAPTURE-REVIEW.md)
+The broader manuscript and literature-review workspace is private and is not a public dependency of this repository. Public design claims should be supported here by self-contained evidence or public primary references rather than links that external readers cannot access.
 
 ## Disposable-prototype documentation
 
@@ -27,6 +24,8 @@ These documents describe or test the implementation currently in this repository
 - root [`GOAL.md`](../GOAL.md) — current implementation goal.
 - root [`PROTOTYPE.md`](../PROTOTYPE.md) — disposable prototype rationale and non-goals.
 - root [`STATUS.md`](../STATUS.md) — current implementation/evaluation status.
+- [`../evaluation/results/rtca-model-matrix-20260815T033609Z/`](../evaluation/results/rtca-model-matrix-20260815T033609Z/) — frozen B1 policy/model evidence.
+- [`../evaluation/results/rtca-experiment-b2-20260815T050113Z/`](../evaluation/results/rtca-experiment-b2-20260815T050113Z/) — frozen B2 guard-aware repair evidence and latency audit.
 
 ## Precedence
 
