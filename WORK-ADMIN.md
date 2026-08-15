@@ -2,25 +2,26 @@
 
 Global repository registry, cross-domain status, and the master calendar are maintained in `krahd/tom-work-admin`.
 
-This repository remains canonical for **Capturing Collective Memories of the Disappeared with Artificial Intelligence** implementation, prototype and production-system development, technical documentation, tests, data-model and stewardship design, and project-specific research/technical state.
+This repository remains canonical for **Capturing Collective Memories of the Disappeared with Artificial Intelligence** implementation, prototype and production-system development, technical documentation, tests, data-model and stewardship design, and project-specific technical evidence.
 
 Paper manuscripts and private publication research are canonical in `krahd/research` under `academic-writing/`. Professional/artistic submission packages belong in `krahd/professional-opportunities`; grant/funding/compute application packages and evidence belong in `krahd/grant-applications`.
 
 This project is distinct from `krahd/desaparecidos.uy`.
 
-## Current evaluation state — 14 August 2026
+## Current evaluation state — 15 August 2026
 
-The Level-0 deferred-significance benchmark is documented in `evaluation/DEFERRED-SIGNIFICANCE-EXPERIMENT.md` and has been executed and audited.
+The RTCA-focused synthetic evaluation sequence has now been executed through B2.
 
-Final retained evidence:
+- **Level 0:** 16/16 mechanical checks pass: 5 delayed-convergence, 3 non-collapse and 8 deterministic controller/guard probes.
+- **B1:** 225/225 model decisions completed across five scenario families, three researcher-authored intervention systems, five repetitions and three frozen local models. The apparent delivered-surface advantage of the deferred condition is guard-confounded and is not treated as an isolated policy effect. Guard-path analysis exposed severe fallback collapse.
+- **B2:** 75/75 deferred-significance decisions completed with up to two guard-aware repair attempts. Repair sharply reduced deterministic fallback but often recovered interactional minimalism; the 4B model also exposed a repeated Rioplatense semantic failure that passed structural/lexical admission checks.
+- **B2 latency:** sequential repair has a material real-time cost. The retained local run shows 2.51 s, 1.93 s and 7.09 s median accumulated model-request time for Qwen3-30B, Qwen3-4B and Mistral respectively. These are not streaming TTFT or participant-perceived speech latency.
 
-- `evaluation/results/deferred-significance-2026-08-14.json`;
-- `evaluation/results/deferred-significance-2026-08-14.md`;
-- `evaluation/results/deferred-significance-2026-08-14-AUDIT.md`.
+The strongest current technical conclusion is diagnostic: tightening epistemic restraint can move a conversational system among informational injection, deterministic fallback, interactional minimalism, semantically distorted but structurally admissible probing, and delay.
 
-Final workflow run `31856109446` at source commit `06eac0f4e74f745684c6f7d24c648b78f580d5ba` passed 16/16 mechanical checks. Main CI on that source commit also passed (`31856109506`). The benchmark verifies only mechanical/researcher-authored properties: preservation before interpretation, later exact-label cross-session emergence without source rewriting, tested non-collapse invariants, and deterministic controller guards. It does not establish live-model interviewing quality or human-memory effects.
+The formal `human_*` adjudication remains unfilled. The project therefore does not report quantitative rates for facilitation, semantic distortion, informational noise, cultural validity or participant benefit.
 
-The Level-1 live-model policy comparison specified in the same protocol remains the next evaluation gate and requires a configured model endpoint/runtime.
+The RTCA publication route is the **4-page short paper**. No further major experiment is required before submission. A later factorial policy × guard × repair experiment is a plausible post-submission technical follow-up.
 
 ## Mandatory synchronisation rule
 
