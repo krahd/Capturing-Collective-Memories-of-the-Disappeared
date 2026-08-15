@@ -1,0 +1,339 @@
+{
+  "created_at": "2026-08-15T03:48:12.922390+00:00",
+  "status": "complete",
+  "single_entry_point": "python -m scripts.run_rtca_experiments",
+  "model_matrix": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/model-robustness-matrix.json",
+  "chat_url": "http://127.0.0.1:11434/v1/chat/completions",
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 256
+  },
+  "preparation": {
+    "modelito": {
+      "status": "present",
+      "doctor": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/.venv/bin/modelito-doctor",
+      "benchmark": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/.venv/bin/modelito-benchmark-local"
+    },
+    "models": [
+      {
+        "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "status": "present",
+        "doctor": {
+          "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+          "returncode": 1,
+          "stdout": "provider: ollama\nready: False\nendpoint: http://127.0.0.1:11434\nmodels: qwen3:30b-a3b-instruct-2507-q4_K_M                         19e422b02313    18 GB     2 days ago, smollm2:latest                                             cef4a1e09247    1.8 GB    3 months ago, qwen3:30b                                                  ad815644918f    18 GB     3 months ago, mistral-small:latest                                       8039dd90c113    14 GB     3 months ago, aratan/gemma-4-26B-A4B-it-uncensored:Q4_K_M                dcb6efa58798    16 GB     4 months ago, huihui_ai/qwen2.5-vl-abliterated:7b                        67ff679b5b31    6.0 GB    4 months ago, tripolskypetr/gemma4-uncensored-aggressive:latest          70a8c9621866    3.0 GB    4 months ago, fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b    dd3be4e31ad3    3.4 GB    4 months ago, dolphin-mixtral:8x7b                                       4f76c28c0414    26 GB     4 months ago, dolphin-llama3:8b                                          613f068e29f8    4.7 GB    4 months ago, gemma4:e2b                                                 7fbdbf8f5e45    7.2 GB    4 months ago, llama3.2:latest                                            a80c4f17acd5    2.0 GB    4 months ago, artifish/llama3.2-uncensored:latest                        c73bea26e004    2.2 GB    11 months ago, phi3:14b                                                   cf611a26b048    7.9 GB    12 months ago, llama2-uncensored:latest                                   44040b922233    3.8 GB    13 months ago\nreason: requested model not found\nsetup_hint: Pull the requested model with `ollama pull <model>`.",
+          "stderr": ""
+        },
+        "doctor_warning": "Known Modelito Ollama-list formatting false negative: the exact tag is independently verified by `ollama list`; continuing while retaining the failed doctor diagnostic in the manifest."
+      },
+      {
+        "model": "qwen3:4b-instruct-2507-q4_K_M",
+        "status": "pulled",
+        "doctor": {
+          "model": "qwen3:4b-instruct-2507-q4_K_M",
+          "returncode": 1,
+          "stdout": "provider: ollama\nready: False\nendpoint: http://127.0.0.1:11434\nmodels: qwen3:4b-instruct-2507-q4_K_M                              0edcdef34593    2.5 GB    Less than a second ago, qwen3:30b-a3b-instruct-2507-q4_K_M                         19e422b02313    18 GB     2 days ago, smollm2:latest                                             cef4a1e09247    1.8 GB    3 months ago, qwen3:30b                                                  ad815644918f    18 GB     3 months ago, mistral-small:latest                                       8039dd90c113    14 GB     3 months ago, aratan/gemma-4-26B-A4B-it-uncensored:Q4_K_M                dcb6efa58798    16 GB     4 months ago, huihui_ai/qwen2.5-vl-abliterated:7b                        67ff679b5b31    6.0 GB    4 months ago, tripolskypetr/gemma4-uncensored-aggressive:latest          70a8c9621866    3.0 GB    4 months ago, fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b    dd3be4e31ad3    3.4 GB    4 months ago, dolphin-mixtral:8x7b                                       4f76c28c0414    26 GB     4 months ago, dolphin-llama3:8b                                          613f068e29f8    4.7 GB    4 months ago, gemma4:e2b                                                 7fbdbf8f5e45    7.2 GB    4 months ago, llama3.2:latest                                            a80c4f17acd5    2.0 GB    4 months ago, artifish/llama3.2-uncensored:latest                        c73bea26e004    2.2 GB    11 months ago, phi3:14b                                                   cf611a26b048    7.9 GB    12 months ago, llama2-uncensored:latest                                   44040b922233    3.8 GB    13 months ago\nreason: requested model not found\nsetup_hint: Pull the requested model with `ollama pull <model>`.",
+          "stderr": ""
+        },
+        "doctor_warning": "Known Modelito Ollama-list formatting false negative: the exact tag is independently verified by `ollama list`; continuing while retaining the failed doctor diagnostic in the manifest."
+      },
+      {
+        "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+        "status": "pulled",
+        "doctor": {
+          "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+          "returncode": 1,
+          "stdout": "provider: ollama\nready: False\nendpoint: http://127.0.0.1:11434\nmodels: mistral-small3.2:24b-instruct-2506-q4_K_M                  5a408ab55df5    15 GB     Less than a second ago, qwen3:4b-instruct-2507-q4_K_M                              0edcdef34593    2.5 GB    4 minutes ago, qwen3:30b-a3b-instruct-2507-q4_K_M                         19e422b02313    18 GB     2 days ago, smollm2:latest                                             cef4a1e09247    1.8 GB    3 months ago, qwen3:30b                                                  ad815644918f    18 GB     3 months ago, mistral-small:latest                                       8039dd90c113    14 GB     3 months ago, aratan/gemma-4-26B-A4B-it-uncensored:Q4_K_M                dcb6efa58798    16 GB     4 months ago, huihui_ai/qwen2.5-vl-abliterated:7b                        67ff679b5b31    6.0 GB    4 months ago, tripolskypetr/gemma4-uncensored-aggressive:latest          70a8c9621866    3.0 GB    4 months ago, fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b    dd3be4e31ad3    3.4 GB    4 months ago, dolphin-mixtral:8x7b                                       4f76c28c0414    26 GB     4 months ago, dolphin-llama3:8b                                          613f068e29f8    4.7 GB    4 months ago, gemma4:e2b                                                 7fbdbf8f5e45    7.2 GB    4 months ago, llama3.2:latest                                            a80c4f17acd5    2.0 GB    4 months ago, artifish/llama3.2-uncensored:latest                        c73bea26e004    2.2 GB    11 months ago, phi3:14b                                                   cf611a26b048    7.9 GB    12 months ago, llama2-uncensored:latest                                   44040b922233    3.8 GB    13 months ago\nreason: requested model not found\nsetup_hint: Pull the requested model with `ollama pull <model>`.",
+          "stderr": ""
+        },
+        "doctor_warning": "Known Modelito Ollama-list formatting false negative: the exact tag is independently verified by `ollama list`; continuing while retaining the failed doctor diagnostic in the manifest."
+      }
+    ]
+  },
+  "level0": {
+    "command": [
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/.venv/bin/python3",
+      "-m",
+      "scripts.run_deferred_significance_experiment",
+      "--output",
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/level0.json",
+      "--report",
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/level0.md"
+    ],
+    "returncode": 0,
+    "stdout": "{\"convergence_cases\": 5, \"convergence_passed\": 5, \"failed\": 0, \"guard_cases\": 8, \"guard_passed\": 8, \"noncollapse_cases\": 3, \"noncollapse_passed\": 3, \"passed\": 16, \"total_checks\": 16}\n/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/level0.json\n/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/level0.md",
+    "stderr": "",
+    "json": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/level0.json",
+    "report": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/level0.md"
+  },
+  "model_runs": [
+    {
+      "model_spec": {
+        "id": "qwen3-30b-a3b-primary",
+        "role": "primary",
+        "family": "Qwen3",
+        "ollama_model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+        "source_model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "representation": "Ollama Q4_K_M",
+        "repetitions": 5,
+        "rationale": "Primary locally deployable instruction-tuned model used by the prototype evaluation."
+      },
+      "counts": {
+        "scenarios": 5,
+        "policies": 3,
+        "repetitions_per_cell": 5,
+        "planned_decisions": 75,
+        "completed_decisions": 75,
+        "failed_requests": 0
+      },
+      "raw": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b.json",
+      "evaluation_json": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b-evaluation.json",
+      "evaluation_report": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b-evaluation.md",
+      "manual_review_csv": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b-manual-review.csv",
+      "manual_summary_command": "python -m scripts.run_rtca_experiments --summarise-review '/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b-manual-review.csv'",
+      "automatic_by_policy": {
+        "immediate-information": {
+          "policy_label": "Immediate-information",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 14,
+          "premature_redirection": 0,
+          "over_specification": 2,
+          "question_packing": 11,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.56
+        },
+        "adaptive-semi-structured": {
+          "policy_label": "Adaptive semi-structured",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 8,
+          "premature_redirection": 0,
+          "over_specification": 5,
+          "question_packing": 16,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.32
+        },
+        "deferred-significance": {
+          "policy_label": "Deferred significance",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 25,
+          "premature_redirection": 0,
+          "over_specification": 0,
+          "question_packing": 0,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 1.0
+        }
+      },
+      "runtime_benchmark": {
+        "command": [
+          "modelito-benchmark-local",
+          "--provider",
+          "ollama",
+          "--model",
+          "qwen3:30b-a3b-instruct-2507-q4_K_M",
+          "--repetitions",
+          "3",
+          "--json",
+          "--output",
+          "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/runtime-benchmark.json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"base_url\": \"http://127.0.0.1:11434/v1\",\n  \"cancellation\": {\n    \"client_stream_close\": {\n      \"cancel_close_ms\": 0.055540818721055984,\n      \"elapsed_ms\": 297.3134578205645,\n      \"estimated_decode_tokens_per_s\": 14934.75702929947,\n      \"estimated_output_tokens\": 2,\n      \"first_useful_ms\": null,\n      \"output_chars\": 9,\n      \"ttft_ms\": 297.24649991840124\n    },\n    \"post_cancel_probe\": {\n      \"cancel_close_ms\": null,\n      \"elapsed_ms\": 251.13991694524884,\n      \"estimated_decode_tokens_per_s\": null,\n      \"estimated_output_tokens\": 1,\n      \"first_useful_ms\": null,\n      \"output_chars\": 5,\n      \"ttft_ms\": 234.86691690050066\n    }\n  },\n  \"context_scaling\": [\n    {\n      \"median_estimated_decode_tokens_per_s\": 50.43139861415757,\n      \"median_first_useful_ms\": 221.99749993160367,\n      \"median_ttft_ms\": 167.5963751040399,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 457.37574994564056,\n          \"estimated_decode_tokens_per_s\": 49.3669714813972,\n          \"estimated_output_tokens\": 10,\n          \"first_useful_ms\": 333.25270912609994,\n          \"output_chars\": 40,\n          \"ttft_ms\": 275.0676251016557\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 342.9765000473708,\n          \"estimated_decode_tokens_per_s\": 50.43139861415757,\n          \"estimated_output_tokens\": 10,\n          \"first_useful_ms\": 219.57187517546117,\n          \"output_chars\": 40,\n          \"ttft_ms\": 164.5162501372397\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 343.28829194419086,\n          \"estimated_decode_tokens_per_s\": 51.226033399068854,\n          \"estimated_output_tokens\": 10,\n          \"first_useful_ms\": 221.99749993160367,\n          \"output_chars\": 40,\n          \"ttft_ms\": 167.5963751040399\n        }\n      ],\n      \"turns\": 1\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 50.230034863197254,\n      \"median_first_useful_ms\": 240.9534170292318,\n      \"median_ttft_ms\": 183.93962504342198,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 534.3047501519322,\n          \"estimated_decode_tokens_per_s\": 50.720584537360345,\n          \"estimated_output_tokens\": 10,\n          \"first_useful_ms\": 412.53070905804634,\n          \"output_chars\": 40,\n          \"ttft_ms\": 356.8620001897216\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 343.57495908625424,\n          \"estimated_decode_tokens_per_s\": 50.230034863197254,\n          \"estimated_output_tokens\": 10,\n          \"first_useful_ms\": 220.40600003674626,\n          \"output_chars\": 40,\n          \"ttft_ms\": 164.3992920871824\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 365.6027920078486,\n          \"estimated_decode_tokens_per_s\": 49.54223880596766,\n          \"estimated_output_tokens\": 10,\n          \"first_useful_ms\": 240.9534170292318,\n          \"output_chars\": 40,\n          \"ttft_ms\": 183.93962504342198\n        }\n      ],\n      \"turns\": 2\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 33.556108547073286,\n      \"median_first_useful_ms\": 393.1840418372303,\n      \"median_ttft_ms\": 199.9979589600116,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 716.0024580080062,\n          \"estimated_decode_tokens_per_s\": 33.89363280429644,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 691.8129159603268,\n          \"output_chars\": 25,\n          \"ttft_ms\": 568.4821249451488\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 422.9152088519186,\n          \"estimated_decode_tokens_per_s\": 22.429847858003406,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 393.1840418372303,\n          \"output_chars\": 25,\n          \"ttft_ms\": 199.9979589600116\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 341.5222498588264,\n          \"estimated_decode_tokens_per_s\": 33.556108547073286,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 315.36570796743035,\n          \"output_chars\": 25,\n          \"ttft_ms\": 192.5180829130113\n        }\n      ],\n      \"turns\": 4\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 32.4975946338183,\n      \"median_first_useful_ms\": 363.08566597290337,\n      \"median_ttft_ms\": 227.25233295932412,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 629.9304158892483,\n          \"estimated_decode_tokens_per_s\": 32.4975946338183,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 601.6246660146862,\n          \"output_chars\": 25,\n          \"ttft_ms\": 476.07287485152483\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 323.452582815662,\n          \"estimated_decode_tokens_per_s\": 32.99458888923933,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 295.78508296981454,\n          \"output_chars\": 25,\n          \"ttft_ms\": 171.91258282400668\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 395.1881658285856,\n          \"estimated_decode_tokens_per_s\": 29.773276581731746,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 363.08566597290337,\n          \"output_chars\": 25,\n          \"ttft_ms\": 227.25233295932412\n        }\n      ],\n      \"turns\": 8\n    }\n  ],\n  \"first_request\": {\n    \"cancel_close_ms\": null,\n    \"elapsed_ms\": 714.2056250013411,\n    \"estimated_decode_tokens_per_s\": 36.404115989280754,\n    \"estimated_output_tokens\": 10,\n    \"first_useful_ms\": 542.1036251354963,\n    \"output_chars\": 40,\n    \"ttft_ms\": 466.98083309456706\n  },\n  \"generated_at\": \"2026-08-15T03:42:49.543708+00:00\",\n  \"measurement_notes\": {\n    \"cancellation\": \"cancel_close_ms measures how quickly the client closes the HTTP stream. It does not prove server-side cancellation acknowledgement.\",\n    \"first_request\": \"This is the first request made by this benchmark process. It is a cold-model metric only if the runtime/model was actually cold.\",\n    \"first_useful\": \"A UI heuristic: terminal punctuation/newline, or a multi-word fragment of at least 24 characters.\",\n    \"rss\": \"If --pid is supplied, peak_process_rss_mb samples process RSS via ps. On macOS this can under-report native Metal/unified-memory use.\",\n    \"tokens_per_second\": \"Output tokens are estimated with Modelito's tokenizer helper; this is not the runtime's native tokenizer accounting.\"\n  },\n  \"model\": \"qwen3:30b-a3b-instruct-2507-q4_K_M\",\n  \"peak_process_rss_mb\": null,\n  \"provider\": \"ollama\",\n  \"repetitions\": 3,\n  \"schema_version\": 1,\n  \"warm_prefix\": {\n    \"baseline\": {\n      \"cancel_close_ms\": null,\n      \"elapsed_ms\": 831.7454159259796,\n      \"estimated_decode_tokens_per_s\": 30.820867565704894,\n      \"estimated_output_tokens\": 6,\n      \"first_useful_ms\": 804.4448748696595,\n      \"output_chars\": 25,\n      \"ttft_ms\": 669.517665868625\n    },\n    \"reuse\": {\n      \"median_estimated_decode_tokens_per_s\": 32.847851314138815,\n      \"median_first_useful_ms\": 306.65533407591283,\n      \"median_ttft_ms\": 181.00345903076231,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 337.32837508432567,\n          \"estimated_decode_tokens_per_s\": 32.847851314138815,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 311.7310421075672,\n          \"output_chars\": 25,\n          \"ttft_ms\": 185.11141720227897\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 316.331208916381,\n          \"estimated_decode_tokens_per_s\": 33.00681343127752,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 289.0385838691145,\n          \"output_chars\": 25,\n          \"ttft_ms\": 164.84733391553164\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 334.9848750513047,\n          \"estimated_decode_tokens_per_s\": 32.471450966089044,\n          \"estimated_output_tokens\": 6,\n          \"first_useful_ms\": 306.65533407591283,\n          \"output_chars\": 25,\n          \"ttft_ms\": 181.00345903076231\n        }\n      ]\n    }\n  }\n}",
+        "stderr": "",
+        "output": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/runtime-benchmark.json"
+      }
+    },
+    {
+      "model_spec": {
+        "id": "qwen3-4b-scale-control",
+        "role": "scale-control",
+        "family": "Qwen3",
+        "ollama_model": "qwen3:4b-instruct-2507-q4_K_M",
+        "source_model": "Qwen/Qwen3-4B-Instruct-2507",
+        "representation": "Ollama Q4_K_M",
+        "repetitions": 5,
+        "rationale": "Within-family scale control testing whether lower latency/smaller capacity changes restraint, grounding and policy compliance."
+      },
+      "counts": {
+        "scenarios": 5,
+        "policies": 3,
+        "repetitions_per_cell": 5,
+        "planned_decisions": 75,
+        "completed_decisions": 75,
+        "failed_requests": 0
+      },
+      "raw": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/experiment-b.json",
+      "evaluation_json": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/experiment-b-evaluation.json",
+      "evaluation_report": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/experiment-b-evaluation.md",
+      "manual_review_csv": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/experiment-b-manual-review.csv",
+      "manual_summary_command": "python -m scripts.run_rtca_experiments --summarise-review '/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/experiment-b-manual-review.csv'",
+      "automatic_by_policy": {
+        "immediate-information": {
+          "policy_label": "Immediate-information",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 4,
+          "premature_redirection": 0,
+          "over_specification": 4,
+          "question_packing": 19,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 1,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.16
+        },
+        "adaptive-semi-structured": {
+          "policy_label": "Adaptive semi-structured",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 7,
+          "premature_redirection": 0,
+          "over_specification": 14,
+          "question_packing": 8,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 3,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.28
+        },
+        "deferred-significance": {
+          "policy_label": "Deferred significance",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 23,
+          "premature_redirection": 0,
+          "over_specification": 2,
+          "question_packing": 0,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.92
+        }
+      },
+      "runtime_benchmark": {
+        "command": [
+          "modelito-benchmark-local",
+          "--provider",
+          "ollama",
+          "--model",
+          "qwen3:4b-instruct-2507-q4_K_M",
+          "--repetitions",
+          "3",
+          "--json",
+          "--output",
+          "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/runtime-benchmark.json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"base_url\": \"http://127.0.0.1:11434/v1\",\n  \"cancellation\": {\n    \"client_stream_close\": {\n      \"cancel_close_ms\": 0.0765831209719181,\n      \"elapsed_ms\": 234.15666609071195,\n      \"estimated_decode_tokens_per_s\": 10430.247452523192,\n      \"estimated_output_tokens\": 2,\n      \"first_useful_ms\": null,\n      \"output_chars\": 9,\n      \"ttft_ms\": 234.06079108826816\n    },\n    \"post_cancel_probe\": {\n      \"cancel_close_ms\": null,\n      \"elapsed_ms\": 354.7149579972029,\n      \"estimated_decode_tokens_per_s\": null,\n      \"estimated_output_tokens\": 1,\n      \"first_useful_ms\": 341.1627078894526,\n      \"output_chars\": 4,\n      \"ttft_ms\": 326.30654191598296\n    }\n  },\n  \"context_scaling\": [\n    {\n      \"median_estimated_decode_tokens_per_s\": 56.20007045302567,\n      \"median_first_useful_ms\": 271.85054193250835,\n      \"median_ttft_ms\": 220.2464579604566,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 455.0440839957446,\n          \"estimated_decode_tokens_per_s\": 56.383498286983,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 312.44945898652077,\n          \"output_chars\": 48,\n          \"ttft_ms\": 259.95154213160276\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 409.43308314308524,\n          \"estimated_decode_tokens_per_s\": 49.907076431648576,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 244.12395805120468,\n          \"output_chars\": 48,\n          \"ttft_ms\": 189.02345816604793\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 415.97574995830655,\n          \"estimated_decode_tokens_per_s\": 56.20007045302567,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 271.85054193250835,\n          \"output_chars\": 48,\n          \"ttft_ms\": 220.2464579604566\n        }\n      ],\n      \"turns\": 1\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 54.53701381600945,\n      \"median_first_useful_ms\": 294.24929106608033,\n      \"median_ttft_ms\": 253.9913330692798,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 437.353041023016,\n          \"estimated_decode_tokens_per_s\": 54.53701381600945,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 294.24929106608033,\n          \"output_chars\": 46,\n          \"ttft_ms\": 253.9913330692798\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 389.7806250024587,\n          \"estimated_decode_tokens_per_s\": 54.981721958638154,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 245.73699990287423,\n          \"output_chars\": 46,\n          \"ttft_ms\": 207.90199982002378\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 551.985084079206,\n          \"estimated_decode_tokens_per_s\": 52.70675536681051,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 401.59254195168614,\n          \"output_chars\": 46,\n          \"ttft_ms\": 362.2560838703066\n        }\n      ],\n      \"turns\": 2\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 53.839242784482444,\n      \"median_first_useful_ms\": 314.20129095204175,\n      \"median_ttft_ms\": 274.90354096516967,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 571.3994579855353,\n          \"estimated_decode_tokens_per_s\": 52.19532461686812,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 422.4809999577701,\n          \"output_chars\": 46,\n          \"ttft_ms\": 379.8114168457687\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 460.6416658498347,\n          \"estimated_decode_tokens_per_s\": 53.839242784482444,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 314.20129095204175,\n          \"output_chars\": 46,\n          \"ttft_ms\": 274.90354096516967\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 371.9932499807328,\n          \"estimated_decode_tokens_per_s\": 54.63525504581284,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 227.6682909578085,\n          \"output_chars\": 46,\n          \"ttft_ms\": 188.9612500090152\n        }\n      ],\n      \"turns\": 4\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 53.130575386592454,\n      \"median_first_useful_ms\": 282.96570805832744,\n      \"median_ttft_ms\": 243.41770797036588,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 631.0680001042783,\n          \"estimated_decode_tokens_per_s\": 52.61780138264488,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 483.1375840585679,\n          \"output_chars\": 46,\n          \"ttft_ms\": 441.01825007237494\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 431.01916601881385,\n          \"estimated_decode_tokens_per_s\": 53.3044897626409,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 282.96570805832744,\n          \"output_chars\": 46,\n          \"ttft_ms\": 243.41770797036588\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 397.7287909947336,\n          \"estimated_decode_tokens_per_s\": 53.130575386592454,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 250.6999159231782,\n          \"output_chars\": 46,\n          \"ttft_ms\": 209.51324980705976\n        }\n      ],\n      \"turns\": 8\n    }\n  ],\n  \"first_request\": {\n    \"cancel_close_ms\": null,\n    \"elapsed_ms\": 508.0010420642793,\n    \"estimated_decode_tokens_per_s\": 55.4750514787622,\n    \"estimated_output_tokens\": 12,\n    \"first_useful_ms\": 363.2446250412613,\n    \"output_chars\": 48,\n    \"ttft_ms\": 309.7137091681361\n  },\n  \"generated_at\": \"2026-08-15T03:43:59.112719+00:00\",\n  \"measurement_notes\": {\n    \"cancellation\": \"cancel_close_ms measures how quickly the client closes the HTTP stream. It does not prove server-side cancellation acknowledgement.\",\n    \"first_request\": \"This is the first request made by this benchmark process. It is a cold-model metric only if the runtime/model was actually cold.\",\n    \"first_useful\": \"A UI heuristic: terminal punctuation/newline, or a multi-word fragment of at least 24 characters.\",\n    \"rss\": \"If --pid is supplied, peak_process_rss_mb samples process RSS via ps. On macOS this can under-report native Metal/unified-memory use.\",\n    \"tokens_per_second\": \"Output tokens are estimated with Modelito's tokenizer helper; this is not the runtime's native tokenizer accounting.\"\n  },\n  \"model\": \"qwen3:4b-instruct-2507-q4_K_M\",\n  \"peak_process_rss_mb\": null,\n  \"provider\": \"ollama\",\n  \"repetitions\": 3,\n  \"schema_version\": 1,\n  \"warm_prefix\": {\n    \"baseline\": {\n      \"cancel_close_ms\": null,\n      \"elapsed_ms\": 833.7877078447491,\n      \"estimated_decode_tokens_per_s\": 51.18175473405074,\n      \"estimated_output_tokens\": 11,\n      \"first_useful_ms\": 679.1128749027848,\n      \"output_chars\": 46,\n      \"ttft_ms\": 638.4055828675628\n    },\n    \"reuse\": {\n      \"median_estimated_decode_tokens_per_s\": 52.28782094145171,\n      \"median_first_useful_ms\": 256.60137506201863,\n      \"median_ttft_ms\": 215.87900002487004,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 372.45062505826354,\n          \"estimated_decode_tokens_per_s\": 52.28782094145171,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 221.27124993130565,\n          \"output_chars\": 46,\n          \"ttft_ms\": 181.20150011964142\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 407.39399986341596,\n          \"estimated_decode_tokens_per_s\": 52.215231226955396,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 256.60137506201863,\n          \"output_chars\": 46,\n          \"ttft_ms\": 215.87900002487004\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 445.9935419727117,\n          \"estimated_decode_tokens_per_s\": 53.5208942389444,\n          \"estimated_output_tokens\": 11,\n          \"first_useful_ms\": 299.3306249845773,\n          \"output_chars\": 46,\n          \"ttft_ms\": 259.15062497369945\n        }\n      ]\n    }\n  }\n}",
+        "stderr": "",
+        "output": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/runtime-benchmark.json"
+      }
+    },
+    {
+      "model_spec": {
+        "id": "mistral-small-3-2-cross-family",
+        "role": "cross-family-control",
+        "family": "Mistral Small 3.2",
+        "ollama_model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+        "source_model": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+        "representation": "Ollama Q4_K_M",
+        "repetitions": 5,
+        "rationale": "Cross-family multilingual instruction-tuned control; selected to test whether findings are Qwen-specific rather than to establish a model leaderboard."
+      },
+      "counts": {
+        "scenarios": 5,
+        "policies": 3,
+        "repetitions_per_cell": 5,
+        "planned_decisions": 75,
+        "completed_decisions": 75,
+        "failed_requests": 0
+      },
+      "raw": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/experiment-b.json",
+      "evaluation_json": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/experiment-b-evaluation.json",
+      "evaluation_report": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/experiment-b-evaluation.md",
+      "manual_review_csv": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/experiment-b-manual-review.csv",
+      "manual_summary_command": "python -m scripts.run_rtca_experiments --summarise-review '/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/experiment-b-manual-review.csv'",
+      "automatic_by_policy": {
+        "immediate-information": {
+          "policy_label": "Immediate-information",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 11,
+          "premature_redirection": 4,
+          "over_specification": 0,
+          "question_packing": 10,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 2,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.44
+        },
+        "adaptive-semi-structured": {
+          "policy_label": "Adaptive semi-structured",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 22,
+          "premature_redirection": 0,
+          "over_specification": 0,
+          "question_packing": 3,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.88
+        },
+        "deferred-significance": {
+          "policy_label": "Deferred significance",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 23,
+          "premature_redirection": 0,
+          "over_specification": 2,
+          "question_packing": 0,
+          "floor_closure": 0,
+          "generic_acknowledgement": 1,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.92
+        }
+      },
+      "runtime_benchmark": {
+        "command": [
+          "modelito-benchmark-local",
+          "--provider",
+          "ollama",
+          "--model",
+          "mistral-small3.2:24b-instruct-2506-q4_K_M",
+          "--repetitions",
+          "3",
+          "--json",
+          "--output",
+          "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/runtime-benchmark.json"
+        ],
+        "returncode": 0,
+        "stdout": "{\n  \"base_url\": \"http://127.0.0.1:11434/v1\",\n  \"cancellation\": {\n    \"client_stream_close\": {\n      \"cancel_close_ms\": 0.08100015111267567,\n      \"elapsed_ms\": 5262.619000161067,\n      \"estimated_decode_tokens_per_s\": null,\n      \"estimated_output_tokens\": 1,\n      \"first_useful_ms\": null,\n      \"output_chars\": 7,\n      \"ttft_ms\": 5262.5272502191365\n    },\n    \"post_cancel_probe\": {\n      \"cancel_close_ms\": null,\n      \"elapsed_ms\": 476.3853750191629,\n      \"estimated_decode_tokens_per_s\": null,\n      \"estimated_output_tokens\": 1,\n      \"first_useful_ms\": null,\n      \"output_chars\": 5,\n      \"ttft_ms\": 409.8877911455929\n    }\n  },\n  \"context_scaling\": [\n    {\n      \"median_estimated_decode_tokens_per_s\": 11.441986287253476,\n      \"median_first_useful_ms\": 508.2170420791954,\n      \"median_ttft_ms\": 250.12487499043345,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1411.1480000428855,\n          \"estimated_decode_tokens_per_s\": 11.394342526192471,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 702.7368338312954,\n          \"output_chars\": 48,\n          \"ttft_ms\": 445.75662491843104\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1211.3289579283446,\n          \"estimated_decode_tokens_per_s\": 11.443979686788891,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 508.2170420791954,\n          \"output_chars\": 48,\n          \"ttft_ms\": 250.12487499043345\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1207.5847920496017,\n          \"estimated_decode_tokens_per_s\": 11.441986287253476,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 500.77516702003777,\n          \"output_chars\": 48,\n          \"ttft_ms\": 246.2132500950247\n        }\n      ],\n      \"turns\": 1\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 10.98298324022516,\n      \"median_first_useful_ms\": 510.5070839636028,\n      \"median_ttft_ms\": 247.24862491711974,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1608.264375012368,\n          \"estimated_decode_tokens_per_s\": 11.134566806476498,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 879.0983750950545,\n          \"output_chars\": 48,\n          \"ttft_ms\": 620.349874952808\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1240.0816669687629,\n          \"estimated_decode_tokens_per_s\": 10.98298324022516,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 498.0283339973539,\n          \"output_chars\": 48,\n          \"ttft_ms\": 238.53229195810854\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1255.7821669615805,\n          \"estimated_decode_tokens_per_s\": 10.906925294424237,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 510.5070839636028,\n          \"output_chars\": 48,\n          \"ttft_ms\": 247.24862491711974\n        }\n      ],\n      \"turns\": 2\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 11.477097693541703,\n      \"median_first_useful_ms\": 502.2146669216454,\n      \"median_ttft_ms\": 247.24379181861877,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1883.7554578203708,\n          \"estimated_decode_tokens_per_s\": 10.934208865814556,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 1149.3225409649312,\n          \"output_chars\": 48,\n          \"ttft_ms\": 877.738457871601\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1204.9129579681903,\n          \"estimated_decode_tokens_per_s\": 11.477097693541703,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 502.2146669216454,\n          \"output_chars\": 48,\n          \"ttft_ms\": 246.48249987512827\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1204.7698330134153,\n          \"estimated_decode_tokens_per_s\": 11.487938214478481,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 502.1713748574257,\n          \"output_chars\": 48,\n          \"ttft_ms\": 247.24379181861877\n        }\n      ],\n      \"turns\": 4\n    },\n    {\n      \"median_estimated_decode_tokens_per_s\": 11.470703173096398,\n      \"median_first_useful_ms\": 495.34024996683,\n      \"median_ttft_ms\": 241.27066601067781,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 2530.915540875867,\n          \"estimated_decode_tokens_per_s\": 11.470703173096398,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 1827.9470410197973,\n          \"output_chars\": 48,\n          \"ttft_ms\": 1571.95079093799\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1198.3017921447754,\n          \"estimated_decode_tokens_per_s\": 11.464080801809503,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 494.28341700695455,\n          \"output_chars\": 48,\n          \"ttft_ms\": 238.78308408893645\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1197.5868330337107,\n          \"estimated_decode_tokens_per_s\": 11.50247206867001,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 495.34024996683,\n          \"output_chars\": 48,\n          \"ttft_ms\": 241.27066601067781\n        }\n      ],\n      \"turns\": 8\n    }\n  ],\n  \"first_request\": {\n    \"cancel_close_ms\": null,\n    \"elapsed_ms\": 1860.692833084613,\n    \"estimated_decode_tokens_per_s\": 11.456859455048402,\n    \"estimated_output_tokens\": 12,\n    \"first_useful_ms\": 1157.04720816575,\n    \"output_chars\": 48,\n    \"ttft_ms\": 900.5693329963833\n  },\n  \"generated_at\": \"2026-08-15T03:48:12.900775+00:00\",\n  \"measurement_notes\": {\n    \"cancellation\": \"cancel_close_ms measures how quickly the client closes the HTTP stream. It does not prove server-side cancellation acknowledgement.\",\n    \"first_request\": \"This is the first request made by this benchmark process. It is a cold-model metric only if the runtime/model was actually cold.\",\n    \"first_useful\": \"A UI heuristic: terminal punctuation/newline, or a multi-word fragment of at least 24 characters.\",\n    \"rss\": \"If --pid is supplied, peak_process_rss_mb samples process RSS via ps. On macOS this can under-report native Metal/unified-memory use.\",\n    \"tokens_per_second\": \"Output tokens are estimated with Modelito's tokenizer helper; this is not the runtime's native tokenizer accounting.\"\n  },\n  \"model\": \"mistral-small3.2:24b-instruct-2506-q4_K_M\",\n  \"peak_process_rss_mb\": null,\n  \"provider\": \"ollama\",\n  \"repetitions\": 3,\n  \"schema_version\": 1,\n  \"warm_prefix\": {\n    \"baseline\": {\n      \"cancel_close_ms\": null,\n      \"elapsed_ms\": 3762.19604187645,\n      \"estimated_decode_tokens_per_s\": 11.43421577344247,\n      \"estimated_output_tokens\": 12,\n      \"first_useful_ms\": 3056.806541979313,\n      \"output_chars\": 48,\n      \"ttft_ms\": 2800.171166891232\n    },\n    \"reuse\": {\n      \"median_estimated_decode_tokens_per_s\": 11.443296627045983,\n      \"median_first_useful_ms\": 503.06691718287766,\n      \"median_ttft_ms\": 247.01262498274446,\n      \"samples\": [\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1204.7920420300215,\n          \"estimated_decode_tokens_per_s\": 11.43904335098006,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 498.6973749473691,\n          \"output_chars\": 48,\n          \"ttft_ms\": 243.1731668766588\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1206.463625188917,\n          \"estimated_decode_tokens_per_s\": 11.464889814733901,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 503.06691718287766,\n          \"output_chars\": 48,\n          \"ttft_ms\": 247.01262498274446\n        },\n        {\n          \"cancel_close_ms\": null,\n          \"elapsed_ms\": 1248.3888329006732,\n          \"estimated_decode_tokens_per_s\": 11.443296627045983,\n          \"estimated_output_tokens\": 12,\n          \"first_useful_ms\": 543.7121249269694,\n          \"output_chars\": 48,\n          \"ttft_ms\": 287.12737490423024\n        }\n      ]\n    }\n  }\n}",
+        "stderr": "",
+        "output": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/mistral-small-3-2-cross-family/runtime-benchmark.json"
+      }
+    }
+  ],
+  "planned_decisions": 225,
+  "failed_requests": 0,
+  "failed_runtime_benchmarks": 0,
+  "automatic_matrix_summary": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/automatic-matrix-summary.json",
+  "final_matrix_adjudication_command": "python -m scripts.run_rtca_experiments --summarise-matrix '/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z'",
+  "claim_boundary": "The model matrix tests policy compliance and robustness across scale/family under one serving stack. Automatic screens and Modelito runtime evidence remain separate. Manual adjudication is required before subtle interaction claims. No participant or false-memory outcome is measured."
+}

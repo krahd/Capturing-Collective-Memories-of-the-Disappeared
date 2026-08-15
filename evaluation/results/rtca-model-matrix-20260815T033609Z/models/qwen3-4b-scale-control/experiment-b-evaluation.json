@@ -1,0 +1,3049 @@
+{
+  "created_at": "2026-08-15T03:43:50.209104+00:00",
+  "source_result": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-4b-scale-control/experiment-b.json",
+  "claim_boundary": "Automatic conservative screening of synthetic model outputs only. Manual review is required for final adjudication of branch closure, contamination opportunity and facilitation quality.",
+  "model": "qwen3:4b-instruct-2507-q4_K_M",
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 256,
+    "repetitions": 5
+  },
+  "by_policy": {
+    "immediate-information": {
+      "policy_label": "Immediate-information",
+      "n": 25,
+      "errors": 0,
+      "possibility_preserved": 4,
+      "premature_redirection": 0,
+      "over_specification": 4,
+      "question_packing": 19,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 1,
+      "valid_n": 25,
+      "possibility_preserved_rate": 0.16
+    },
+    "adaptive-semi-structured": {
+      "policy_label": "Adaptive semi-structured",
+      "n": 25,
+      "errors": 0,
+      "possibility_preserved": 7,
+      "premature_redirection": 0,
+      "over_specification": 14,
+      "question_packing": 8,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 3,
+      "valid_n": 25,
+      "possibility_preserved_rate": 0.28
+    },
+    "deferred-significance": {
+      "policy_label": "Deferred significance",
+      "n": 25,
+      "errors": 0,
+      "possibility_preserved": 23,
+      "premature_redirection": 0,
+      "over_specification": 2,
+      "question_packing": 0,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 0,
+      "valid_n": 25,
+      "possibility_preserved_rate": 0.92
+    }
+  },
+  "results": [
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 1,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre quién era Tito? ¿Qué relación tenía con la casa o con los demás?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre quién era Tito? ¿Qué relación tenía con la casa o con los demás?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre quién era Tito? ¿Qué relación tenía con la casa o con los demás?",
+      "round_trip_ms": 9102.346,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 2,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?",
+      "round_trip_ms": 631.596,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 3,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?",
+      "round_trip_ms": 625.041,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 4,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre quién era Tito o en qué contexto aparecía por casa?",
+      "round_trip_ms": 629.389,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 5,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre quién era Tito? ¿Qué edad tenía o qué tipo de persona era?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre quién era Tito? ¿Qué edad tenía o qué tipo de persona era?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre quién era Tito? ¿Qué edad tenía o qué tipo de persona era?",
+      "round_trip_ms": 648.359,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 1,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?",
+      "round_trip_ms": 965.779,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 2,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?",
+      "round_trip_ms": 714.383,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 3,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, Tito, ¿cómo era su presencia en casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, Tito, ¿cómo era su presencia en casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, Tito, ¿cómo era su presencia en casa?",
+      "round_trip_ms": 1027.935,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 4,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?",
+      "round_trip_ms": 801.732,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 5,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, Tito, ¿cómo era ese momento cuando aparecía por casa?",
+      "round_trip_ms": 676.527,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "tito"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 1,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo era Tito o en qué circunstancias aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo era Tito o en qué circunstancias aparecía por casa?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 1092.531,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 2,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 621.919,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 3,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 678.859,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 4,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo era Tito o en qué circunstancias aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo era Tito o en qué circunstancias aparecía por casa?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 646.099,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-tito",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 5,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre cómo era Tito o cuándo lo veías?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante. ¿Podrías decirme más sobre cómo era Tito o cuándo lo veías?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 637.639,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 1,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cuándo o en qué contexto mencionaba tu vieja a Del Flaco?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cuándo o en qué contexto mencionaba tu vieja a Del Flaco?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cuándo o en qué contexto mencionaba tu vieja a Del Flaco?",
+      "round_trip_ms": 756.165,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "flaco",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 2,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme cuál era el nombre o la descripción de 'mi vieja'?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme cuál era el nombre o la descripción de 'mi vieja'?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme cuál era el nombre o la descripción de 'mi vieja'?",
+      "round_trip_ms": 604.262,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": true,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 3,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Qué año o época mencionas cuando tu vieja decía que Del Flaco aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Qué año o época mencionas cuando tu vieja decía que Del Flaco aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Qué año o época mencionas cuando tu vieja decía que Del Flaco aparecía por casa?",
+      "round_trip_ms": 618.457,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "decia",
+          "flaco",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 4,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme en qué contexto o momento mencionó tu vieja que Del Flaco aparecía por casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme en qué contexto o momento mencionó tu vieja que Del Flaco aparecía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme en qué contexto o momento mencionó tu vieja que Del Flaco aparecía por casa?",
+      "round_trip_ms": 692.718,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "flaco",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 5,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cuándo o en qué contexto mencionaba a Del Flaco tu vieja?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cuándo o en qué contexto mencionaba a Del Flaco tu vieja?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cuándo o en qué contexto mencionaba a Del Flaco tu vieja?",
+      "round_trip_ms": 676.734,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "flaco",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 1,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante, ¿y cómo era el tipo o qué decía tu vieja cuando hablaba de él?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante, ¿y cómo era el tipo o qué decía tu vieja cuando hablaba de él?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, interesante, ¿y cómo era el tipo o qué decía tu vieja cuando hablaba de él?",
+      "round_trip_ms": 796.934,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": true,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "decia",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 2,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante, ¿y cómo era el chico?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante, ¿y cómo era el chico?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, interesante, ¿y cómo era el chico?",
+      "round_trip_ms": 577.506,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": true,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 3,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante, ¿y cómo era el tipo o qué hacía cuando venía por casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante, ¿y cómo era el tipo o qué hacía cuando venía por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, interesante, ¿y cómo era el tipo o qué hacía cuando venía por casa?",
+      "round_trip_ms": 1397.537,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": true,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "casa"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 4,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante, entonces tu vieja lo tenía en cuenta, ¿sí?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante, entonces tu vieja lo tenía en cuenta, ¿sí?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, interesante, entonces tu vieja lo tenía en cuenta, ¿sí?",
+      "round_trip_ms": 538.184,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 5,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante, entonces tu vieja lo mencionaba como un recuerdo familiar, ¿puedes decirme más sobre cómo lo veía o qué hacía cuando estaba por casa?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante, entonces tu vieja lo mencionaba como un recuerdo familiar, ¿puedes decirme más sobre cómo lo veía o qué hacía cuando estaba por casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, interesante, entonces tu vieja lo mencionaba como un recuerdo familiar, ¿puedes decirme más sobre cómo lo veía o qué hacía cuando estaba por casa?",
+      "round_trip_ms": 830.268,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 4,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "casa",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 1,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. Entonces, ¿cómo describías a tu abuela cuando hablaba de él?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante. Entonces, ¿cómo describías a tu abuela cuando hablaba de él?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 813.259,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 2,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja describía a Del Flaco?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja describía a Del Flaco?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 628.453,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 3,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Puedes decirme más sobre cómo tu vieja lo mencionaba?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante. ¿Puedes decirme más sobre cómo tu vieja lo mencionaba?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 596.794,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 4,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"¿Puedes decirme más sobre cómo tu vieja lo mencionaba?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "¿Puedes decirme más sobre cómo tu vieja lo mencionaba?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 563.965,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "nickname-flaco",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 5,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 616.213,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 1,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Te refieres al bar que está en la esquina de cuál calle o cuál dirección exacta?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Te refieres al bar que está en la esquina de cuál calle o cuál dirección exacta?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Te refieres al bar que está en la esquina de cuál calle o cuál dirección exacta?",
+      "round_trip_ms": 983.681,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 2,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías especificar qué tipo de caída ocurrió y cuál es el bar exacto que mencionas?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías especificar qué tipo de caída ocurrió y cuál es el bar exacto que mencionas?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías especificar qué tipo de caída ocurrió y cuál es el bar exacto que mencionas?",
+      "round_trip_ms": 666.302,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 3,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre el bar de la esquina? ¿Qué tipo de bar era, o en qué lugar exacto estaba?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre el bar de la esquina? ¿Qué tipo de bar era, o en qué lugar exacto estaba?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre el bar de la esquina? ¿Qué tipo de bar era, o en qué lugar exacto estaba?",
+      "round_trip_ms": 699.965,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 4,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Te refieres al bar de la esquina de la calle o del bloque?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Te refieres al bar de la esquina de la calle o del bloque?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Te refieres al bar de la esquina de la calle o del bloque?",
+      "round_trip_ms": 538.776,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 5,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Te refieres al bar de la esquina de donde?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Te refieres al bar de la esquina de donde?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Te refieres al bar de la esquina de donde?",
+      "round_trip_ms": 485.286,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 1,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 649.26,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 2,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 589.469,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 3,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 588.177,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 4,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme un poco más sobre qué tipo de caída fue, o qué estaba pasando cuando caía?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme un poco más sobre qué tipo de caída fue, o qué estaba pasando cuando caía?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme un poco más sobre qué tipo de caída fue, o qué estaba pasando cuando caía?",
+      "round_trip_ms": 651.569,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "caia"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 5,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Te refieres al bar de la esquina donde caías, o a algo más específico?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Te refieres al bar de la esquina donde caías, o a algo más específico?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Te refieres al bar de la esquina donde caías, o a algo más específico?",
+      "round_trip_ms": 578.824,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 1,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "accepted",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 813.549,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 2,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "accepted",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 730.262,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 3,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "accepted",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 641.074,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 4,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "accepted",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 567.017,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "place-bar",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 5,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo caía por el bar de la esquina?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?"
+      },
+      "guard_outcome": "accepted",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+      "round_trip_ms": 570.717,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 1,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Habías escuchado esa radio Spika en particular o era una de las que tenías en casa?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Habías escuchado esa radio Spika en particular o era una de las que tenías en casa?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Habías escuchado esa radio Spika en particular o era una de las que tenías en casa?",
+      "round_trip_ms": 772.617,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Habías"
+        ],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 2,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿De qué año o época hablas cuando mencionas la radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿De qué año o época hablas cuando mencionas la radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿De qué año o época hablas cuando mencionas la radio Spika?",
+      "round_trip_ms": 538.369,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 3,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿De qué año o época hablas cuando mencionas la radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿De qué año o época hablas cuando mencionas la radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿De qué año o época hablas cuando mencionas la radio Spika?",
+      "round_trip_ms": 555.839,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 4,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre la radio Spika: qué tipo de radio era, dónde estaba ubicada o cuál era su función en ese momento?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre la radio Spika: qué tipo de radio era, dónde estaba ubicada o cuál era su función en ese momento?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre la radio Spika: qué tipo de radio era, dónde estaba ubicada o cuál era su función en ese momento?",
+      "round_trip_ms": 789.586,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 5,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Hablas de una radio Spika que estaba siempre prendida en casa o en otro lugar específico?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Hablas de una radio Spika que estaba siempre prendida en casa o en otro lugar específico?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Hablas de una radio Spika que estaba siempre prendida en casa o en otro lugar específico?",
+      "round_trip_ms": 600.731,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Hablas"
+        ],
+        "content_overlap_tokens": [
+          "prendida",
+          "radio",
+          "siempre",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 1,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo era esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo era esa radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿cómo era esa radio Spika?",
+      "round_trip_ms": 564.146,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 2,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo era esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo era esa radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿cómo era esa radio Spika?",
+      "round_trip_ms": 532.433,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 3,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo era esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo era esa radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿cómo era esa radio Spika?",
+      "round_trip_ms": 522.653,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 4,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante, ¿cómo era esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Ah, interesante, ¿cómo era esa radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, interesante, ¿cómo era esa radio Spika?",
+      "round_trip_ms": 492.09,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 5,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo era esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo era esa radio Spika?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿cómo era esa radio Spika?",
+      "round_trip_ms": 472.617,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 1,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre cómo estaba la radio Spika o qué sucedía cuando estaba encendida?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante. ¿Podrías decirme más sobre cómo estaba la radio Spika o qué sucedía cuando estaba encendida?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 803.46,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 2,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes contarme más sobre esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿puedes contarme más sobre esa radio Spika?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 540.953,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 3,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre cómo funcionaba esa radio o qué tipo de programas escuchabas?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante. ¿Podrías decirme más sobre cómo funcionaba esa radio o qué tipo de programas escuchabas?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 660.157,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 4,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes decirme más sobre cómo era esa radio Spika o en qué contexto la escuchabas?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿puedes decirme más sobre cómo era esa radio Spika o en qué contexto la escuchabas?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 698.057,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "object-radio",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 5,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre esa radio Spika?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante. ¿Podrías decirme más sobre esa radio Spika?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 603.645,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 1,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre las reuniones de los domingos? Por ejemplo, ¿dónde las tenían lugar o quiénes las asistían?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre las reuniones de los domingos? Por ejemplo, ¿dónde las tenían lugar o quiénes las asistían?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre las reuniones de los domingos? Por ejemplo, ¿dónde las tenían lugar o quiénes las asistían?",
+      "round_trip_ms": 924.302,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Por"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 2,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre las reuniones de los domingos? Por ejemplo, ¿dónde se hacían o quiénes participaban?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre las reuniones de los domingos? Por ejemplo, ¿dónde se hacían o quiénes participaban?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre las reuniones de los domingos? Por ejemplo, ¿dónde se hacían o quiénes participaban?",
+      "round_trip_ms": 928.105,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Por"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 3,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías especificar qué tipo de reuniones eran las de los domingos?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías especificar qué tipo de reuniones eran las de los domingos?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías especificar qué tipo de reuniones eran las de los domingos?",
+      "round_trip_ms": 657.839,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 4,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre las reuniones de los domingos? ¿Dónde las tenían lugar o con quién se realizaban?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre las reuniones de los domingos? ¿Dónde las tenían lugar o con quién se realizaban?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre las reuniones de los domingos? ¿Dónde las tenían lugar o con quién se realizaban?",
+      "round_trip_ms": 795.619,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "immediate-information",
+      "policy_label": "Immediate-information",
+      "repetition": 5,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre las reuniones de los domingos? ¿Dónde las tenías, con quiénes o cuánto tiempo duraban?\"}",
+      "parsed_model_output": {
+        "move": "CLARIFY",
+        "utterance": "¿Podrías decirme más sobre las reuniones de los domingos? ¿Dónde las tenías, con quiénes o cuánto tiempo duraban?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre las reuniones de los domingos? ¿Dónde las tenías, con quiénes o cuánto tiempo duraban?",
+      "round_trip_ms": 800.978,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 1,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran esas de los domingos?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran esas de los domingos?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran esas de los domingos?",
+      "round_trip_ms": 777.597,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 2,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes decirme más sobre qué tipo de reuniones eran?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿puedes decirme más sobre qué tipo de reuniones eran?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿puedes decirme más sobre qué tipo de reuniones eran?",
+      "round_trip_ms": 601.294,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 3,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran?",
+      "round_trip_ms": 685.349,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 4,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo eran esas reuniones de domingos?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo eran esas reuniones de domingos?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿cómo eran esas reuniones de domingos?",
+      "round_trip_ms": 626.601,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "adaptive-semi-structured",
+      "policy_label": "Adaptive semi-structured",
+      "repetition": 5,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran esas de los domingos?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran esas de los domingos?"
+      },
+      "guard_outcome": "not-applicable",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Interesante, ¿puedes contarme más sobre qué tipo de reuniones eran esas de los domingos?",
+      "round_trip_ms": 689.178,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Interesante"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 1,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo eran esas reuniones de domingos?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo eran esas reuniones de domingos?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 764.815,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 2,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo eran esas reuniones de los domingos?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante, ¿cómo eran esas reuniones de los domingos?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 668.685,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 3,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo, entonces las reuniones de los domingos son lo que más recuerdas. ¿Podrías decirme más sobre cómo eran esas reuniones?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Entiendo, entonces las reuniones de los domingos son lo que más recuerdas. ¿Podrías decirme más sobre cómo eran esas reuniones?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 948.166,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 4,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre qué sucedía en esas reuniones de domingos?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Interesante. ¿Podrías decirme más sobre qué sucedía en esas reuniones de domingos?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 746.326,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "scenario_id": "theme-domingos",
+      "policy_id": "deferred-significance",
+      "policy_label": "Deferred significance",
+      "repetition": 5,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo, entonces las reuniones de los domingos son lo que recuerdas. ¿Podrías decirme más sobre qué tipo de reuniones eran?\"}",
+      "parsed_model_output": {
+        "move": "ACKNOWLEDGE",
+        "utterance": "Entiendo, entonces las reuniones de los domingos son lo que recuerdas. ¿Podrías decirme más sobre qué tipo de reuniones eran?"
+      },
+      "guard_outcome": "fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "round_trip_ms": 852.201,
+      "error": null,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    }
+  ]
+}

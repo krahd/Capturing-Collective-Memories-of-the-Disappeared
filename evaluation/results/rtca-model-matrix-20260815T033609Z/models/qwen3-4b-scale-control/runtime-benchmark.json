@@ -1,0 +1,232 @@
+{
+  "base_url": "http://127.0.0.1:11434/v1",
+  "cancellation": {
+    "client_stream_close": {
+      "cancel_close_ms": 0.0765831209719181,
+      "elapsed_ms": 234.15666609071195,
+      "estimated_decode_tokens_per_s": 10430.247452523192,
+      "estimated_output_tokens": 2,
+      "first_useful_ms": null,
+      "output_chars": 9,
+      "ttft_ms": 234.06079108826816
+    },
+    "post_cancel_probe": {
+      "cancel_close_ms": null,
+      "elapsed_ms": 354.7149579972029,
+      "estimated_decode_tokens_per_s": null,
+      "estimated_output_tokens": 1,
+      "first_useful_ms": 341.1627078894526,
+      "output_chars": 4,
+      "ttft_ms": 326.30654191598296
+    }
+  },
+  "context_scaling": [
+    {
+      "median_estimated_decode_tokens_per_s": 56.20007045302567,
+      "median_first_useful_ms": 271.85054193250835,
+      "median_ttft_ms": 220.2464579604566,
+      "samples": [
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 455.0440839957446,
+          "estimated_decode_tokens_per_s": 56.383498286983,
+          "estimated_output_tokens": 12,
+          "first_useful_ms": 312.44945898652077,
+          "output_chars": 48,
+          "ttft_ms": 259.95154213160276
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 409.43308314308524,
+          "estimated_decode_tokens_per_s": 49.907076431648576,
+          "estimated_output_tokens": 12,
+          "first_useful_ms": 244.12395805120468,
+          "output_chars": 48,
+          "ttft_ms": 189.02345816604793
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 415.97574995830655,
+          "estimated_decode_tokens_per_s": 56.20007045302567,
+          "estimated_output_tokens": 12,
+          "first_useful_ms": 271.85054193250835,
+          "output_chars": 48,
+          "ttft_ms": 220.2464579604566
+        }
+      ],
+      "turns": 1
+    },
+    {
+      "median_estimated_decode_tokens_per_s": 54.53701381600945,
+      "median_first_useful_ms": 294.24929106608033,
+      "median_ttft_ms": 253.9913330692798,
+      "samples": [
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 437.353041023016,
+          "estimated_decode_tokens_per_s": 54.53701381600945,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 294.24929106608033,
+          "output_chars": 46,
+          "ttft_ms": 253.9913330692798
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 389.7806250024587,
+          "estimated_decode_tokens_per_s": 54.981721958638154,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 245.73699990287423,
+          "output_chars": 46,
+          "ttft_ms": 207.90199982002378
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 551.985084079206,
+          "estimated_decode_tokens_per_s": 52.70675536681051,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 401.59254195168614,
+          "output_chars": 46,
+          "ttft_ms": 362.2560838703066
+        }
+      ],
+      "turns": 2
+    },
+    {
+      "median_estimated_decode_tokens_per_s": 53.839242784482444,
+      "median_first_useful_ms": 314.20129095204175,
+      "median_ttft_ms": 274.90354096516967,
+      "samples": [
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 571.3994579855353,
+          "estimated_decode_tokens_per_s": 52.19532461686812,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 422.4809999577701,
+          "output_chars": 46,
+          "ttft_ms": 379.8114168457687
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 460.6416658498347,
+          "estimated_decode_tokens_per_s": 53.839242784482444,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 314.20129095204175,
+          "output_chars": 46,
+          "ttft_ms": 274.90354096516967
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 371.9932499807328,
+          "estimated_decode_tokens_per_s": 54.63525504581284,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 227.6682909578085,
+          "output_chars": 46,
+          "ttft_ms": 188.9612500090152
+        }
+      ],
+      "turns": 4
+    },
+    {
+      "median_estimated_decode_tokens_per_s": 53.130575386592454,
+      "median_first_useful_ms": 282.96570805832744,
+      "median_ttft_ms": 243.41770797036588,
+      "samples": [
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 631.0680001042783,
+          "estimated_decode_tokens_per_s": 52.61780138264488,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 483.1375840585679,
+          "output_chars": 46,
+          "ttft_ms": 441.01825007237494
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 431.01916601881385,
+          "estimated_decode_tokens_per_s": 53.3044897626409,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 282.96570805832744,
+          "output_chars": 46,
+          "ttft_ms": 243.41770797036588
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 397.7287909947336,
+          "estimated_decode_tokens_per_s": 53.130575386592454,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 250.6999159231782,
+          "output_chars": 46,
+          "ttft_ms": 209.51324980705976
+        }
+      ],
+      "turns": 8
+    }
+  ],
+  "first_request": {
+    "cancel_close_ms": null,
+    "elapsed_ms": 508.0010420642793,
+    "estimated_decode_tokens_per_s": 55.4750514787622,
+    "estimated_output_tokens": 12,
+    "first_useful_ms": 363.2446250412613,
+    "output_chars": 48,
+    "ttft_ms": 309.7137091681361
+  },
+  "generated_at": "2026-08-15T03:43:59.112719+00:00",
+  "measurement_notes": {
+    "cancellation": "cancel_close_ms measures how quickly the client closes the HTTP stream. It does not prove server-side cancellation acknowledgement.",
+    "first_request": "This is the first request made by this benchmark process. It is a cold-model metric only if the runtime/model was actually cold.",
+    "first_useful": "A UI heuristic: terminal punctuation/newline, or a multi-word fragment of at least 24 characters.",
+    "rss": "If --pid is supplied, peak_process_rss_mb samples process RSS via ps. On macOS this can under-report native Metal/unified-memory use.",
+    "tokens_per_second": "Output tokens are estimated with Modelito's tokenizer helper; this is not the runtime's native tokenizer accounting."
+  },
+  "model": "qwen3:4b-instruct-2507-q4_K_M",
+  "peak_process_rss_mb": null,
+  "provider": "ollama",
+  "repetitions": 3,
+  "schema_version": 1,
+  "warm_prefix": {
+    "baseline": {
+      "cancel_close_ms": null,
+      "elapsed_ms": 833.7877078447491,
+      "estimated_decode_tokens_per_s": 51.18175473405074,
+      "estimated_output_tokens": 11,
+      "first_useful_ms": 679.1128749027848,
+      "output_chars": 46,
+      "ttft_ms": 638.4055828675628
+    },
+    "reuse": {
+      "median_estimated_decode_tokens_per_s": 52.28782094145171,
+      "median_first_useful_ms": 256.60137506201863,
+      "median_ttft_ms": 215.87900002487004,
+      "samples": [
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 372.45062505826354,
+          "estimated_decode_tokens_per_s": 52.28782094145171,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 221.27124993130565,
+          "output_chars": 46,
+          "ttft_ms": 181.20150011964142
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 407.39399986341596,
+          "estimated_decode_tokens_per_s": 52.215231226955396,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 256.60137506201863,
+          "output_chars": 46,
+          "ttft_ms": 215.87900002487004
+        },
+        {
+          "cancel_close_ms": null,
+          "elapsed_ms": 445.9935419727117,
+          "estimated_decode_tokens_per_s": 53.5208942389444,
+          "estimated_output_tokens": 11,
+          "first_useful_ms": 299.3306249845773,
+          "output_chars": 46,
+          "ttft_ms": 259.15062497369945
+        }
+      ]
+    }
+  }
+}

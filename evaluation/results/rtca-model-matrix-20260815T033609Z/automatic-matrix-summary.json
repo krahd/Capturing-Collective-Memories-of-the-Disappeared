@@ -1,0 +1,187 @@
+{
+  "total_valid_decisions": 225,
+  "by_model": {
+    "qwen3-30b-a3b-primary": {
+      "role": "primary",
+      "family": "Qwen3",
+      "ollama_model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
+      "by_policy": {
+        "immediate-information": {
+          "policy_label": "Immediate-information",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 14,
+          "premature_redirection": 0,
+          "over_specification": 2,
+          "question_packing": 11,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.56
+        },
+        "adaptive-semi-structured": {
+          "policy_label": "Adaptive semi-structured",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 8,
+          "premature_redirection": 0,
+          "over_specification": 5,
+          "question_packing": 16,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.32
+        },
+        "deferred-significance": {
+          "policy_label": "Deferred significance",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 25,
+          "premature_redirection": 0,
+          "over_specification": 0,
+          "question_packing": 0,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 1.0
+        }
+      }
+    },
+    "qwen3-4b-scale-control": {
+      "role": "scale-control",
+      "family": "Qwen3",
+      "ollama_model": "qwen3:4b-instruct-2507-q4_K_M",
+      "by_policy": {
+        "immediate-information": {
+          "policy_label": "Immediate-information",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 4,
+          "premature_redirection": 0,
+          "over_specification": 4,
+          "question_packing": 19,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 1,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.16
+        },
+        "adaptive-semi-structured": {
+          "policy_label": "Adaptive semi-structured",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 7,
+          "premature_redirection": 0,
+          "over_specification": 14,
+          "question_packing": 8,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 3,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.28
+        },
+        "deferred-significance": {
+          "policy_label": "Deferred significance",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 23,
+          "premature_redirection": 0,
+          "over_specification": 2,
+          "question_packing": 0,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.92
+        }
+      }
+    },
+    "mistral-small-3-2-cross-family": {
+      "role": "cross-family-control",
+      "family": "Mistral Small 3.2",
+      "ollama_model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "by_policy": {
+        "immediate-information": {
+          "policy_label": "Immediate-information",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 11,
+          "premature_redirection": 4,
+          "over_specification": 0,
+          "question_packing": 10,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 2,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.44
+        },
+        "adaptive-semi-structured": {
+          "policy_label": "Adaptive semi-structured",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 22,
+          "premature_redirection": 0,
+          "over_specification": 0,
+          "question_packing": 3,
+          "floor_closure": 0,
+          "generic_acknowledgement": 0,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.88
+        },
+        "deferred-significance": {
+          "policy_label": "Deferred significance",
+          "n": 25,
+          "errors": 0,
+          "possibility_preserved": 23,
+          "premature_redirection": 0,
+          "over_specification": 2,
+          "question_packing": 0,
+          "floor_closure": 0,
+          "generic_acknowledgement": 1,
+          "uncertainty_hardened": 0,
+          "valid_n": 25,
+          "possibility_preserved_rate": 0.92
+        }
+      }
+    }
+  },
+  "across_models_by_policy": {
+    "immediate-information": {
+      "valid_n": 75,
+      "possibility_preserved": 29,
+      "premature_redirection": 4,
+      "over_specification": 6,
+      "question_packing": 40,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 3,
+      "possibility_preserved_rate": 0.3867
+    },
+    "adaptive-semi-structured": {
+      "valid_n": 75,
+      "possibility_preserved": 37,
+      "premature_redirection": 0,
+      "over_specification": 19,
+      "question_packing": 27,
+      "floor_closure": 0,
+      "generic_acknowledgement": 0,
+      "uncertainty_hardened": 3,
+      "possibility_preserved_rate": 0.4933
+    },
+    "deferred-significance": {
+      "valid_n": 75,
+      "possibility_preserved": 71,
+      "premature_redirection": 0,
+      "over_specification": 4,
+      "question_packing": 0,
+      "floor_closure": 0,
+      "generic_acknowledgement": 1,
+      "uncertainty_hardened": 0,
+      "possibility_preserved_rate": 0.9467
+    }
+  }
+}
