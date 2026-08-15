@@ -139,7 +139,8 @@ def markdown(payload: dict[str, Any]) -> str:
 
 def write_review_csv(items: list[dict[str, Any]], path: Path) -> None:
     fields = [
-        "scenario_id", "policy_id", "repetition", "session_a", "withheld_later_sessions", "delivered_move", "delivered_utterance",
+        "scenario_id", "policy_id", "repetition", "session_a", "withheld_later_sessions",
+        "raw_move", "raw_utterance", "guard_outcome", "delivered_move", "delivered_utterance",
         "auto_premature_redirection", "auto_over_specification", "auto_question_packing", "auto_floor_closure", "auto_generic_ack", "auto_uncertainty_hardened",
         "human_premature_redirection", "human_over_specification", "human_question_packing", "human_floor_closure", "human_facilitates_recollection", "human_inserts_noise", "human_notes",
     ]
@@ -149,9 +150,11 @@ def write_review_csv(items: list[dict[str, Any]], path: Path) -> None:
         writer.writeheader()
         for item in items:
             s = item["automatic_screen"]
+            raw = item.get("parsed_model_output") or {}
             writer.writerow({
                 "scenario_id": item["scenario_id"], "policy_id": item["policy_id"], "repetition": item["repetition"],
                 "session_a": item["session_a"], "withheld_later_sessions": " || ".join(item["withheld_later_sessions"]),
+                "raw_move": raw.get("move") or "", "raw_utterance": raw.get("utterance") or "", "guard_outcome": item.get("guard_outcome") or "",
                 "delivered_move": item.get("delivered_move") or "", "delivered_utterance": item.get("delivered_utterance") or "",
                 "auto_premature_redirection": int(s["premature_redirection"]), "auto_over_specification": int(s["over_specification"]),
                 "auto_question_packing": int(s["question_packing"]), "auto_floor_closure": int(s["floor_closure"]),
