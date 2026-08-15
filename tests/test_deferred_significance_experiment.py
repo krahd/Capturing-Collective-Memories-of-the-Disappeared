@@ -23,7 +23,8 @@ def test_deferred_significance_runner_writes_auditable_outputs(tmp_path):
     result = subprocess.run(
         [
             sys.executable,
-            "scripts/run_deferred_significance_experiment.py",
+            "-m",
+            "scripts.run_deferred_significance_experiment",
             "--output",
             str(output),
             "--report",
