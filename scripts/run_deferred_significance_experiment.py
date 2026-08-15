@@ -168,6 +168,9 @@ def run_guard_probe() -> list[dict[str, Any]]:
     known = {
         "turn_a": "Había uno al que le decían Tito, que a veces aparecía por casa."
     }
+    direct = {
+        "turn_d": "Conocí a Tito en el barrio y a veces venía por casa."
+    }
     uncertain = {"turn_u": "Capaz que era él, pero no estoy seguro. De lejos se parecía."}
     cases = [
         {
@@ -186,16 +189,16 @@ def run_guard_probe() -> list[dict[str, Any]]:
         },
         {
             "id": "generic-acknowledgement",
-            "known": known,
+            "known": direct,
             "recent": [],
-            "candidate": InterviewMove("ACKNOWLEDGE", "Te sigo.", "turn_a"),
+            "candidate": InterviewMove("ACKNOWLEDGE", "Te sigo.", "turn_d"),
             "expected_guard": "fallback",
         },
         {
             "id": "grounded-acknowledgement",
-            "known": known,
+            "known": direct,
             "recent": [],
-            "candidate": InterviewMove("ACKNOWLEDGE", "Mencionás a Tito y que aparecía por casa.", "turn_a"),
+            "candidate": InterviewMove("ACKNOWLEDGE", "Mencionás a Tito y que venía por casa.", "turn_d"),
             "expected_guard": "accepted",
         },
         {
@@ -207,9 +210,9 @@ def run_guard_probe() -> list[dict[str, Any]]:
         },
         {
             "id": "single-grounded-probe",
-            "known": known,
+            "known": direct,
             "recent": [],
-            "candidate": InterviewMove("FOLLOW_UP", "¿Quién era Tito?", "turn_a"),
+            "candidate": InterviewMove("FOLLOW_UP", "¿Quién era Tito?", "turn_d"),
             "expected_guard": "accepted",
         },
         {
