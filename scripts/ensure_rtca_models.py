@@ -11,7 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MATRIX = ROOT / "evaluation" / "model-robustness-matrix.json"
-MODELITO_PIN = "b0b3f6e74c5fc272a23ba8cff211686611cbf3af"
+MODELITO_PIN = "15b616ca02de50436a026865ee04500e3561b932"
 
 
 def _run(command: list[str], *, check: bool = False) -> subprocess.CompletedProcess[str]:
@@ -78,7 +78,11 @@ def ensure_ollama_model(model: str, *, allow_pull: bool = True) -> dict[str, Any
 
 
 def doctor(model: str) -> dict[str, Any]:
-    result = _run(["modelito-doctor", "--provider", "ollama", "--model", model])
+    # Modelito <=1.4.6 exposes modelito-doctor as an entry point to a parser that
+    # still expects the `doctor` subcommand. Newer Modelito accepts both forms.
+    # Use the backwards-compatible form so an already-installed 1.4.6 does not
+    # make the experiment fail before it can update or run.
+    result = _run(["modelito-doctor", "doctor", "--provider", "ollama", "--model", model])
     return {
         "model": model,
         "returncode": result.returncode,
@@ -96,7 +100,8 @@ def prepare(matrix_path: Path, *, install_modelito: bool = True, pull_models: bo
         state = ensure_ollama_model(tag, allow_pull=pull_models)
         state["doctor"] = doctor(tag)
         if state["doctor"]["returncode"] != 0:
-            raise RuntimeError(f"Modelito doctor failed for {tag}: {state['doctor']['stderr']}")
+            diagnostic = state["doctor"]["stderr"] or state["doctor"]["stdout"]
+            raise RuntimeError(f"Modelito doctor failed for {tag}: {diagnostic}")
         models.append(state)
     return {"modelito": modelito, "models": models}
 
