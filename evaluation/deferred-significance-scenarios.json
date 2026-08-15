@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "evidence_level": 0,
+  "description": "Researcher-authored synthetic cases for mechanically testing preservation-before-interpretation, later cross-session relation emergence, and non-collapse. No participant data and no model-quality claim.",
+  "convergence_cases": [
+    {
+      "id": "nickname-tito",
+      "target_kind": "person",
+      "target_label": "Tito",
+      "sessions": [
+        {"title": "A", "text": "Había uno al que le decían Tito, que a veces aparecía por casa.", "items": [["person", "Tito"]]},
+        {"title": "B", "text": "Tito vivía por La Teja.", "items": [["person", "Tito"], ["place", "La Teja"]]},
+        {"title": "C", "text": "Creo que Julio usaba el nombre Tito.", "items": [["person", "Julio"], ["person", "Tito"], ["uncertainty", "Creo que"]]}
+      ]
+    },
+    {
+      "id": "nickname-flaco",
+      "target_kind": "person",
+      "target_label": "el Flaco",
+      "sessions": [
+        {"title": "A", "text": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.", "items": [["person", "el Flaco"], ["hearsay", "mi vieja decía"]]},
+        {"title": "B", "text": "Al Flaco lo veía a veces cerca del club.", "items": [["person", "el Flaco"]]},
+        {"title": "C", "text": "Mi tío también hablaba de el Flaco, pero nunca supe el nombre.", "items": [["person", "el Flaco"], ["uncertainty", "nunca supe el nombre"]]}
+      ]
+    },
+    {
+      "id": "place-bar",
+      "target_kind": "place",
+      "target_label": "el bar de la esquina",
+      "sessions": [
+        {"title": "A", "text": "A veces caía por el bar de la esquina, creo.", "items": [["place", "el bar de la esquina"], ["uncertainty", "creo"]]},
+        {"title": "B", "text": "Nos encontrábamos en el bar de la esquina.", "items": [["place", "el bar de la esquina"]]},
+        {"title": "C", "text": "Mi hermana se acordaba del bar de la esquina por la radio.", "items": [["place", "el bar de la esquina"]]}
+      ]
+    },
+    {
+      "id": "object-radio",
+      "target_kind": "entity",
+      "target_label": "la radio Spika",
+      "sessions": [
+        {"title": "A", "text": "Había una radio Spika siempre prendida.", "items": [["entity", "la radio Spika"]]},
+        {"title": "B", "text": "Me acuerdo de la radio Spika arriba de la heladera.", "items": [["entity", "la radio Spika"]]},
+        {"title": "C", "text": "La radio Spika era lo primero que se escuchaba al entrar.", "items": [["entity", "la radio Spika"]]}
+      ]
+    },
+    {
+      "id": "theme-domingos",
+      "target_kind": "theme",
+      "target_label": "reuniones de los domingos",
+      "sessions": [
+        {"title": "A", "text": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.", "items": [["theme", "reuniones de los domingos"], ["uncertainty", "nada muy preciso"]]},
+        {"title": "B", "text": "Las reuniones de los domingos eran cuando venía más gente.", "items": [["theme", "reuniones de los domingos"]]},
+        {"title": "C", "text": "Mi padre nombraba mucho las reuniones de los domingos.", "items": [["theme", "reuniones de los domingos"], ["hearsay", "mi padre nombraba"]]}
+      ]
+    }
+  ],
+  "noncollapse_cases": [
+    {
+      "id": "contradictory-dates",
+      "sessions": [
+        {"title": "A", "text": "Eso habrá sido por el 77.", "items": [["time", "el 77"], ["uncertainty", "habrá sido"]]},
+        {"title": "B", "text": "Yo lo ubico en el 78.", "items": [["time", "el 78"]]}
+      ],
+      "expected_time_labels": ["el 77", "el 78"]
+    },
+    {
+      "id": "unlocated-time",
+      "sessions": [
+        {"title": "A", "text": "Después volvimos al barrio.", "items": [["time", "después"]]}
+      ],
+      "expected_undated_labels": ["después"]
+    },
+    {
+      "id": "uncertainty-remains-mark",
+      "sessions": [
+        {"title": "A", "text": "Capaz que era él, pero no estoy seguro.", "items": [["person", "él"], ["uncertainty", "capaz; no estoy seguro"]]}
+      ],
+      "expected_marks": ["uncertainty"]
+    }
+  ]
+}
