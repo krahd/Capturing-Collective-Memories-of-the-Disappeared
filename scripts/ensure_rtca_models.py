@@ -91,6 +91,27 @@ def doctor(model: str) -> dict[str, Any]:
     }
 
 
+def _known_modelito_listing_false_negative(model: str, doctor_state: dict[str, Any]) -> bool:
+    """Return True only for the known Ollama-list formatting false negative.
+
+    Some installed Modelito versions compare the requested model against raw
+    `ollama list` rows instead of bare model names. In that case the diagnostic
+    says `requested model not found` while visibly listing the exact requested
+    tag. Exact presence has already been independently verified by
+    `ensure_ollama_model`, so this specific doctor failure is safe to retain as
+    a warning rather than aborting the experiment.
+    """
+    diagnostic = "\n".join(
+        [doctor_state.get("stdout", ""), doctor_state.get("stderr", "")]
+    )
+    return (
+        doctor_state.get("returncode") != 0
+        and "requested model not found" in diagnostic.lower()
+        and model in diagnostic
+        and model in _ollama_models()
+    )
+
+
 def prepare(matrix_path: Path, *, install_modelito: bool = True, pull_models: bool = True) -> dict[str, Any]:
     matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
     modelito = ensure_modelito(allow_install=install_modelito)
@@ -100,8 +121,15 @@ def prepare(matrix_path: Path, *, install_modelito: bool = True, pull_models: bo
         state = ensure_ollama_model(tag, allow_pull=pull_models)
         state["doctor"] = doctor(tag)
         if state["doctor"]["returncode"] != 0:
-            diagnostic = state["doctor"]["stderr"] or state["doctor"]["stdout"]
-            raise RuntimeError(f"Modelito doctor failed for {tag}: {diagnostic}")
+            if _known_modelito_listing_false_negative(tag, state["doctor"]):
+                state["doctor_warning"] = (
+                    "Known Modelito Ollama-list formatting false negative: the exact "
+                    "tag is independently verified by `ollama list`; continuing while "
+                    "retaining the failed doctor diagnostic in the manifest."
+                )
+            else:
+                diagnostic = state["doctor"]["stderr"] or state["doctor"]["stdout"]
+                raise RuntimeError(f"Modelito doctor failed for {tag}: {diagnostic}")
         models.append(state)
     return {"modelito": modelito, "models": models}
 
