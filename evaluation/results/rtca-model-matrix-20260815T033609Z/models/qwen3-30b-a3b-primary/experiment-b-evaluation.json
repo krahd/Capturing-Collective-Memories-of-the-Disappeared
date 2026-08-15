@@ -1,6 +1,6 @@
 {
-  "created_at": "2026-08-15T03:42:40.212658+00:00",
-  "source_result": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b.json",
+  "created_at": "2026-08-15T04:50:04.421255+00:00",
+  "source_result": "evaluation/results/rtca-model-matrix-20260815T033609Z/models/qwen3-30b-a3b-primary/experiment-b.json",
   "claim_boundary": "Automatic conservative screening of synthetic model outputs only. Manual review is required for final adjudication of branch closure, contamination opportunity and facilitation quality.",
   "model": "qwen3:30b-a3b-instruct-2507-q4_K_M",
   "sampling": {

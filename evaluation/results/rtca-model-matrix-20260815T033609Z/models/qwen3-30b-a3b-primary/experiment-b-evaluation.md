@@ -1,6 +1,6 @@
 # RTCA Experiment B evaluation
 
-**Created:** 2026-08-15T03:42:40.212658+00:00
+**Created:** 2026-08-15T04:50:04.421255+00:00
 
 This report is a deterministic conservative screen of researcher-authored model outputs. It is not a human-memory outcome and it is not sufficient by itself for paper-facing claims about subtle conversational mechanisms. Review the generated adjudication CSV before treating ambiguous cases as final.
 
