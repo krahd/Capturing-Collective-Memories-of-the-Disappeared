@@ -10,12 +10,7 @@ Everything else in the system follows from that objective. Provenance, conversat
 
 ## Research record
 
-Two research reviews in `krahd/academic-writing` are direct inputs to these design foundations:
-
-- [State of the Art Review — *The Conversation Is Not the Record*](https://github.com/krahd/academic-writing/blob/main/my_papers_2026/2026%20-%20NeurIPS%20RTCA%20-%20Collective%20Memories/STATE-OF-THE-ART-REVIEW.md)
-- [Collective-memory capture review — *Conditions of Recollection*](https://github.com/krahd/academic-writing/blob/main/my_papers_2026/2026%20-%20NeurIPS%20RTCA%20-%20Collective%20Memories/COLLECTIVE-MEMORY-CAPTURE-REVIEW.md)
-
-The reviews are literature maps, novelty audits and source ledgers. They should be consulted before changing the interviewing policy, representation model, evaluation framework or the boundary between capture and the accumulated corpus.
+The private manuscript workspace contains longer literature reviews and source audits, but this public design record does not depend on them. Changes to interviewing policy, representation, evaluation or the boundary between capture and the accumulated corpus should remain justifiable from public primary sources and self-contained project evidence.
 
 Selected external anchors were re-checked on 13 August 2026 against primary or authoritative sources:
 
@@ -147,7 +142,7 @@ The project should be evaluated against the following interacting problem famili
 ### Infrastructure and deployment
 
 - mobile-first operation;
-- full-duplex speech;
+- interruption/overlap and whether full duplex is appropriate;
 - offline or intermittently connected capture;
 - local versus remote inference;
 - battery, thermals and device coverage;
@@ -170,7 +165,7 @@ The following are current design commitments unless later evidence gives a stron
 9. Historical significance can emerge later, across contributions. Real-time policy must therefore avoid aggressive relevance filtering based only on the current conversation.
 10. The participant must be able to stop, pause, decline a topic, correct the system and ask protocol/consent questions without model improvisation over their rights.
 11. The final participant interface is mobile-first, speech-first and deliberately simpler than the current desktop research interface.
-12. The production speech interface is intended to be full duplex. Participant interruption should be easy; system interruption should be conservative.
+12. Production speech should test easy participant interruption and conservative system interruption; full duplex is one candidate mechanism, not yet a participant-validated requirement.
 13. The aggregate memory field, chronology and other corpus views are researcher/access apparatuses, not default material shown to participants during capture.
 14. Recurrence, graph centrality, model confidence and visual prominence must not be presented as historical truth or credibility.
 15. Identity resolution and cross-session linking are provisional interpretive operations, not string-matching facts.
