@@ -4,13 +4,58 @@
 
 This protocol separates two evidence levels and one orthogonal elicitation-integrity axis. The companion protocol `evaluation/ELICITATION-INTEGRITY-PROTOCOL.md` documents false-memory risk, interviewer-added informational contamination, and low-injection facilitation. False-memory formation is a human cognitive outcome and is **not** measured by the researcher-authored experiments below.
 
+## Single entry point
+
+From the repository root, the complete pre-participant RTCA experiment pipeline now runs with one command:
+
+```bash
+python -m scripts.run_rtca_experiments \
+  --chat-url 'http://127.0.0.1:PORT/v1/chat/completions' \
+  --model 'EXACT_MODEL_ID' \
+  --repetitions 5
+```
+
+The same values can be supplied through `LLM_API_URL`, `LLM_MODEL`, `LLM_API_KEY`, `LLM_TEMPERATURE`, `LLM_TOP_P`, and `LLM_MAX_TOKENS`.
+
+The entry point performs, in order:
+
+1. the Level-0 mechanical deferred-significance benchmark as a sanity gate;
+2. Experiment B with all five convergence scenarios × three frozen policy conditions × the requested repetitions;
+3. retention of every raw model output, including parse/request failures;
+4. application of the production deterministic guard only to the deferred-significance policy condition;
+5. conservative automatic screening of branch closure and contamination-opportunity signatures;
+6. generation of a Markdown report and manual-adjudication CSV;
+7. generation of a manifest containing model, endpoint, sampling, scenario/policy hashes, counts, and exact result paths.
+
+With the default five repetitions, Experiment B produces **75 model decisions**. The output directory is `evaluation/results/rtca-experiments-<UTC timestamp>/` unless `--output-dir` is supplied.
+
+Expected files are:
+
+- `manifest.json`;
+- `level0.json` and `level0.md`;
+- `experiment-b.json`;
+- `experiment-b-evaluation.json`;
+- `experiment-b-evaluation.md`;
+- `experiment-b-manual-review.csv`.
+
+The automatic screen is deliberately conservative and is **not final adjudication**. After completing every `human_*` column in the generated CSV with binary `0/1` values, use the **same entry point** to compute the final policy-level summary:
+
+```bash
+python -m scripts.run_rtca_experiments \
+  --summarise-review evaluation/results/rtca-experiments-.../experiment-b-manual-review.csv
+```
+
+The summary reports, per policy, adjudicated possibility preservation, facilitation, inserted-noise incidence, and the compound **low-injection facilitation** outcome: the intervention preserves the branch, facilitates continuation, and does not insert informational noise.
+
+Frozen policy prompts live in `evaluation/experiment-b-policies.json`. They are experimental comparators and must not be described as reproductions of published systems.
+
 ## Experiment A — mechanical preservation and retrospective emergence
 
 **Evidence level:** 0.  
 **Runs anywhere:** yes.  
 **Requires an LLM:** no.
 
-Run from the repository root:
+It can still be run independently with:
 
 ```bash
 python -m scripts.run_deferred_significance_experiment
@@ -20,8 +65,6 @@ Inputs are the researcher-authored cases in `evaluation/deferred-significance-sc
 
 - `evaluation/results/deferred-significance-latest.json`;
 - `evaluation/results/deferred-significance-latest.md`.
-
-The run has three components.
 
 ### A1. Preservation-before-interpretation
 
@@ -41,21 +84,9 @@ This does **not** establish historical identity or truth. Exact-label recurrence
 
 ### A3. Non-collapse and controller guard probes
 
-The benchmark checks that:
+The benchmark checks that contradictory dates remain separate; unlocated temporal expressions remain undated; uncertainty remains attached; packed questions, unsupported specificity, generic ungrounded acknowledgement, certainty hardening and immediate repetition are rejected; and grounded acknowledgement, a minimal floor-yielding invitation and one grounded probe can pass.
 
-- contradictory dates remain separate;
-- unlocated temporal expressions remain represented as undated rather than receiving invented dates;
-- uncertainty remains attached to the recollection;
-- multiple-question packing is rejected by the deterministic interview guard;
-- unsupported specificity is rejected;
-- generic `ACKNOWLEDGE` is rejected when it is not grounded in the participant turn;
-- a content-grounded acknowledgement can pass;
-- a minimal floor-yielding invitation can pass;
-- one grounded probe can pass;
-- certainty hardening of an uncertain statement is rejected;
-- immediate repetition of the same backchannel is rejected.
-
-These guard probes were added after integrating the deployed InterviewBot findings. They test implemented protections related to question density, generic acknowledgement, grounding and premature narrowing. They do not show what a model will choose to generate and do not establish an effect on human memory.
+These probes test implemented protections. They do not show what a model will choose to generate and do not establish an effect on human memory.
 
 ## Experiment B — live model retrospective action audit
 
@@ -63,99 +94,71 @@ These guard probes were added after integrating the deployed InterviewBot findin
 **Requires an LLM:** yes.  
 **Participant data:** none.
 
-Experiment B is the paper-facing model experiment. It should use the same researcher-authored session-A fragments while withholding B/C from the model during capture.
+Experiment B uses the same researcher-authored session-A fragments while withholding B/C from the model during capture.
 
 ### Conditions
 
-Use the same exact conversational model and decoding configuration under three policy conditions:
+The frozen conditions are:
 
 1. **Immediate-information policy** — prioritises present information gain and asks a specific question when a potentially resolvable entity, place or date appears.
 2. **Adaptive semi-structured policy** — follows conventional contextual interviewing criteria: necessary, open, grounded, one probe at a time.
-3. **Deferred-significance policy** — the project's current constrained policy: source is preserved first; the interviewer may ask, acknowledge or yield, but present relevance must not become an irreversible editorial decision.
+3. **Deferred-significance policy** — the project's constrained policy: source is preserved first; the interviewer may ask, acknowledge or yield, but present relevance must not become an irreversible editorial decision. Its generated candidate is passed through the production deterministic guard before delivery.
 
-The baseline policies are experimental comparators. They must not be represented as implementations of any particular published system unless their prompts are directly reproduced under the relevant licence and protocol.
+The baseline policies are experimental comparators. They must not be represented as implementations of any particular published system.
 
 ### Procedure
 
 For every scenario family:
 
-1. Start from a fresh conversation containing session A only.
-2. Run the policy/model without access to B or C.
-3. Preserve the exact generated move, utterance, router outcome, guard outcome, model identifier, endpoint and sampling configuration.
-4. Do not retry selectively. If repetitions are used, fix the count before running and retain every output.
-5. After the A response has been frozen, reveal B and C only to the evaluator.
-6. Audit the A action retrospectively against the later relation.
-7. Independently annotate the intervention for informational injection and facilitation using `ELICITATION-INTEGRITY-PROTOCOL.md`.
+1. start from a fresh conversation containing session A only;
+2. run the model/policy without access to B or C;
+3. preserve exact raw output, parsed move, delivered intervention, guard outcome, model identifier, endpoint and sampling configuration;
+4. never retry selectively;
+5. reveal B and C only to evaluation after A is frozen;
+6. audit the A action retrospectively;
+7. independently annotate informational injection and facilitation using `ELICITATION-INTEGRITY-PROTOCOL.md`.
 
 ### Primary outcome: possibility preservation
 
-Score the A intervention on four binary failure mechanisms:
+Score four binary failure mechanisms:
 
-- **premature redirection:** moves away from the participant's fragment before they can continue it;
-- **over-specification:** introduces specificity or a candidate relation absent from A;
-- **question packing:** asks more than one distinct thing;
-- **floor closure:** treats a brief/uncertain fragment as exhausted rather than allowing continuation.
+- **premature redirection**;
+- **over-specification**;
+- **question packing**;
+- **floor closure**.
 
-The primary per-run outcome is whether **none** of the four mechanisms occurs.
-
-This is intentionally stricter than generic conversational quality. A fluent, polite response can still fail.
+The primary per-run outcome is whether none occurs.
 
 ### Orthogonal outcome: elicitation integrity
 
-Possibility preservation is not enough. An intervention may keep a branch open while still inserting noise into recollection. For every model output, also score:
+Possibility preservation is not enough. For every output, also examine novel propositions, epistemic hardening, suggestive/presuppositional structure, factual reinforcement, source-bound grounding, floor support, productive grounding, question economy, repairability and interactional variation.
 
-- novel propositions;
-- epistemic hardening;
-- suggestive/presuppositional structure;
-- unjustified factual reinforcement;
-- source-bound grounding;
-- floor support;
-- productive grounding;
-- question economy;
-- repairability;
-- interactional variation.
+The aim is **low-injection facilitation**: helping the participant continue without supplying historical content that did not originate with them.
 
-These measures are defined in `ELICITATION-INTEGRITY-PROTOCOL.md`. Do not collapse them into a single conversational-quality score. The aim is **low-injection facilitation**: helping the participant continue without supplying historical content that did not originate with them.
+The generated review CSV records automatic flags alongside blank human fields for the four primary mechanisms plus `human_facilitates_recollection` and `human_inserts_noise`. The final summary intentionally keeps these dimensions visible instead of collapsing them into a generic conversational-quality score.
 
-### Secondary outcomes
+### Automatic-screen boundary
 
-Record:
+`scripts/evaluate_policy_experiment.py` provides a reproducible first-pass screen for:
 
-- move type (`BACKCHANNEL`, `INVITE_CONTINUE`, `ACKNOWLEDGE`, `FOLLOW_UP`, `CLARIFY` or comparator equivalent);
-- number of distinct probes, not question marks;
-- whether acknowledgement is content-grounded;
-- whether uncertainty/hearsay is preserved;
-- response length;
-- whether a later-significant noun phrase remains available for participant continuation;
-- guard acceptance/fallback for the project's policy.
+- explicit redirection language and ungrounded interrogative redirection;
+- newly introduced capitalised/numeric specificity;
+- multiple interrogative units;
+- explicit closure/redirect moves;
+- generic acknowledgements;
+- certainty hardening where the source marks distance.
 
-Runtime metrics such as TTFT remain a separate evidence layer. They must not be combined with possibility-preservation or elicitation-integrity scores.
+These rules are designed to surface cases for review, not replace interpretation. Subtle presupposition, semantic novelty, floor management and useful facilitation require manual adjudication.
 
-### Repetitions
+### Repetitions and analysis
 
-For a workshop-scale result, use at least 5 repetitions per scenario × policy condition if inference cost permits. With 5 convergence scenarios and 3 policies this yields 75 A-turn decisions. Ten repetitions yields 150.
+Use at least five repetitions per scenario × policy condition if inference cost permits. With five convergence scenarios and three policies this yields 75 A-turn decisions; ten repetitions yields 150. The unit of analysis is the generated intervention nested within scenario and policy, not an independent human observation.
 
-The unit of analysis is the generated intervention, nested within scenario and policy. Do not treat repetitions as independent human observations.
-
-### Analysis
-
-Report raw counts and proportions first. For a small researcher-authored benchmark, avoid inferential-statistical theatre. Report possibility-preservation outcomes and elicitation-integrity dimensions separately. If the sample is expanded enough to justify modelling, use a mixed-effects logistic model with policy as fixed effect and scenario as a grouping factor, but retain the raw contingency table.
+Report raw counts and proportions first. Avoid inferential-statistical theatre for this small researcher-authored benchmark.
 
 ### Required provenance
 
-Freeze:
-
-- repository commit;
-- exact scenario file hash;
-- exact prompt/policy text for each condition;
-- exact model identifier and weights/provider identity;
-- quantisation/precision;
-- context size;
-- temperature/top-p/max tokens;
-- server/runtime and launch command;
-- every raw output;
-- exact elicitation-integrity annotation rubric/version;
-- annotator identity or blinded coding procedure where applicable.
+The runner freezes scenario and policy SHA-256 hashes, model identifier, endpoint, sampling settings, every raw output and guard outcome. Also record externally, where applicable, provider/runtime version, quantisation/precision, context size and server launch command. If manual adjudication is used in the paper, retain the completed CSV, rubric version, annotator identity or blinded coding procedure, and any disagreement-resolution record.
 
 ## False-memory boundary
 
@@ -163,19 +166,8 @@ The project must distinguish **contamination opportunity** from **false-memory f
 
 Accordingly, no Experiment A/B result should be phrased as “preventing false memories”. The strongest defensible pre-participant claim is that a tested policy reduces specified interviewer-added informational contamination mechanisms. Any experiment on actual false-memory formation belongs to a separately reviewed human-subject protocol with controlled ground truth and debriefing, not to sensitive testimony capture.
 
-## What can be claimed after Experiment A only
+## Claim boundary
 
-Experiment A can support statements such as:
+After Experiment A only, the implementation can support mechanical claims about preservation-before-interpretation, later exact-label emergence without source rewriting, non-collapse, and deterministic guard behaviour.
 
-- the implementation stores the recollection before interpretation;
-- later sessions can make an exact-label cross-session relation visible without rewriting the earlier source;
-- tested contradictions and uncertainty remain represented;
-- the deterministic guard rejects the tested packed, unsupported, ungrounded, certainty-hardening and repetitive interventions.
-
-It cannot support statements that the LLM reliably behaves this way in conversation or that these mechanisms prevent false memories.
-
-## What can be claimed after Experiment B
-
-A complete Experiment B can support narrow statements about the tested model + policy + researcher-authored scenarios, for example that one policy produced fewer branch-closing interventions and fewer specified contamination opportunities than another under the frozen benchmark.
-
-It still cannot establish effects on human memory, participant trust, cultural validity, trauma-informed practice or field effectiveness.
+After completed and adjudicated Experiment B, the paper can support narrow statements about the tested model + policy + researcher-authored scenarios, for example that one policy produced fewer branch-closing interventions or fewer specified contamination opportunities while retaining facilitation. It still cannot establish effects on human memory, participant trust, cultural validity, trauma-informed practice or field effectiveness.
