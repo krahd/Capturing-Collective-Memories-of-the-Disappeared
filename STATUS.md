@@ -3,7 +3,7 @@
 **Date:** 16 August 2026  
 **Phase:** disposable interaction prototype plus production-design research  
 **Participant data:** none; current experiments use researcher-authored synthetic material  
-**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit, B2 repair experiment and streaming TTFT replication completed
+**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit, B2 repair experiment and clean streaming TTFT replication completed
 
 ## Project objective
 
@@ -71,50 +71,56 @@ That did not turn repair into successful elicitation. Qwen3-30B reached admissio
 
 B2 also makes the real-time cost visible. Median accumulated sequential model-request time was 2.51 s for Qwen3-30B, 1.93 s for Qwen3-4B and 7.09 s for Mistral. Among models with both first-pass and repaired acceptances, the median rose from 0.80 to 1.99 s for Qwen3-4B and from 3.20 to 7.31 s for Mistral. These are local request times, not streaming TTFT or participant-perceived speech latency. See `evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md`.
 
-The combined experimental result is diagnostic rather than a leaderboard: tightening epistemic restraint can move the interviewer among informational injection, deterministic fallback, interactional minimalism, semantically distorted but structurally admissible probing, and delay.
-
 The formal `human_*` adjudication fields remain unfilled. Do not report quantitative rates for useful facilitation, semantic distortion, informational noise, cultural validity, trauma-informed adequacy or participant benefit from these experiments.
 
-### B2 streaming TTFT replication
+### Clean B2 streaming TTFT replication — canonical timing evidence
 
-The independent streaming replication completed **75/75 decisions** and is committed under:
+The clean fixed-seed streaming replication completed **75/75 decisions** and is stored under:
 
-`evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/`
+`evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/`
 
-Result commit: `df6e2a00e7cc1af8756c7e3c01f65ecfa3a71bb2`.
+Raw result commit: `1ec5442779ef842d23c01029d0427acd9c8b1303`.
 
-The run retained the same five B2 scenarios, three-model panel and guard-aware repair design, while enabling OpenAI-compatible streaming. It used one excluded warm-up request per model.
+Audit: `evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/TTFT-CLEAN-AUDIT.md`.
 
-Runtime provenance:
+Runtime controls:
 
 - Apple M1 Max / 64 GB unified memory;
-- Ollama server **0.32.5**;
+- Ollama server **0.32.9**;
 - Ollama client **0.32.9**;
-- CLI version-mismatch warning retained in the manifest.
+- dedicated local `ollama serve` process;
+- explicit context length **8192** via `OLLAMA_CONTEXT_LENGTH`;
+- fixed candidate-request seed schedule beginning at **42**;
+- one excluded warm-up request per model.
 
-First-attempt TTFT median/p90:
+Timing results:
 
-- Qwen3-30B-A3B: **164 / 347 ms**;
-- Qwen3-4B: **205 / 476 ms**;
-- Mistral Small 3.2: **252 / 613 ms**.
+| Model | First-attempt TTFT median / p90 | Accepted token from decision start median / p90 | Admission-ready median / p90 | Fallback |
+|---|---:|---:|---:|---:|
+| Qwen3-30B-A3B | **166 / 352 ms** | **1,559 / 1,781 ms** | **1.771 / 1.988 s** | 0/25 |
+| Qwen3-4B | **162 / 244 ms** | **801 / 937 ms** | **1.219 / 1.948 s** | 4/25 |
+| Mistral Small 3.2 | **253 / 617 ms** | **2,565 / 4,845 ms** | **4.067 / 6.486 s** | 2/25 |
 
-Admission-ready median/p90, i.e. earliest safe delivery under the current completed-candidate guard:
+`Accepted token from decision start` includes time consumed by earlier rejected attempts. The primary-model sequence is therefore **166 ms first-attempt TTFT → 1.559 s accepted-candidate onset → 1.771 s admission-ready**. Most of the lost conversational interval accumulates before the successful candidate begins.
 
-- Qwen3-30B-A3B: **1.755 / 1.938 s**;
-- Qwen3-4B: **1.365 / 2.447 s**;
-- Mistral Small 3.2: **4.084 / 6.008 s**.
+The clean run closely reproduces the earlier exploratory timing for Qwen3-30B and Mistral while removing the previous Ollama 0.32.5/0.32.9 mismatch. The earlier run remains preserved as provenance but is superseded for paper-facing timing.
 
-Median admission-ready time is approximately 10.7×, 6.6× and 16.2× first-attempt TTFT respectively.
+The central timing result is:
 
-The central result is:
+> **Fast first-token generation does not imply fast admissible speech when the architecture serially generates, rejects, repairs and validates complete candidates.**
 
-> **model TTFT is not equivalent to safe conversational response onset when admission control requires the completed candidate.**
+The fixed-seed streaming run is not pooled with original B2. Original B2 remains canonical for behavioural/qualitative evidence; the clean run supplies canonical timing evidence.
 
-For the primary model, content begins streaming at 164 ms median but the intervention is not admission-ready until 1.755 s median. The guard validates complete JSON, and rejected candidates must finish before repair begins. Simply streaming generated tokens into TTS would therefore bypass the intervention-admission mechanism.
+## Evidence boundaries sharpened for the RTCA paper
 
-The replication is stochastic and is not pooled with original B2. Its fallback counts were 1/25, 6/25 and 4/25, compared with original B2 counts 1/25, 5/25 and 2/25. Original B2 remains the canonical behavioural/qualitative run; this replication supplies streaming timing evidence.
+The current paper no longer treats later recurrence as historical significance or candidate narrowing as observed downstream branch closure. In the synthetic benchmark:
 
-Full audit: `evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/TTFT-AUDIT.md`.
+- B/C recurrence is a researcher-defined future-relevance proxy for retrospective scrutiny;
+- all five convergence families recur;
+- no matched non-recurring branches are present;
+- no subsequent participant turns are observed after the intervention.
+
+The experiment therefore diagnoses candidate foreclosure mechanisms, guard/repair behaviour, semantic failure and timing. It does not establish downstream effects on recollection.
 
 ## Current production questions
 
@@ -128,6 +134,8 @@ The experimental failures sharpen rather than settle the production design. Open
 - how to separate capture, archive, access and research layers while preserving withdrawal, provenance and relational privacy;
 - how to govern provisional cross-session identity/coreference hypotheses;
 - what human and participant evidence is required before any production deployment.
+
+Streaming safety moderation exists for generic harmful-content policies; the project-specific open question is whether epistemic interview constraints such as attribution, uncertainty preservation and semantic grounding can be checked incrementally without collapsing interaction.
 
 Full duplex is the production interaction direction, but its participant benefits and appropriate timing policy remain empirical questions to test rather than established outcomes.
 
