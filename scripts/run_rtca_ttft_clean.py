@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import sys
@@ -17,37 +16,17 @@ DEFAULT_SEED_BASE = 42
 DEFAULT_CONTEXT_LENGTH = 8192
 
 
-def _derived_seed(
-    *,
-    seed_base: int,
-    model: str,
-    participant_text: str,
-    prior_raw_outputs: list[str],
-) -> int:
-    """Derive a stable per-request seed from request identity.
-
-    This avoids making all five nominal repetitions of a scenario identical while
-    keeping the seed schedule reproducible. Repair attempts receive different
-    seeds because prior_raw_outputs is part of the derivation.
-    """
-    material = json.dumps(
-        {
-            "seed_base": seed_base,
-            "model": model,
-            "participant_text": participant_text,
-            "prior_raw_outputs": prior_raw_outputs,
-        },
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
-    digest = hashlib.sha256(material).digest()
-    # Ollama's OpenAI-compatible endpoint accepts integer seeds. Keep the value
-    # within the signed 31-bit range for portability.
-    return int.from_bytes(digest[:8], "big") % 2_147_483_647
-
-
 def _make_seeded_stream_candidate(seed_base: int):
+    """Return a streaming request function with a deterministic seed sequence.
+
+    Candidate requests are issued sequentially by the frozen B2 runner. Each
+    measured model request therefore receives seed_base + request_index. Warm-up
+    requests use the existing unseeded warm-up path and do not consume indices.
+    This preserves five distinct nominal repetitions while making the request
+    seed schedule explicit and reproducible.
+    """
+    request_index = 0
+
     async def _stream_candidate(
         client: httpx.AsyncClient,
         *,
@@ -61,6 +40,7 @@ def _make_seeded_stream_candidate(seed_base: int):
         top_p: float,
         max_tokens: int,
     ) -> tuple[str, float | None, float]:
+        nonlocal request_index
         headers = {"Content-Type": "application/json"}
         if api_key:
             headers["Authorization"] = f"Bearer {api_key}"
@@ -73,12 +53,8 @@ def _make_seeded_stream_candidate(seed_base: int):
             messages.append({"role": "assistant", "content": raw})
             messages.append({"role": "user", "content": base._repair_message()})
 
-        seed = _derived_seed(
-            seed_base=seed_base,
-            model=model,
-            participant_text=participant_text,
-            prior_raw_outputs=prior_raw_outputs,
-        )
+        seed = seed_base + request_index
+        request_index += 1
         payload = {
             "model": model,
             "messages": messages,
@@ -155,7 +131,7 @@ def main() -> int:
 
     # _run_decision resolves this module global at runtime, so replacing the
     # streaming function here preserves the frozen B2 control/guard logic while
-    # adding an explicit reproducible seed to every model request.
+    # adding an explicit reproducible seed to every measured model request.
     base._stream_candidate = _make_seeded_stream_candidate(args.seed_base)
 
     original_argv = sys.argv
@@ -180,8 +156,8 @@ def main() -> int:
         "clean_replication": True,
         "seed_base": args.seed_base,
         "seed_scheme": (
-            "sha256(seed_base, model, participant_text, prior_raw_outputs) modulo 2147483647; "
-            "stable per request and different across repair states"
+            "candidate request seeds are seed_base + zero-based request index in the runner's "
+            "deterministic sequential request order; warm-up requests are excluded from the seed sequence"
         ),
         "context_length": args.context_length,
         "context_configuration": "OLLAMA_CONTEXT_LENGTH set on the dedicated ollama serve process",
