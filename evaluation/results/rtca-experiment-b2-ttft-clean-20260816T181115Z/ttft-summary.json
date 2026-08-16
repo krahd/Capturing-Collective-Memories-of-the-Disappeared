@@ -1,0 +1,72 @@
+{
+  "created_at": "2026-08-16T18:14:50.000389+00:00",
+  "experiment": "B2-TTFT-replication",
+  "planned_primary_decisions": 75,
+  "measurement": {
+    "ttft": "request dispatch to first non-empty streamed delta.content chunk",
+    "completion": "request dispatch to completion of streamed candidate",
+    "admission_ready": "sum of completed candidate request times through the accepted attempt, or all attempts before fallback; the guard validates completed JSON, so this is the earliest safe delivery point in the current architecture",
+    "warmup": "one excluded streaming warm-up request per model before measured decisions"
+  },
+  "runtime": {
+    "ollama_version_observation": {
+      "returncode": 0,
+      "stdout": "ollama version is 0.32.9",
+      "stderr": ""
+    },
+    "user_supplied_server_version": "0.32.9",
+    "user_supplied_client_version": "0.32.9"
+  },
+  "by_model": {
+    "qwen3-30b-a3b-primary": {
+      "n": 25,
+      "final_fallback_count": 0,
+      "final_fallback_rate": 0.0,
+      "first_attempt_ttft_median_ms": 166.292,
+      "first_attempt_ttft_p90_ms": 352.425,
+      "accepted_candidate_ttft_median_ms": 363.137,
+      "accepted_candidate_ttft_p90_ms": 375.07,
+      "accepted_candidate_first_token_from_decision_start_median_ms": 1559.486,
+      "accepted_candidate_first_token_from_decision_start_p90_ms": 1780.947,
+      "admission_ready_median_ms": 1771.443,
+      "admission_ready_p90_ms": 1988.303
+    },
+    "qwen3-4b-scale-control": {
+      "n": 25,
+      "final_fallback_count": 4,
+      "final_fallback_rate": 0.16,
+      "first_attempt_ttft_median_ms": 162.215,
+      "first_attempt_ttft_p90_ms": 243.617,
+      "accepted_candidate_ttft_median_ms": 237.408,
+      "accepted_candidate_ttft_p90_ms": 246.975,
+      "accepted_candidate_first_token_from_decision_start_median_ms": 800.526,
+      "accepted_candidate_first_token_from_decision_start_p90_ms": 937.473,
+      "admission_ready_median_ms": 1219.231,
+      "admission_ready_p90_ms": 1947.995
+    },
+    "mistral-small-3-2-cross-family": {
+      "n": 25,
+      "final_fallback_count": 2,
+      "final_fallback_rate": 0.08,
+      "first_attempt_ttft_median_ms": 252.83,
+      "first_attempt_ttft_p90_ms": 616.715,
+      "accepted_candidate_ttft_median_ms": 622.831,
+      "accepted_candidate_ttft_p90_ms": 647.918,
+      "accepted_candidate_first_token_from_decision_start_median_ms": 2565.031,
+      "accepted_candidate_first_token_from_decision_start_p90_ms": 4844.674,
+      "admission_ready_median_ms": 4066.583,
+      "admission_ready_p90_ms": 6486.096
+    }
+  },
+  "claim_boundary": "Researcher-authored synthetic streaming replication. It measures local model TTFT and guard-mediated decision timing, not ASR, endpointing, TTS, networked deployment, participant-perceived latency, or full-duplex conversational quality.",
+  "reproducibility": {
+    "clean_replication": true,
+    "seed_base": 42,
+    "seed_scheme": "candidate request seeds are seed_base + zero-based request index in the runner's deterministic sequential request order; warm-up requests are excluded from the seed sequence",
+    "context_length": 8192,
+    "context_configuration": "OLLAMA_CONTEXT_LENGTH set on the dedicated ollama serve process",
+    "ollama_server_version": "0.32.9",
+    "ollama_client_version": "0.32.9",
+    "versions_matched": true
+  }
+}

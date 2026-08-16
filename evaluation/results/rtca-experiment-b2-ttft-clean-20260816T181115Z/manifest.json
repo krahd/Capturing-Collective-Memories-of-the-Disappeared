@@ -1,0 +1,44 @@
+{
+  "created_at": "2026-08-16T18:14:50.067270+00:00",
+  "status": "complete",
+  "single_entry_point": "python -m scripts.run_rtca_ttft_experiment",
+  "result_root": "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z",
+  "code_git_head": "c86cb169fb82cb8644c01c93c400f8c0220b47c5",
+  "planned_primary_decisions": 75,
+  "runtime": {
+    "ollama_version_observation": {
+      "returncode": 0,
+      "stdout": "ollama version is 0.32.9",
+      "stderr": ""
+    },
+    "user_supplied_server_version": "0.32.9",
+    "user_supplied_client_version": "0.32.9"
+  },
+  "measurement": {
+    "ttft": "request dispatch to first non-empty streamed delta.content chunk",
+    "completion": "request dispatch to completion of streamed candidate",
+    "admission_ready": "sum of completed candidate request times through the accepted attempt, or all attempts before fallback; the guard validates completed JSON, so this is the earliest safe delivery point in the current architecture",
+    "warmup": "one excluded streaming warm-up request per model before measured decisions"
+  },
+  "files": {
+    "full_result": "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/experiment-b2-ttft.json",
+    "summary_json": "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/ttft-summary.json",
+    "summary_md": "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/ttft-summary.md",
+    "per_model": [
+      "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/models/mistral-small-3-2-cross-family/experiment-b2-ttft.json",
+      "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/models/qwen3-30b-a3b-primary/experiment-b2-ttft.json",
+      "evaluation/results/rtca-experiment-b2-ttft-clean-20260816T181115Z/models/qwen3-4b-scale-control/experiment-b2-ttft.json"
+    ]
+  },
+  "claim_boundary": "Researcher-authored synthetic streaming replication. It measures local model TTFT and guard-mediated decision timing, not ASR, endpointing, TTS, networked deployment, participant-perceived latency, or full-duplex conversational quality.",
+  "reproducibility": {
+    "clean_replication": true,
+    "seed_base": 42,
+    "seed_scheme": "candidate request seeds are seed_base + zero-based request index in the runner's deterministic sequential request order; warm-up requests are excluded from the seed sequence",
+    "context_length": 8192,
+    "context_configuration": "OLLAMA_CONTEXT_LENGTH set on the dedicated ollama serve process",
+    "ollama_server_version": "0.32.9",
+    "ollama_client_version": "0.32.9",
+    "versions_matched": true
+  }
+}
