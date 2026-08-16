@@ -1,0 +1,34 @@
+{
+  "created_at": "2026-08-16T03:03:07.128552+00:00",
+  "status": "complete",
+  "single_entry_point": "python -m scripts.run_rtca_ttft_experiment",
+  "result_root": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z",
+  "code_git_head": "bfe4c8cdbc5529e1dfc972ceddeecac9724567e8",
+  "planned_primary_decisions": 75,
+  "runtime": {
+    "ollama_version_observation": {
+      "returncode": 0,
+      "stdout": "ollama version is 0.32.5\nWarning: client version is 0.32.9",
+      "stderr": ""
+    },
+    "user_supplied_server_version": "0.32.5",
+    "user_supplied_client_version": "0.32.9"
+  },
+  "measurement": {
+    "ttft": "request dispatch to first non-empty streamed delta.content chunk",
+    "completion": "request dispatch to completion of streamed candidate",
+    "admission_ready": "sum of completed candidate request times through the accepted attempt, or all attempts before fallback; the guard validates completed JSON, so this is the earliest safe delivery point in the current architecture",
+    "warmup": "one excluded streaming warm-up request per model before measured decisions"
+  },
+  "files": {
+    "full_result": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/experiment-b2-ttft.json",
+    "summary_json": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/ttft-summary.json",
+    "summary_md": "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/ttft-summary.md",
+    "per_model": [
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/models/mistral-small-3-2-cross-family/experiment-b2-ttft.json",
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/models/qwen3-30b-a3b-primary/experiment-b2-ttft.json",
+      "/Users/tom/devel/projects/Capturing-Collective-Memories-of-the-Disappeared/evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/models/qwen3-4b-scale-control/experiment-b2-ttft.json"
+    ]
+  },
+  "claim_boundary": "Researcher-authored synthetic streaming replication. It measures local model TTFT and guard-mediated decision timing, not ASR, endpointing, TTS, networked deployment, participant-perceived latency, or full-duplex conversational quality."
+}

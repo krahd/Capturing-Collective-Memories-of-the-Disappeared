@@ -1,0 +1,1864 @@
+{
+  "model_spec": {
+    "id": "qwen3-4b-scale-control",
+    "role": "scale-control",
+    "family": "Qwen3",
+    "ollama_model": "qwen3:4b-instruct-2507-q4_K_M",
+    "source_model": "Qwen/Qwen3-4B-Instruct-2507",
+    "representation": "Ollama Q4_K_M",
+    "repetitions": 5,
+    "rationale": "Within-family scale control testing whether lower latency/smaller capacity changes restraint, grounding and policy compliance."
+  },
+  "summary": {
+    "n": 25,
+    "final_fallback_count": 6,
+    "final_fallback_rate": 0.24,
+    "first_attempt_ttft_median_ms": 205.378,
+    "first_attempt_ttft_p90_ms": 476.042,
+    "accepted_candidate_ttft_median_ms": 256.546,
+    "accepted_candidate_ttft_p90_ms": 331.74,
+    "accepted_candidate_first_token_from_decision_start_median_ms": 883.737,
+    "accepted_candidate_first_token_from_decision_start_p90_ms": 1032.84,
+    "admission_ready_median_ms": 1365.211,
+    "admission_ready_p90_ms": 2447.283
+  },
+  "results": [
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 1,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 519.122,
+          "completion_ms": 995.439,
+          "first_token_from_decision_start_ms": 519.122,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"A veces aparecía por casa. ¿Cómo era su presencia?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "A veces aparecía por casa. ¿Cómo era su presencia?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "A veces aparecía por casa. ¿Cómo era su presencia?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 244.155,
+          "completion_ms": 569.113,
+          "first_token_from_decision_start_ms": 1239.594,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, Tito. ¿Qué hacía cuando estaba allí?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, Tito. ¿Qué hacía cuando estaba allí?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, Tito. ¿Qué hacía cuando estaba allí?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 250.676,
+          "completion_ms": 588.627,
+          "first_token_from_decision_start_ms": 1815.229,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 519.122,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 2153.179,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 2,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 164.875,
+          "completion_ms": 574.874,
+          "first_token_from_decision_start_ms": 164.875,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entonces, Tito era una persona que a veces venía a casa, ¿cómo era su presencia?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entonces, Tito era una persona que a veces venía a casa, ¿cómo era su presencia?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entonces, Tito era una persona que a veces venía a casa, ¿cómo era su presencia?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 276.657,
+          "completion_ms": 731.291,
+          "first_token_from_decision_start_ms": 851.531,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿puedes decirme cómo se manifestaba su presencia?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿puedes decirme cómo se manifestaba su presencia?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿puedes decirme cómo se manifestaba su presencia?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 315.972,
+          "completion_ms": 945.604,
+          "first_token_from_decision_start_ms": 1622.137,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 164.875,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 2251.769,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 3,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo se presentaba Tito o en qué circunstancias aparecía por casa?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 442.186,
+          "completion_ms": 956.666,
+          "first_token_from_decision_start_ms": 442.186,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entiendo, Tito era una persona que a veces venía a casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo, Tito era una persona que a veces venía a casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo, Tito era una persona que a veces venía a casa.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 393.335,
+          "completion_ms": 825.069,
+          "first_token_from_decision_start_ms": 1350.002,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Sí, había un hombre que se llamaba Tito, que a veces aparecía por casa.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Sí, había un hombre que se llamaba Tito, que a veces aparecía por casa."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Sí, había un hombre que se llamaba Tito, que a veces aparecía por casa.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 308.613,
+          "completion_ms": 751.696,
+          "first_token_from_decision_start_ms": 2090.349,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 442.186,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 2533.432,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 4,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 183.096,
+          "completion_ms": 612.01,
+          "first_token_from_decision_start_ms": 183.096,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entonces, Tito era una persona que a veces venía a la casa, ¿correcto?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entonces, Tito era una persona que a veces venía a la casa, ¿correcto?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entonces, Tito era una persona que a veces venía a la casa, ¿correcto?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 262.54,
+          "completion_ms": 704.868,
+          "first_token_from_decision_start_ms": 874.551,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿sí?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿sí?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿sí?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 770.363,
+          "completion_ms": 1679.17,
+          "first_token_from_decision_start_ms": 2087.241,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 183.096,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 2996.048,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 5,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo era Tito o en qué contexto aparecía por casa?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 498.612,
+          "completion_ms": 1085.951,
+          "first_token_from_decision_start_ms": 498.612,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entonces, Tito era una persona que a veces venía a la casa, ¿verdad?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entonces, Tito era una persona que a veces venía a la casa, ¿verdad?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entonces, Tito era una persona que a veces venía a la casa, ¿verdad?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 668.557,
+          "completion_ms": 1375.28,
+          "first_token_from_decision_start_ms": 1754.508,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿correcto?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿correcto?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Así que había un hombre que se llamaba Tito, y a veces aparecía por casa, ¿correcto?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 602.651,
+          "completion_ms": 1225.966,
+          "first_token_from_decision_start_ms": 3063.882,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 498.612,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 3687.198,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 1,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Aparecía por casa, según decía mi vieja.\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Aparecía por casa, según decía mi vieja."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Aparecía por casa, según decía mi vieja.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 539.663,
+          "completion_ms": 867.755,
+          "first_token_from_decision_start_ms": 539.663,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Aparecía por casa, según decía mi vieja.",
+      "first_attempt_ttft_ms": 539.663,
+      "accepted_candidate_ttft_ms": 539.663,
+      "accepted_candidate_first_token_from_decision_start_ms": 539.663,
+      "admission_ready_ms": 867.755,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "decia",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 2,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Puedes decirme más sobre cómo tu vieja lo mencionaba?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, interesante. ¿Puedes decirme más sobre cómo tu vieja lo mencionaba?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, interesante. ¿Puedes decirme más sobre cómo tu vieja lo mencionaba?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 240.86,
+          "completion_ms": 745.055,
+          "first_token_from_decision_start_ms": 240.86,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme cómo tu vieja lo mencionaba cuando hablaba de Del Flaco?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme cómo tu vieja lo mencionaba cuando hablaba de Del Flaco?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme cómo tu vieja lo mencionaba cuando hablaba de Del Flaco?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 337.599,
+          "completion_ms": 787.296,
+          "first_token_from_decision_start_ms": 1082.654,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Entonces, tu vieja decía que aparecía por casa. ¿Qué más te contaba sobre eso?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entonces, tu vieja decía que aparecía por casa. ¿Qué más te contaba sobre eso?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entonces, tu vieja decía que aparecía por casa. ¿Qué más te contaba sobre eso?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 274.171,
+          "completion_ms": 785.708,
+          "first_token_from_decision_start_ms": 1806.522,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 240.86,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 2318.059,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 3,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 219.296,
+          "completion_ms": 660.076,
+          "first_token_from_decision_start_ms": 219.296,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Cómo era la manera en que tu vieja decía que aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Cómo era la manera en que tu vieja decía que aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Cómo era la manera en que tu vieja decía que aparecía por casa?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 243.844,
+          "completion_ms": 671.405,
+          "first_token_from_decision_start_ms": 903.92,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Cómo era la manera en que tu vieja decía que aparecía por casa?",
+      "first_attempt_ttft_ms": 219.296,
+      "accepted_candidate_ttft_ms": 243.844,
+      "accepted_candidate_first_token_from_decision_start_ms": 903.92,
+      "admission_ready_ms": 1331.481,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "decia",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 4,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja lo mencionaba?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 266.848,
+          "completion_ms": 716.837,
+          "first_token_from_decision_start_ms": 266.848,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Cómo era la forma en que tu vieja decía que aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Cómo era la forma en que tu vieja decía que aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Cómo era la forma en que tu vieja decía que aparecía por casa?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 269.46,
+          "completion_ms": 648.374,
+          "first_token_from_decision_start_ms": 986.298,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Cómo era la forma en que tu vieja decía que aparecía por casa?",
+      "first_attempt_ttft_ms": 266.848,
+      "accepted_candidate_ttft_ms": 269.46,
+      "accepted_candidate_first_token_from_decision_start_ms": 986.298,
+      "admission_ready_ms": 1365.211,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 3,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "decia",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 5,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja describía a Del Flaco?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja describía a Del Flaco?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, interesante. ¿Podrías decirme más sobre cómo tu vieja describía a Del Flaco?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 181.698,
+          "completion_ms": 662.308,
+          "first_token_from_decision_start_ms": 181.698,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Cómo decía tu vieja que aparecía por casa?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Cómo decía tu vieja que aparecía por casa?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Cómo decía tu vieja que aparecía por casa?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 250.292,
+          "completion_ms": 559.896,
+          "first_token_from_decision_start_ms": 912.6,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Cómo decía tu vieja que aparecía por casa?",
+      "first_attempt_ttft_ms": 181.698,
+      "accepted_candidate_ttft_ms": 250.292,
+      "accepted_candidate_first_token_from_decision_start_ms": 912.6,
+      "admission_ready_ms": 1222.204,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "aparecia",
+          "casa",
+          "decia",
+          "vieja"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "place-bar",
+      "repetition": 1,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 389.458,
+          "completion_ms": 837.35,
+          "first_token_from_decision_start_ms": 389.458,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme un poco más sobre cómo caía por el bar de la esquina?",
+      "first_attempt_ttft_ms": 389.458,
+      "accepted_candidate_ttft_ms": 389.458,
+      "accepted_candidate_first_token_from_decision_start_ms": 389.458,
+      "admission_ready_ms": 837.35,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "place-bar",
+      "repetition": 2,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme más sobre cómo caía por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 256.546,
+          "completion_ms": 665.089,
+          "first_token_from_decision_start_ms": 256.546,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+      "first_attempt_ttft_ms": 256.546,
+      "accepted_candidate_ttft_ms": 256.546,
+      "accepted_candidate_first_token_from_decision_start_ms": 256.546,
+      "admission_ready_ms": 665.089,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "place-bar",
+      "repetition": 3,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme más sobre cómo caía por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 200.353,
+          "completion_ms": 594.676,
+          "first_token_from_decision_start_ms": 200.353,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+      "first_attempt_ttft_ms": 200.353,
+      "accepted_candidate_ttft_ms": 200.353,
+      "accepted_candidate_first_token_from_decision_start_ms": 200.353,
+      "admission_ready_ms": 594.676,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "place-bar",
+      "repetition": 4,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo caía por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 176.579,
+          "completion_ms": 558.944,
+          "first_token_from_decision_start_ms": 176.579,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo caía por el bar de la esquina?",
+      "first_attempt_ttft_ms": 176.579,
+      "accepted_candidate_ttft_ms": 176.579,
+      "accepted_candidate_first_token_from_decision_start_ms": 176.579,
+      "admission_ready_ms": 558.944,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "place-bar",
+      "repetition": 5,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme más sobre cómo caía por el bar de la esquina?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 165.792,
+          "completion_ms": 559.232,
+          "first_token_from_decision_start_ms": 165.792,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme más sobre cómo caía por el bar de la esquina?",
+      "first_attempt_ttft_ms": 165.792,
+      "accepted_candidate_ttft_ms": 165.792,
+      "accepted_candidate_first_token_from_decision_start_ms": 165.792,
+      "admission_ready_ms": 559.232,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "bar",
+          "caia",
+          "esquina"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "object-radio",
+      "repetition": 1,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme un poco más sobre cómo estaba la radio Spika en ese momento?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante. ¿Podrías decirme un poco más sobre cómo estaba la radio Spika en ese momento?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante. ¿Podrías decirme un poco más sobre cómo estaba la radio Spika en ese momento?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 260.865,
+          "completion_ms": 754.119,
+          "first_token_from_decision_start_ms": 260.865,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías explicarme un poco más sobre cómo estaba la radio Spika cuando estaba siempre prendida?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías explicarme un poco más sobre cómo estaba la radio Spika cuando estaba siempre prendida?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías explicarme un poco más sobre cómo estaba la radio Spika cuando estaba siempre prendida?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 294.448,
+          "completion_ms": 736.335,
+          "first_token_from_decision_start_ms": 1048.566,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías explicarme un poco más sobre cómo estaba la radio Spika cuando estaba siempre prendida?",
+      "first_attempt_ttft_ms": 260.865,
+      "accepted_candidate_ttft_ms": 294.448,
+      "accepted_candidate_first_token_from_decision_start_ms": 1048.566,
+      "admission_ready_ms": 1490.453,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "prendida",
+          "radio",
+          "siempre",
+          "spika"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "object-radio",
+      "repetition": 2,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes decirme más sobre esa radio Spika?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante, ¿puedes decirme más sobre esa radio Spika?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante, ¿puedes decirme más sobre esa radio Spika?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 205.378,
+          "completion_ms": 572.086,
+          "first_token_from_decision_start_ms": 205.378,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías explicarme un poco más sobre qué era la radio Spika?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías explicarme un poco más sobre qué era la radio Spika?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías explicarme un poco más sobre qué era la radio Spika?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 292.494,
+          "completion_ms": 655.972,
+          "first_token_from_decision_start_ms": 864.579,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías explicarme un poco más sobre qué era la radio Spika?",
+      "first_attempt_ttft_ms": 205.378,
+      "accepted_candidate_ttft_ms": 292.494,
+      "accepted_candidate_first_token_from_decision_start_ms": 864.579,
+      "admission_ready_ms": 1228.058,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "radio",
+          "spika"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "object-radio",
+      "repetition": 3,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre cómo estaba la radio Spika o qué tipo de música escuchaban con ella?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante. ¿Podrías decirme más sobre cómo estaba la radio Spika o qué tipo de música escuchaban con ella?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante. ¿Podrías decirme más sobre cómo estaba la radio Spika o qué tipo de música escuchaban con ella?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 173.667,
+          "completion_ms": 693.598,
+          "first_token_from_decision_start_ms": 173.667,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme un poco más sobre cómo estaba la radio Spika o qué significaba tenerla siempre prendida para ti?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Puedes decirme un poco más sobre cómo estaba la radio Spika o qué significaba tenerla siempre prendida para ti?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Puedes decirme un poco más sobre cómo estaba la radio Spika o qué significaba tenerla siempre prendida para ti?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 288.087,
+          "completion_ms": 803.241,
+          "first_token_from_decision_start_ms": 981.685,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme un poco más sobre cómo estaba la radio Spika o qué significaba tenerla siempre prendida para ti?",
+      "first_attempt_ttft_ms": 173.667,
+      "accepted_candidate_ttft_ms": 288.087,
+      "accepted_candidate_first_token_from_decision_start_ms": 981.685,
+      "admission_ready_ms": 1496.839,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "prendida",
+          "radio",
+          "siempre",
+          "spika"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "object-radio",
+      "repetition": 4,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme un poco más sobre cómo estaba esa radio Spika en tu casa?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante. ¿Podrías decirme un poco más sobre cómo estaba esa radio Spika en tu casa?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante. ¿Podrías decirme un poco más sobre cómo estaba esa radio Spika en tu casa?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 189.827,
+          "completion_ms": 643.352,
+          "first_token_from_decision_start_ms": 189.827,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías explicarme un poco más sobre cómo estaba siempre prendida esa radio Spika?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías explicarme un poco más sobre cómo estaba siempre prendida esa radio Spika?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías explicarme un poco más sobre cómo estaba siempre prendida esa radio Spika?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 240.386,
+          "completion_ms": 640.468,
+          "first_token_from_decision_start_ms": 883.737,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías explicarme un poco más sobre cómo estaba siempre prendida esa radio Spika?",
+      "first_attempt_ttft_ms": 189.827,
+      "accepted_candidate_ttft_ms": 240.386,
+      "accepted_candidate_first_token_from_decision_start_ms": 883.737,
+      "admission_ready_ms": 1283.82,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "prendida",
+          "radio",
+          "siempre",
+          "spika"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "object-radio",
+      "repetition": 5,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿puedes contarme más sobre esa radio Spika?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante, ¿puedes contarme más sobre esa radio Spika?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante, ¿puedes contarme más sobre esa radio Spika?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 160.073,
+          "completion_ms": 515.504,
+          "first_token_from_decision_start_ms": 160.073,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme un poco más sobre la radio Spika que siempre estaba encendida?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme un poco más sobre la radio Spika que siempre estaba encendida?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme un poco más sobre la radio Spika que siempre estaba encendida?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 261.322,
+          "completion_ms": 677.004,
+          "first_token_from_decision_start_ms": 776.826,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme un poco más sobre la radio Spika que siempre estaba encendida?",
+      "first_attempt_ttft_ms": 160.073,
+      "accepted_candidate_ttft_ms": 261.322,
+      "accepted_candidate_first_token_from_decision_start_ms": 776.826,
+      "admission_ready_ms": 1192.508,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "radio",
+          "siempre",
+          "spika"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 1,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre qué tipo de reuniones eran?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante. ¿Podrías decirme más sobre qué tipo de reuniones eran?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante. ¿Podrías decirme más sobre qué tipo de reuniones eran?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 290.061,
+          "completion_ms": 685.574,
+          "first_token_from_decision_start_ms": 290.061,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías explicarme un poco más qué se hacía durante esas reuniones de domingos?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías explicarme un poco más qué se hacía durante esas reuniones de domingos?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías explicarme un poco más qué se hacía durante esas reuniones de domingos?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 246.229,
+          "completion_ms": 688.061,
+          "first_token_from_decision_start_ms": 931.803,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías explicarme un poco más qué se hacía durante esas reuniones de domingos?",
+      "first_attempt_ttft_ms": 290.061,
+      "accepted_candidate_ttft_ms": 246.229,
+      "accepted_candidate_first_token_from_decision_start_ms": 931.803,
+      "admission_ready_ms": 1373.635,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 2,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, entonces las reuniones de domingos son lo que más se recuerda. ¿Podrías contarme un poco más sobre qué tipo de reuniones eran?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante, entonces las reuniones de domingos son lo que más se recuerda. ¿Podrías contarme un poco más sobre qué tipo de reuniones eran?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante, entonces las reuniones de domingos son lo que más se recuerda. ¿Podrías contarme un poco más sobre qué tipo de reuniones eran?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 213.266,
+          "completion_ms": 862.693,
+          "first_token_from_decision_start_ms": 213.266,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme un poco más sobre qué tipo de reuniones eran las de domingos?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme un poco más sobre qué tipo de reuniones eran las de domingos?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme un poco más sobre qué tipo de reuniones eran las de domingos?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 244.396,
+          "completion_ms": 786.646,
+          "first_token_from_decision_start_ms": 1107.09,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme un poco más sobre qué tipo de reuniones eran las de domingos?",
+      "first_attempt_ttft_ms": 213.266,
+      "accepted_candidate_ttft_ms": 244.396,
+      "accepted_candidate_first_token_from_decision_start_ms": 1107.09,
+      "admission_ready_ms": 1649.339,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 3,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante. ¿Podrías decirme más sobre qué sucedía en esas reuniones de domingos?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante. ¿Podrías decirme más sobre qué sucedía en esas reuniones de domingos?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante. ¿Podrías decirme más sobre qué sucedía en esas reuniones de domingos?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 194.829,
+          "completion_ms": 720.243,
+          "first_token_from_decision_start_ms": 194.829,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme qué tipo de reuniones eran las de domingos?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme qué tipo de reuniones eran las de domingos?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme qué tipo de reuniones eran las de domingos?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 308.666,
+          "completion_ms": 715.061,
+          "first_token_from_decision_start_ms": 1028.909,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme qué tipo de reuniones eran las de domingos?",
+      "first_attempt_ttft_ms": 194.829,
+      "accepted_candidate_ttft_ms": 308.666,
+      "accepted_candidate_first_token_from_decision_start_ms": 1028.909,
+      "admission_ready_ms": 1435.304,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 4,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿qué tipo de reuniones eran esas de domingos?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante, ¿qué tipo de reuniones eran esas de domingos?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante, ¿qué tipo de reuniones eran esas de domingos?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 176.04,
+          "completion_ms": 572.569,
+          "first_token_from_decision_start_ms": 176.04,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Puedes decirme más sobre qué tipo de reuniones eran esas de domingos?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Puedes decirme más sobre qué tipo de reuniones eran esas de domingos?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Puedes decirme más sobre qué tipo de reuniones eran esas de domingos?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 317.311,
+          "completion_ms": 744.152,
+          "first_token_from_decision_start_ms": 889.88,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Puedes decirme más sobre qué tipo de reuniones eran esas de domingos?",
+      "first_attempt_ttft_ms": 176.04,
+      "accepted_candidate_ttft_ms": 317.311,
+      "accepted_candidate_first_token_from_decision_start_ms": 889.88,
+      "admission_ready_ms": 1316.722,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Puedes"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "model_id": "qwen3-4b-scale-control",
+      "model": "qwen3:4b-instruct-2507-q4_K_M",
+      "model_role": "scale-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 5,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\"move\":\"ACKNOWLEDGE\",\"utterance\":\"Interesante, ¿cómo eran esas reuniones de domingos?\"}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Interesante, ¿cómo eran esas reuniones de domingos?"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Interesante, ¿cómo eran esas reuniones de domingos?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 203.116,
+          "completion_ms": 578.706,
+          "first_token_from_decision_start_ms": 203.116,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\"move\":\"CLARIFY\",\"utterance\":\"¿Podrías decirme más sobre cómo eran esas reuniones de domingos?\"}",
+          "parsed_model_output": {
+            "move": "CLARIFY",
+            "utterance": "¿Podrías decirme más sobre cómo eran esas reuniones de domingos?"
+          },
+          "candidate_move": "CLARIFY",
+          "candidate_utterance": "¿Podrías decirme más sobre cómo eran esas reuniones de domingos?",
+          "guard_outcome": "accepted",
+          "ttft_ms": 242.745,
+          "completion_ms": 1243.734,
+          "first_token_from_decision_start_ms": 821.452,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "CLARIFY",
+      "delivered_utterance": "¿Podrías decirme más sobre cómo eran esas reuniones de domingos?",
+      "first_attempt_ttft_ms": 203.116,
+      "accepted_candidate_ttft_ms": 242.745,
+      "accepted_candidate_first_token_from_decision_start_ms": 821.452,
+      "admission_ready_ms": 1822.44,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 1,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    }
+  ]
+}

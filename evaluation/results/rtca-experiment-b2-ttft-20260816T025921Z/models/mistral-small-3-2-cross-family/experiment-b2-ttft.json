@@ -1,0 +1,1790 @@
+{
+  "model_spec": {
+    "id": "mistral-small-3-2-cross-family",
+    "role": "cross-family-control",
+    "family": "Mistral Small 3.2",
+    "ollama_model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+    "source_model": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    "representation": "Ollama Q4_K_M",
+    "repetitions": 5,
+    "rationale": "Cross-family multilingual instruction-tuned control; selected to test whether findings are Qwen-specific rather than to establish a model leaderboard."
+  },
+  "summary": {
+    "n": 25,
+    "final_fallback_count": 4,
+    "final_fallback_rate": 0.16,
+    "first_attempt_ttft_median_ms": 251.909,
+    "first_attempt_ttft_p90_ms": 613.12,
+    "accepted_candidate_ttft_median_ms": 617.439,
+    "accepted_candidate_ttft_p90_ms": 677.808,
+    "accepted_candidate_first_token_from_decision_start_median_ms": 2554.591,
+    "accepted_candidate_first_token_from_decision_start_p90_ms": 4156.952,
+    "admission_ready_median_ms": 4084.401,
+    "admission_ready_p90_ms": 6007.621
+  },
+  "results": [
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 1,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"Ah, sí...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "Ah, sí..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "Ah, sí...",
+          "guard_outcome": "accepted",
+          "ttft_ms": 2781.416,
+          "completion_ms": 4528.797,
+          "first_token_from_decision_start_ms": 2781.416,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Ah, sí...",
+      "first_attempt_ttft_ms": 2781.416,
+      "accepted_candidate_ttft_ms": 2781.416,
+      "accepted_candidate_first_token_from_decision_start_ms": 2781.416,
+      "admission_ready_ms": 4528.797,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 2,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 240.14,
+          "completion_ms": 1934.571,
+          "first_token_from_decision_start_ms": 240.14,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 620.02,
+          "completion_ms": 2122.789,
+          "first_token_from_decision_start_ms": 2554.591,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "first_attempt_ttft_ms": 240.14,
+      "accepted_candidate_ttft_ms": 620.02,
+      "accepted_candidate_first_token_from_decision_start_ms": 2554.591,
+      "admission_ready_ms": 4057.361,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 3,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, Tito.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, Tito."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, Tito.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 394.896,
+          "completion_ms": 2113.284,
+          "first_token_from_decision_start_ms": 394.896,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 618.089,
+          "completion_ms": 2119.784,
+          "first_token_from_decision_start_ms": 2731.373,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "first_attempt_ttft_ms": 394.896,
+      "accepted_candidate_ttft_ms": 618.089,
+      "accepted_candidate_first_token_from_decision_start_ms": 2731.373,
+      "admission_ready_ms": 4233.068,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 4,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah sí\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah sí"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah sí",
+          "guard_outcome": "rejected",
+          "ttft_ms": 253.009,
+          "completion_ms": 1875.326,
+          "first_token_from_decision_start_ms": 253.009,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 644.766,
+          "completion_ms": 2197.324,
+          "first_token_from_decision_start_ms": 2520.093,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mmm\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm"
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm",
+          "guard_outcome": "accepted",
+          "ttft_ms": 611.326,
+          "completion_ms": 2115.004,
+          "first_token_from_decision_start_ms": 4683.977,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm",
+      "first_attempt_ttft_ms": 253.009,
+      "accepted_candidate_ttft_ms": 611.326,
+      "accepted_candidate_first_token_from_decision_start_ms": 4683.977,
+      "admission_ready_ms": 6187.654,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-tito",
+      "repetition": 5,
+      "session_a": "Había uno al que le decían Tito, que a veces aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "Tito",
+      "withheld_later_sessions": [
+        "Tito vivía por La Teja.",
+        "Creo que Julio usaba el nombre Tito."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"Ah, sí.\"\n}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 252.141,
+          "completion_ms": 1753.614,
+          "first_token_from_decision_start_ms": 252.141,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Ah, sí.",
+      "first_attempt_ttft_ms": 252.141,
+      "accepted_candidate_ttft_ms": 252.141,
+      "accepted_candidate_first_token_from_decision_start_ms": 252.141,
+      "admission_ready_ms": 1753.614,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 1,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 612.251,
+          "completion_ms": 2320.838,
+          "first_token_from_decision_start_ms": 612.251,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mmm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 633.007,
+          "completion_ms": 2124.432,
+          "first_token_from_decision_start_ms": 2953.845,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm.",
+      "first_attempt_ttft_ms": 612.251,
+      "accepted_candidate_ttft_ms": 633.007,
+      "accepted_candidate_first_token_from_decision_start_ms": 2953.845,
+      "admission_ready_ms": 4445.27,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 2,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 241.245,
+          "completion_ms": 1995.496,
+          "first_token_from_decision_start_ms": 241.245,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Ah, sí.",
+      "first_attempt_ttft_ms": 241.245,
+      "accepted_candidate_ttft_ms": 241.245,
+      "accepted_candidate_first_token_from_decision_start_ms": 241.245,
+      "admission_ready_ms": 1995.496,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 3,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 247.023,
+          "completion_ms": 1555.854,
+          "first_token_from_decision_start_ms": 247.023,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah.\"\n}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 616.628,
+          "completion_ms": 1940.865,
+          "first_token_from_decision_start_ms": 2172.482,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm.\"\n}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 660.233,
+          "completion_ms": 1917.357,
+          "first_token_from_decision_start_ms": 4156.952,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "first_attempt_ttft_ms": 247.023,
+      "accepted_candidate_ttft_ms": 660.233,
+      "accepted_candidate_first_token_from_decision_start_ms": 4156.952,
+      "admission_ready_ms": 5414.077,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 4,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 240.61,
+          "completion_ms": 1924.49,
+          "first_token_from_decision_start_ms": 240.61,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 605.544,
+          "completion_ms": 2110.69,
+          "first_token_from_decision_start_ms": 2530.034,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "first_attempt_ttft_ms": 240.61,
+      "accepted_candidate_ttft_ms": 605.544,
+      "accepted_candidate_first_token_from_decision_start_ms": 2530.034,
+      "admission_ready_ms": 4035.18,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "nickname-flaco",
+      "repetition": 5,
+      "session_a": "Del Flaco yo no me acuerdo; mi vieja decía que aparecía por casa.",
+      "future_target_kind": "person",
+      "future_target_label": "el Flaco",
+      "withheld_later_sessions": [
+        "Al Flaco lo veía a veces cerca del club.",
+        "Mi tío también hablaba de el Flaco, pero nunca supe el nombre."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí"
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí",
+          "guard_outcome": "rejected",
+          "ttft_ms": 251.909,
+          "completion_ms": 1936.223,
+          "first_token_from_decision_start_ms": 251.909,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Hmm\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Hmm"
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Hmm",
+          "guard_outcome": "accepted",
+          "ttft_ms": 612.605,
+          "completion_ms": 2114.422,
+          "first_token_from_decision_start_ms": 2548.827,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Hmm",
+      "first_attempt_ttft_ms": 251.909,
+      "accepted_candidate_ttft_ms": 612.605,
+      "accepted_candidate_first_token_from_decision_start_ms": 2548.827,
+      "admission_ready_ms": 4050.645,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Hmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "place-bar",
+      "repetition": 1,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 610.603,
+          "completion_ms": 2181.83,
+          "first_token_from_decision_start_ms": 610.603,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "..."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 610.586,
+          "completion_ms": 1992.001,
+          "first_token_from_decision_start_ms": 2792.416,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "..."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 613.671,
+          "completion_ms": 2117.883,
+          "first_token_from_decision_start_ms": 4787.503,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 610.603,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 6291.714,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "place-bar",
+      "repetition": 2,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 255.205,
+          "completion_ms": 1820.066,
+          "first_token_from_decision_start_ms": 255.205,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "..."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 621.843,
+          "completion_ms": 2004.034,
+          "first_token_from_decision_start_ms": 2441.909,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "..."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 632.353,
+          "completion_ms": 2144.298,
+          "first_token_from_decision_start_ms": 4456.453,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 255.205,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 5968.397,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "place-bar",
+      "repetition": 3,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"Aham.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "Aham."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "Aham.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 288.012,
+          "completion_ms": 1996.332,
+          "first_token_from_decision_start_ms": 288.012,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Aham.",
+      "first_attempt_ttft_ms": 288.012,
+      "accepted_candidate_ttft_ms": 288.012,
+      "accepted_candidate_first_token_from_decision_start_ms": 288.012,
+      "admission_ready_ms": 1996.332,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Aham"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "place-bar",
+      "repetition": 4,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 242.855,
+          "completion_ms": 1554.481,
+          "first_token_from_decision_start_ms": 242.855,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"...\"\n}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "..."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 616.76,
+          "completion_ms": 1754.326,
+          "first_token_from_decision_start_ms": 2171.242,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"...\"\n}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "..."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 626.925,
+          "completion_ms": 1884.608,
+          "first_token_from_decision_start_ms": 3935.732,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 242.855,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 5193.415,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "place-bar",
+      "repetition": 5,
+      "session_a": "A veces caía por el bar de la esquina, creo.",
+      "future_target_kind": "place",
+      "future_target_label": "el bar de la esquina",
+      "withheld_later_sessions": [
+        "Nos encontrábamos en el bar de la esquina.",
+        "Mi hermana se acordaba del bar de la esquina por la radio."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 246.134,
+          "completion_ms": 1711.578,
+          "first_token_from_decision_start_ms": 246.134,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 610.64,
+          "completion_ms": 1922.44,
+          "first_token_from_decision_start_ms": 2322.218,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mmm.\"\n}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 616.99,
+          "completion_ms": 1875.227,
+          "first_token_from_decision_start_ms": 4251.007,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": 3,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm.",
+      "first_attempt_ttft_ms": 246.134,
+      "accepted_candidate_ttft_ms": 616.99,
+      "accepted_candidate_first_token_from_decision_start_ms": 4251.007,
+      "admission_ready_ms": 5509.245,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": true,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "object-radio",
+      "repetition": 1,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Ajá.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Ajá."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Ajá.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 715.806,
+          "completion_ms": 2215.723,
+          "first_token_from_decision_start_ms": 715.806,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Ajá.",
+      "first_attempt_ttft_ms": 715.806,
+      "accepted_candidate_ttft_ms": 715.806,
+      "accepted_candidate_first_token_from_decision_start_ms": 715.806,
+      "admission_ready_ms": 2215.723,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": true,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Ajá"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "object-radio",
+      "repetition": 2,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 238.432,
+          "completion_ms": 1928.988,
+          "first_token_from_decision_start_ms": 238.432,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 677.037,
+          "completion_ms": 2179.895,
+          "first_token_from_decision_start_ms": 2606.025,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "first_attempt_ttft_ms": 238.432,
+      "accepted_candidate_ttft_ms": 677.037,
+      "accepted_candidate_first_token_from_decision_start_ms": 2606.025,
+      "admission_ready_ms": 4108.884,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "object-radio",
+      "repetition": 3,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 246.471,
+          "completion_ms": 1938.65,
+          "first_token_from_decision_start_ms": 246.471,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 638.595,
+          "completion_ms": 2140.271,
+          "first_token_from_decision_start_ms": 2577.245,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm.",
+      "first_attempt_ttft_ms": 246.471,
+      "accepted_candidate_ttft_ms": 638.595,
+      "accepted_candidate_first_token_from_decision_start_ms": 2577.245,
+      "admission_ready_ms": 4078.921,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "object-radio",
+      "repetition": 4,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 242.795,
+          "completion_ms": 1927.64,
+          "first_token_from_decision_start_ms": 242.795,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mmm.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mmm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 619.86,
+          "completion_ms": 2156.761,
+          "first_token_from_decision_start_ms": 2547.5,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mmm.",
+      "first_attempt_ttft_ms": 242.795,
+      "accepted_candidate_ttft_ms": 619.86,
+      "accepted_candidate_first_token_from_decision_start_ms": 2547.5,
+      "admission_ready_ms": 4084.401,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Mmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "object-radio",
+      "repetition": 5,
+      "session_a": "Había una radio Spika siempre prendida.",
+      "future_target_kind": "entity",
+      "future_target_label": "la radio Spika",
+      "withheld_later_sessions": [
+        "Me acuerdo de la radio Spika arriba de la heladera.",
+        "La radio Spika era lo primero que se escuchaba al entrar."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, sí.\"\n}",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, sí."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, sí.",
+          "guard_outcome": "rejected",
+          "ttft_ms": 595.825,
+          "completion_ms": 2042.741,
+          "first_token_from_decision_start_ms": 595.825,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Hmm.\"\n}",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Hmm."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Hmm.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 617.439,
+          "completion_ms": 1878.41,
+          "first_token_from_decision_start_ms": 2660.18,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Hmm.",
+      "first_attempt_ttft_ms": 595.825,
+      "accepted_candidate_ttft_ms": 617.439,
+      "accepted_candidate_first_token_from_decision_start_ms": 2660.18,
+      "admission_ready_ms": 3921.151,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Hmm"
+        ],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 1,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, las reuniones de los domingos.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, las reuniones de los domingos.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 613.699,
+          "completion_ms": 2678.984,
+          "first_token_from_decision_start_ms": 613.699,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, las reuniones de los domingos.",
+      "first_attempt_ttft_ms": 613.699,
+      "accepted_candidate_ttft_ms": 613.699,
+      "accepted_candidate_first_token_from_decision_start_ms": 613.699,
+      "admission_ready_ms": 2678.984,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 2,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"Ah, interesante. ¿Podría contarme un poco más sobre esas reuniones de los domingos?\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "Ah, interesante. ¿Podría contarme un poco más sobre esas reuniones de los domingos?"
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "Ah, interesante. ¿Podría contarme un poco más sobre esas reuniones de los domingos?",
+          "guard_outcome": "rejected",
+          "ttft_ms": 241.822,
+          "completion_ms": 3062.696,
+          "first_token_from_decision_start_ms": 241.822,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"Mm\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "Mm"
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "Mm",
+          "guard_outcome": "accepted",
+          "ttft_ms": 677.808,
+          "completion_ms": 2180.152,
+          "first_token_from_decision_start_ms": 3740.504,
+          "error": null
+        }
+      ],
+      "attempt_count": 2,
+      "accepted_attempt": 2,
+      "delivery_source": "model",
+      "delivered_move": "BACKCHANNEL",
+      "delivered_utterance": "Mm",
+      "first_attempt_ttft_ms": 241.822,
+      "accepted_candidate_ttft_ms": 677.808,
+      "accepted_candidate_first_token_from_decision_start_ms": 3740.504,
+      "admission_ready_ms": 5242.848,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 3,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Ah, las reuniones de los domingos.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Ah, las reuniones de los domingos."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Ah, las reuniones de los domingos.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 269.365,
+          "completion_ms": 2327.882,
+          "first_token_from_decision_start_ms": 269.365,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Ah, las reuniones de los domingos.",
+      "first_attempt_ttft_ms": 269.365,
+      "accepted_candidate_ttft_ms": 269.365,
+      "accepted_candidate_first_token_from_decision_start_ms": 269.365,
+      "admission_ready_ms": 2327.882,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones"
+        ]
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 4,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"INVITE_CONTINUE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "INVITE_CONTINUE",
+            "utterance": "..."
+          },
+          "candidate_move": "INVITE_CONTINUE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 240.358,
+          "completion_ms": 1800.007,
+          "first_token_from_decision_start_ms": 240.358,
+          "error": null
+        },
+        {
+          "attempt": 2,
+          "raw_model_output": "```json\n{\n  \"move\": \"BACKCHANNEL\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "BACKCHANNEL",
+            "utterance": "..."
+          },
+          "candidate_move": "BACKCHANNEL",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 703.945,
+          "completion_ms": 2081.324,
+          "first_token_from_decision_start_ms": 2503.951,
+          "error": null
+        },
+        {
+          "attempt": 3,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"...\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "..."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "...",
+          "guard_outcome": "rejected",
+          "ttft_ms": 658.541,
+          "completion_ms": 2152.44,
+          "first_token_from_decision_start_ms": 4539.872,
+          "error": null
+        }
+      ],
+      "attempt_count": 3,
+      "accepted_attempt": null,
+      "delivery_source": "deterministic-fallback",
+      "delivered_move": "INVITE_CONTINUE",
+      "delivered_utterance": "Contame.",
+      "first_attempt_ttft_ms": 240.358,
+      "accepted_candidate_ttft_ms": null,
+      "accepted_candidate_first_token_from_decision_start_ms": null,
+      "admission_ready_ms": 6033.77,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": false,
+        "question_packing": false,
+        "floor_closure": false,
+        "possibility_preserved": true,
+        "question_units": 0,
+        "content_grounded": false,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [],
+        "content_overlap_tokens": []
+      }
+    },
+    {
+      "model_id": "mistral-small-3-2-cross-family",
+      "model": "mistral-small3.2:24b-instruct-2506-q4_K_M",
+      "model_role": "cross-family-control",
+      "scenario_id": "theme-domingos",
+      "repetition": 5,
+      "session_a": "Lo que recuerdo son las reuniones de los domingos, nada muy preciso.",
+      "future_target_kind": "theme",
+      "future_target_label": "reuniones de los domingos",
+      "withheld_later_sessions": [
+        "Las reuniones de los domingos eran cuando venía más gente.",
+        "Mi padre nombraba mucho las reuniones de los domingos."
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "raw_model_output": "```json\n{\n  \"move\": \"ACKNOWLEDGE\",\n  \"utterance\": \"Entiendo que las reuniones de los domingos son algo que recuerdas.\"\n}\n```",
+          "parsed_model_output": {
+            "move": "ACKNOWLEDGE",
+            "utterance": "Entiendo que las reuniones de los domingos son algo que recuerdas."
+          },
+          "candidate_move": "ACKNOWLEDGE",
+          "candidate_utterance": "Entiendo que las reuniones de los domingos son algo que recuerdas.",
+          "guard_outcome": "accepted",
+          "ttft_ms": 233.744,
+          "completion_ms": 2669.867,
+          "first_token_from_decision_start_ms": 233.744,
+          "error": null
+        }
+      ],
+      "attempt_count": 1,
+      "accepted_attempt": 1,
+      "delivery_source": "model",
+      "delivered_move": "ACKNOWLEDGE",
+      "delivered_utterance": "Entiendo que las reuniones de los domingos son algo que recuerdas.",
+      "first_attempt_ttft_ms": 233.744,
+      "accepted_candidate_ttft_ms": 233.744,
+      "accepted_candidate_first_token_from_decision_start_ms": 233.744,
+      "admission_ready_ms": 2669.867,
+      "had_request_or_parse_error": false,
+      "automatic_screen": {
+        "premature_redirection": false,
+        "over_specification": true,
+        "question_packing": true,
+        "floor_closure": false,
+        "possibility_preserved": false,
+        "question_units": 2,
+        "content_grounded": true,
+        "generic_acknowledgement": false,
+        "source_marks_distance": false,
+        "uncertainty_hardened": false,
+        "novel_specificity_tokens": [
+          "Entiendo"
+        ],
+        "content_overlap_tokens": [
+          "domingos",
+          "reuniones",
+          "son"
+        ]
+      }
+    }
+  ]
+}

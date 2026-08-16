@@ -1,0 +1,62 @@
+{
+  "created_at": "2026-08-16T03:03:06.945788+00:00",
+  "experiment": "B2-TTFT-replication",
+  "planned_primary_decisions": 75,
+  "measurement": {
+    "ttft": "request dispatch to first non-empty streamed delta.content chunk",
+    "completion": "request dispatch to completion of streamed candidate",
+    "admission_ready": "sum of completed candidate request times through the accepted attempt, or all attempts before fallback; the guard validates completed JSON, so this is the earliest safe delivery point in the current architecture",
+    "warmup": "one excluded streaming warm-up request per model before measured decisions"
+  },
+  "runtime": {
+    "ollama_version_observation": {
+      "returncode": 0,
+      "stdout": "ollama version is 0.32.5\nWarning: client version is 0.32.9",
+      "stderr": ""
+    },
+    "user_supplied_server_version": "0.32.5",
+    "user_supplied_client_version": "0.32.9"
+  },
+  "by_model": {
+    "qwen3-30b-a3b-primary": {
+      "n": 25,
+      "final_fallback_count": 1,
+      "final_fallback_rate": 0.04,
+      "first_attempt_ttft_median_ms": 164.139,
+      "first_attempt_ttft_p90_ms": 346.534,
+      "accepted_candidate_ttft_median_ms": 357.727,
+      "accepted_candidate_ttft_p90_ms": 379.478,
+      "accepted_candidate_first_token_from_decision_start_median_ms": 1548.964,
+      "accepted_candidate_first_token_from_decision_start_p90_ms": 1734.111,
+      "admission_ready_median_ms": 1755.089,
+      "admission_ready_p90_ms": 1937.899
+    },
+    "qwen3-4b-scale-control": {
+      "n": 25,
+      "final_fallback_count": 6,
+      "final_fallback_rate": 0.24,
+      "first_attempt_ttft_median_ms": 205.378,
+      "first_attempt_ttft_p90_ms": 476.042,
+      "accepted_candidate_ttft_median_ms": 256.546,
+      "accepted_candidate_ttft_p90_ms": 331.74,
+      "accepted_candidate_first_token_from_decision_start_median_ms": 883.737,
+      "accepted_candidate_first_token_from_decision_start_p90_ms": 1032.84,
+      "admission_ready_median_ms": 1365.211,
+      "admission_ready_p90_ms": 2447.283
+    },
+    "mistral-small-3-2-cross-family": {
+      "n": 25,
+      "final_fallback_count": 4,
+      "final_fallback_rate": 0.16,
+      "first_attempt_ttft_median_ms": 251.909,
+      "first_attempt_ttft_p90_ms": 613.12,
+      "accepted_candidate_ttft_median_ms": 617.439,
+      "accepted_candidate_ttft_p90_ms": 677.808,
+      "accepted_candidate_first_token_from_decision_start_median_ms": 2554.591,
+      "accepted_candidate_first_token_from_decision_start_p90_ms": 4156.952,
+      "admission_ready_median_ms": 4084.401,
+      "admission_ready_p90_ms": 6007.621
+    }
+  },
+  "claim_boundary": "Researcher-authored synthetic streaming replication. It measures local model TTFT and guard-mediated decision timing, not ASR, endpointing, TTS, networked deployment, participant-perceived latency, or full-duplex conversational quality."
+}
