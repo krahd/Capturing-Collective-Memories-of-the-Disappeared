@@ -1,9 +1,9 @@
 # Status
 
-**Date:** 15 August 2026  
+**Date:** 16 August 2026  
 **Phase:** disposable interaction prototype plus production-design research  
 **Participant data:** none; current experiments use researcher-authored synthetic material  
-**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit and B2 repair experiment completed; streaming TTFT replication instrumented and pending execution on the target machine
+**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit, B2 repair experiment and streaming TTFT replication completed
 
 ## Project objective
 
@@ -75,37 +75,53 @@ The combined experimental result is diagnostic rather than a leaderboard: tighte
 
 The formal `human_*` adjudication fields remain unfilled. Do not report quantitative rates for useful facilitation, semantic distortion, informational noise, cultural validity, trauma-informed adequacy or participant benefit from these experiments.
 
-### B2 TTFT replication
+### B2 streaming TTFT replication
 
-A new runner, `scripts/run_rtca_ttft_experiment.py`, now reproduces the B2 scenario/model/policy/repair design using OpenAI-compatible streaming so that **time to first token** can be measured directly. The frozen B2 results are not modified.
+The independent streaming replication completed **75/75 decisions** and is committed under:
 
-The replication records, per attempt:
+`evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/`
 
-- model TTFT: request dispatch to first non-empty streamed content chunk;
-- full candidate completion time;
-- first-token time relative to the start of a repaired decision;
-- guard outcome and complete reassembled candidate.
+Result commit: `df6e2a00e7cc1af8756c7e3c01f65ecfa3a71bb2`.
 
-It also records **admission-ready time**. This distinction matters because the current deterministic guard validates a completed JSON candidate. The first streamed model token cannot yet be exposed safely to the participant; the architecture does not know whether the intervention is admissible until generation completes. Consequently:
+The run retained the same five B2 scenarios, three-model panel and guard-aware repair design, while enabling OpenAI-compatible streaming. It used one excluded warm-up request per model.
+
+Runtime provenance:
+
+- Apple M1 Max / 64 GB unified memory;
+- Ollama server **0.32.5**;
+- Ollama client **0.32.9**;
+- CLI version-mismatch warning retained in the manifest.
+
+First-attempt TTFT median/p90:
+
+- Qwen3-30B-A3B: **164 / 347 ms**;
+- Qwen3-4B: **205 / 476 ms**;
+- Mistral Small 3.2: **252 / 613 ms**.
+
+Admission-ready median/p90, i.e. earliest safe delivery under the current completed-candidate guard:
+
+- Qwen3-30B-A3B: **1.755 / 1.938 s**;
+- Qwen3-4B: **1.365 / 2.447 s**;
+- Mistral Small 3.2: **4.084 / 6.008 s**.
+
+Median admission-ready time is approximately 10.7×, 6.6× and 16.2× first-attempt TTFT respectively.
+
+The central result is:
 
 > **model TTFT is not equivalent to safe conversational response onset when admission control requires the completed candidate.**
 
-Each model receives one excluded streaming warm-up request so measured TTFT characterises resident-model behaviour rather than first-load time.
+For the primary model, content begins streaming at 164 ms median but the intervention is not admission-ready until 1.755 s median. The guard validates complete JSON, and rejected candidates must finish before repair begins. Simply streaming generated tokens into TTS would therefore bypass the intervention-admission mechanism.
 
-Current target-machine Ollama versions supplied for the replication:
+The replication is stochastic and is not pooled with original B2. Its fallback counts were 1/25, 6/25 and 4/25, compared with original B2 counts 1/25, 5/25 and 2/25. Original B2 remains the canonical behavioural/qualitative run; this replication supplies streaming timing evidence.
 
-- server: **0.32.5**;
-- client: **0.32.9** (the CLI reports the server/client mismatch warning).
-
-Protocol: `evaluation/EXPERIMENT-B2-TTFT-PROTOCOL.md`.
-
-The runner and streaming parser have CI coverage. The implementation CI passed after adding the TTFT instrumentation. The actual 75-decision model run must execute on the target machine hosting the frozen Ollama model panel; it cannot be produced by GitHub-hosted CI.
+Full audit: `evaluation/results/rtca-experiment-b2-ttft-20260816T025921Z/TTFT-AUDIT.md`.
 
 ## Current production questions
 
 The experimental failures sharpen rather than settle the production design. Open questions include:
 
 - whether a no-speech `WAIT/YIELD` action is preferable to computationally generated backchannels in some moments;
+- how admission can become compatible with token streaming without exposing an intervention before its epistemic constraints have been checked;
 - how to ground interventions in source spans broader than the latest turn without allowing unsupported reconstruction;
 - how to replace brittle lexical admission tests with semantics that remain auditable;
 - how to support participant interruption and overlap without converting speech timing into another source of pressure;
