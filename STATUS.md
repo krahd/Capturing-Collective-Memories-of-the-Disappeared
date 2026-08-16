@@ -3,13 +3,15 @@
 **Date:** 15 August 2026  
 **Phase:** disposable interaction prototype plus production-design research  
 **Participant data:** none; current experiments use researcher-authored synthetic material  
-**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit and B2 repair experiment completed
+**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit and B2 repair experiment completed; streaming TTFT replication instrumented and pending execution on the target machine
 
 ## Project objective
 
 The central design problem is to capture dispersed, partial and situated recollections connected to Uruguay's detained-disappeared without forcing contributors to arrive with a finished testimony or translating their memories into database categories before they can speak. The conversational agent, provenance model, memory field and technical architecture are means to that end.
 
 The repository deliberately separates the current disposable prototype from long-lived production guidance. The prototype is an experimental instrument, not a production architecture.
+
+The long-lived **Capturing Collective Memories of the Disappeared with Artificial Intelligence** project is being developed toward a **speech-first, full-duplex voice interface**. The production design is intended to let participants interrupt easily, continue through apparent turn boundaries, overlap naturally and correct an incorrect system intervention before it finishes. The current half-duplex browser path is only a disposable test instrument and must not be mistaken for the target interaction model.
 
 ## Current prototype
 
@@ -24,7 +26,7 @@ The implementation currently provides:
 - a constrained interviewer with `BACKCHANNEL`, `INVITE_CONTINUE`, `FOLLOW_UP`, `CLARIFY`, and `ACKNOWLEDGE` moves;
 - a deterministic intervention-admission guard checking structural/lexical source relations, repeated wording, question packing and selected forms of unsupported certainty;
 - optional local continuous half-duplex voice with a configurable 2.2 s endpointing heuristic;
-- no implemented no-speech `WAIT/YIELD` action and no production full-duplex speech path;
+- no implemented no-speech `WAIT/YIELD` action and no production full-duplex speech path yet;
 - deterministic tests and frozen researcher-authored evaluation tooling.
 
 The `campo de memoria` exposes relations among stored acts of recollection. It is not claimed to be collective memory itself, and same-label convergence is not historical corroboration or identity resolution.
@@ -73,6 +75,32 @@ The combined experimental result is diagnostic rather than a leaderboard: tighte
 
 The formal `human_*` adjudication fields remain unfilled. Do not report quantitative rates for useful facilitation, semantic distortion, informational noise, cultural validity, trauma-informed adequacy or participant benefit from these experiments.
 
+### B2 TTFT replication
+
+A new runner, `scripts/run_rtca_ttft_experiment.py`, now reproduces the B2 scenario/model/policy/repair design using OpenAI-compatible streaming so that **time to first token** can be measured directly. The frozen B2 results are not modified.
+
+The replication records, per attempt:
+
+- model TTFT: request dispatch to first non-empty streamed content chunk;
+- full candidate completion time;
+- first-token time relative to the start of a repaired decision;
+- guard outcome and complete reassembled candidate.
+
+It also records **admission-ready time**. This distinction matters because the current deterministic guard validates a completed JSON candidate. The first streamed model token cannot yet be exposed safely to the participant; the architecture does not know whether the intervention is admissible until generation completes. Consequently:
+
+> **model TTFT is not equivalent to safe conversational response onset when admission control requires the completed candidate.**
+
+Each model receives one excluded streaming warm-up request so measured TTFT characterises resident-model behaviour rather than first-load time.
+
+Current target-machine Ollama versions supplied for the replication:
+
+- server: **0.32.5**;
+- client: **0.32.9** (the CLI reports the server/client mismatch warning).
+
+Protocol: `evaluation/EXPERIMENT-B2-TTFT-PROTOCOL.md`.
+
+The runner and streaming parser have CI coverage. The implementation CI passed after adding the TTFT instrumentation. The actual 75-decision model run must execute on the target machine hosting the frozen Ollama model panel; it cannot be produced by GitHub-hosted CI.
+
 ## Current production questions
 
 The experimental failures sharpen rather than settle the production design. Open questions include:
@@ -85,7 +113,7 @@ The experimental failures sharpen rather than settle the production design. Open
 - how to govern provisional cross-session identity/coreference hypotheses;
 - what human and participant evidence is required before any production deployment.
 
-Full duplex remains a production hypothesis/target to test, not an empirically established participant requirement.
+Full duplex is the production interaction direction, but its participant benefits and appropriate timing policy remain empirical questions to test rather than established outcomes.
 
 ## Repository boundaries
 
