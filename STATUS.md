@@ -3,7 +3,7 @@
 **Date:** 16 August 2026  
 **Phase:** disposable interaction prototype plus production-design research  
 **Participant data:** none; current experiments use researcher-authored synthetic material  
-**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit, B2 repair experiment and clean streaming TTFT replication completed
+**RTCA evidence:** Level 0, B1 multi-model comparison, guard-effect audit, B2 repair experiment and clean streaming timing replication completed
 
 ## Project objective
 
@@ -67,13 +67,13 @@ Final deterministic fallback fell to:
 - Qwen3-4B: **20%**;
 - Mistral Small 3.2: **8%**.
 
-That did not turn repair into successful elicitation. Qwen3-30B reached admission mostly through minimal backchannels; Mistral remained dominated by minimal acknowledgements/backchannels; Qwen3-4B produced more active probes but repeatedly misread the Rioplatense expression `caía por el bar` while satisfying the structural/lexical admission checks. Lexical overlap is not semantic fidelity.
+That did not turn repair into successful elicitation. Qwen3-30B reached admission mostly through minimal backchannels; Mistral remained dominated by minimal acknowledgements/backchannels. The Rioplatense `place-bar` case exposes a different limitation: B1 unambiguously interprets `caía por el bar` as a physical fall, while all five Qwen3-4B B2 outputs target variants of `cómo caía por el bar` for clarification and drop the source hedge `creo` while passing structural/lexical admission. Lexical overlap is not semantic or epistemic fidelity.
 
-B2 also makes the real-time cost visible. Median accumulated sequential model-request time was 2.51 s for Qwen3-30B, 1.93 s for Qwen3-4B and 7.09 s for Mistral. Among models with both first-pass and repaired acceptances, the median rose from 0.80 to 1.99 s for Qwen3-4B and from 3.20 to 7.31 s for Mistral. These are local request times, not streaming TTFT or participant-perceived speech latency. See `evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md`.
+B2 also makes the real-time cost visible. Median accumulated sequential model-request time was 2.51 s for Qwen3-30B, 1.93 s for Qwen3-4B and 7.09 s for Mistral. Among models with both first-pass and repaired acceptances, the median rose from 0.80 to 1.99 s for Qwen3-4B and from 3.20 to 7.31 s for Mistral. These are local request times, not streaming onset or participant-perceived speech latency. See `evaluation/results/rtca-experiment-b2-20260815T050113Z/LATENCY-AUDIT.md`.
 
 The formal `human_*` adjudication fields remain unfilled. Do not report quantitative rates for useful facilitation, semantic distortion, informational noise, cultural validity, trauma-informed adequacy or participant benefit from these experiments.
 
-### Clean B2 streaming TTFT replication — canonical timing evidence
+### Clean B2 streaming timing replication — canonical timing evidence
 
 The clean fixed-seed streaming replication completed **75/75 decisions** and is stored under:
 
@@ -95,32 +95,34 @@ Runtime controls:
 
 Timing results:
 
-| Model | First-attempt TTFT median / p90 | Accepted token from decision start median / p90 | Admission-ready median / p90 | Fallback |
+| Model | First-attempt candidate-stream onset median / p90 | Accepted-candidate stream onset from decision start median / p90 | Admission-ready median / p90 | Fallback |
 |---|---:|---:|---:|---:|
 | Qwen3-30B-A3B | **166 / 352 ms** | **1,559 / 1,781 ms** | **1.771 / 1.988 s** | 0/25 |
 | Qwen3-4B | **162 / 244 ms** | **801 / 937 ms** | **1.219 / 1.948 s** | 4/25 |
 | Mistral Small 3.2 | **253 / 617 ms** | **2,565 / 4,845 ms** | **4.067 / 6.486 s** | 2/25 |
 
-`Accepted token from decision start` includes time consumed by earlier rejected attempts. The primary-model sequence is therefore **166 ms first-attempt TTFT → 1.559 s accepted-candidate onset → 1.771 s admission-ready**. Most of the lost conversational interval accumulates before the successful candidate begins.
+The primary-model sequence is therefore **166 ms first-attempt candidate-stream onset → 1.559 s accepted-candidate stream onset → 1.771 s admission-ready**. Across all three models, most of the median admission interval elapses before the accepted candidate stream begins.
+
+The model returns a structured JSON candidate. The first non-empty streamed content chunk can precede the participant-facing `utterance` field, so both stream-onset measures are **lower bounds on participant-facing utterance onset**, not measurements of speech onset.
 
 The clean run closely reproduces the earlier exploratory timing for Qwen3-30B and Mistral while removing the previous Ollama 0.32.5/0.32.9 mismatch. The earlier run remains preserved as provenance but is superseded for paper-facing timing.
 
 The central timing result is:
 
-> **Fast first-token generation does not imply fast admissible speech when the architecture serially generates, rejects, repairs and validates complete candidates.**
+> **Fast candidate-stream onset does not imply fast admissible speech when the architecture serially generates, rejects, repairs and validates complete candidates.**
 
 The fixed-seed streaming run is not pooled with original B2. Original B2 remains canonical for behavioural/qualitative evidence; the clean run supplies canonical timing evidence.
 
 ## Evidence boundaries sharpened for the RTCA paper
 
-The current paper no longer treats later recurrence as historical significance or candidate narrowing as observed downstream branch closure. In the synthetic benchmark:
+The current paper treats later recurrence as a researcher-defined signal for retrospective scrutiny, not as historical verification, and distinguishes foreclosure-risk interventions from observed downstream effects. In the synthetic stress-test suite:
 
-- B/C recurrence is a researcher-defined future-relevance proxy for retrospective scrutiny;
 - all five convergence families recur;
 - no matched non-recurring branches are present;
+- later B/C sessions are withheld from generation;
 - no subsequent participant turns are observed after the intervention.
 
-The experiment therefore diagnoses candidate foreclosure mechanisms, guard/repair behaviour, semantic failure and timing. It does not establish downstream effects on recollection.
+The experiment therefore diagnoses intervention-risk mechanisms, guard/repair behaviour, semantic/epistemic failure and timing. It does not establish downstream effects on recollection.
 
 ## Current production questions
 
