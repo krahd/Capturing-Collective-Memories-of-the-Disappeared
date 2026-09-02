@@ -9,6 +9,7 @@ These documents guide future implementations and should survive the disposable p
 - [`DESIGN-FOUNDATIONS.md`](DESIGN-FOUNDATIONS.md) — project objective hierarchy, problem families, long-lived invariants and research grounding.
 - [`COLLECTIVE-MEMORY-CAPTURE.md`](COLLECTIVE-MEMORY-CAPTURE.md) — deferred collective significance, under-formulated recollections, capture policy, archive blindness and cross-session representation cautions.
 - [`FUTURE-ARCHITECTURE.md`](FUTURE-ARCHITECTURE.md) — mobile/speech production direction, capture/archive isolation, source/mediation/interpretation layers, privacy, consent, accessibility, threat model and unresolved deployment choices.
+- [`ON-DEVICE-CONVERSATION-CROSS-FERTILISATION.md`](ON-DEVICE-CONVERSATION-CROSS-FERTILISATION.md) — September 2026 mobile on-device conversation experiment shared at the technical level with a separate commercial project: Spanish streaming ASR, local LLM, local TTS/voice cloning, barge-in and the explicit public/proprietary code boundary.
 - [`EVALUATION-FRAMEWORK.md`](EVALUATION-FRAMEWORK.md) — evidence levels, conversational/capture evaluation, epistemic-interference failures, deferred-significance tests, speech/timing metrics, accessibility and adversarial evaluation.
 
 The broader manuscript and literature-review workspace is private and is not a public dependency of this repository. Public design claims should be supported here by self-contained evidence or public primary references rather than links that external readers cannot access.
