@@ -1,15 +1,16 @@
 # On-device mobile conversation — cross-fertilisation note
 
-**Date:** 1 September 2026  
+**Original date:** 1 September 2026  
+**Updated:** 3 September 2026  
 **Status:** production-direction experiment; no production dependency selected
 
 ## Why this exists
 
-A separate private commercial project, URSULA, is beginning a fully on-device mobile conversational proof of concept. The technical problem substantially overlaps with this project's already documented production target: mobile-first, speech-first conversational capture with strong privacy, interruption and offline/intermittent operation.
+A separate private commercial project, URSULA, now has a source-audited native iPhone proof for fully local Spanish conversation. The technical problem substantially overlaps with this project's production target: mobile-first, speech-first conversational capture with strong privacy, participant interruption and offline/intermittent operation.
 
 The overlap is useful, but it must not blur project ownership or create a hidden proprietary dependency in this public research repository.
 
-This document records the shared **technical questions** and a candidate experimental stack using only public references. It does not import URSULA product code, storytelling semantics or commercial project state.
+This document records transferable **technical findings and questions** using public references/concepts. It does not import URSULA code, product semantics, model policy or commercial state.
 
 ## Shared technical substrate under test
 
@@ -20,132 +21,161 @@ microphone
    ↓
 local voice activity / turn evidence
    ↓
-streaming ASR
+local Spanish ASR
    ↓
 text conversation model
    ↓
-experience-specific policy
+project-specific mediation policy
    ↓
 local TTS
    ↓
 speaker
+   ↘ participant interruption / floor return
 ```
 
-The production-relevant questions shared by both projects include:
+Shared questions include:
 
 - whether useful Spanish conversation can remain fully on-device on current phones;
-- latency from usable end-of-turn evidence to first audible response;
-- whether a cascaded system can support participant barge-in without a monolithic full-duplex speech model;
+- latency from end-of-turn evidence to first audible response;
+- whether cascaded local models can support barge-in without a monolithic full-duplex model;
 - memory, battery and thermal cost;
 - Rioplatense/Uruguayan ASR behaviour;
-- local TTS quality and pronunciation;
-- model and voice provenance;
-- offline operation;
+- local TTS quality/pronunciation;
+- offline cold-start rather than merely offline continuation;
 - model/version reproducibility;
 - clean separation between generic runtime and project-specific mediation policy.
 
-## Candidate first iPhone proof
+## Current engineering evidence from the private proof
 
-### ASR: Moonshine Spanish Streaming
+The URSULA proof currently implements:
 
-Moonshine Voice currently provides on-device streaming Spanish ASR, including Small Streaming (123M) and Tiny Streaming (34M) models, with native iOS support. The current streaming Spanish models are MIT-licensed.
+- native iOS `AVAudioSession` / `AVAudioEngine` voice-processing audio;
+- local energy endpointing with microphone pre-roll;
+- Parakeet TDT v3 multilingual ASR with a Spanish hint;
+- Apple's on-device Foundation Models system model for the first persistent local conversation baseline;
+- PocketTTS `spanish24L` through an audited FluidAudio repair revision;
+- locally recorded/derived voice conditioning;
+- participant barge-in with playback-generation invalidation;
+- cold-offline acceptance as an explicit requirement.
 
-This is a better first mobile experiment than moving the current desktop `whisper.cpp` configuration unchanged onto the phone: the point of the experiment is to test an architecture designed for streaming mobile use.
+This is engineering evidence, not a recommendation that this research project adopt the same exact stack.
 
-Public references:
+### Important correction to the earlier candidate stack
 
-- https://github.com/moonshine-ai/moonshine
-- https://github.com/moonshine-ai/moonshine/blob/main/docs/models/available-models.md
-- https://github.com/moonshine-ai/moonshine-swift
+The original note proposed **Moonshine Spanish Streaming** as the first mobile ASR. The private proof instead implemented endpointed Parakeet TDT v3 because the same Swift/CoreML dependency already supplied both ASR and TTS.
 
-Generic Spanish benchmark scores are not sufficient evidence for this project. Evaluation must include Uruguayan/Rioplatense speech, participant pace, names, places, code-switching and historically specific vocabulary.
+This does **not** settle the research choice here. The current Parakeet path is utterance-endpointed, not token-streaming Spanish ASR. If endpointed recognition materially harms turn-taking, Moonshine Small/Tiny Streaming Spanish remains the most relevant next comparator.
 
-### Local text model: Apple Foundation Models as first iOS baseline
+For collective-memory capture specifically, streaming/partial evidence may matter more because:
 
-Apple's Foundation Models framework provides an on-device multilingual language model with Spanish support, multi-turn sessions, structured/guided generation and tool calling on compatible devices.
+- participant pauses may be longer and semantically meaningful;
+- the system should avoid claiming the floor too quickly;
+- interruption/revision may occur before conventional endpoint closure;
+- exact timing may be research-relevant provenance.
 
-This makes it a useful first systems baseline because it allows the experiment to isolate whether a fully local conversation loop is viable without first solving open-model deployment.
+## Interruption lesson: playback cancellation is not enough
 
-It must **not** become the sole research path because:
+A significant bug found in the private proof generalises directly to conversational capture systems.
 
-- availability depends on Apple-Intelligence-capable hardware;
-- model behaviour changes with OS/model releases;
-- context is bounded;
-- the exact system model is not a fixed researcher-distributed checkpoint.
+The text model can commit a complete assistant response to its conversational history **before the participant has heard the complete TTS delivery**. If the participant interrupts halfway through, a naïve persistent session then behaves as if the unheard remainder had been communicated.
 
-Every experiment using it must therefore record device, OS/model environment and prompt/policy version.
+The audited proof addresses this by:
 
-Public references:
+1. preserving a rollback transcript before/around the generated response;
+2. recording interruption as capture provenance rather than inferring it from UI callback order;
+3. rebuilding the local model session before the next model operation so the interrupted assistant response is not silently treated as delivered.
 
-- https://developer.apple.com/documentation/FoundationModels
-- https://developer.apple.com/documentation/foundationmodels/supporting-languages-and-locales-with-foundation-models
+Without word-level text/audio alignment, the proof conservatively removes the whole interrupted assistant answer from model history.
 
-### Open-model comparator: Qwen3 through Apple Core AI
+For **Capturing Collective Memories**, this point is even more important. Future implementation must distinguish at least:
 
-Apple's 2026 `coreai-models` tooling supports Qwen3 export for iOS and allows an app-bundled open model to conform to the same Foundation Models `LanguageModel` abstraction.
+- text generated by the mediator;
+- text/audio actually delivered to the participant;
+- participant interruption time;
+- any undelivered synthetic continuation.
 
-A Qwen3-0.6B path is therefore a useful later comparator for reproducibility/provider independence after the system-model baseline works.
+A mediator's internal generated text must not silently become part of the participant-facing conversational record merely because synthesis was started.
 
-Public references:
+## Participant-floor lesson
 
-- https://github.com/apple/coreai-models
-- https://developer.apple.com/documentation/foundationmodels/running-a-core-ai-model-in-a-foundation-models-session
+The private proof uses interruptible cascaded conversation:
 
-### Local TTS: Pocket TTS through FluidAudio
+1. assistant TTS is playing;
+2. microphone remains active through the voice-processing/AEC path;
+3. local turn evidence detects participant speech;
+4. assistant playback is invalidated/stopped;
+5. pre-roll preserves the beginning of the participant's interruption;
+6. the new participant utterance proceeds to ASR.
 
-Kyutai Pocket TTS is approximately 100M parameters, supports Spanish, streaming synthesis and local voice cloning. FluidAudio currently provides a Swift/CoreML path with Spanish and Spanish-24-layer packs plus voice cloning from short reference audio.
+It also carries the exact interrupted playback generation with the captured utterance. This avoids a race where a delayed playback-finished callback could make a fully delivered assistant response look interrupted.
 
-This is a particularly relevant first mobile TTS experiment because it tests both local synthesis and local voice identity without a commercial speech API.
+For this project, the important general principle is:
 
-Public references:
+> **floor ownership and delivered mediation must be represented explicitly, not reconstructed later from interface callback timing.**
 
-- https://kyutai.org/blog/2026-05-04-pocket-tts-multilingual/
-- https://github.com/kyutai-labs/pocket-tts
-- https://github.com/FluidInference/FluidAudio
-- https://github.com/FluidInference/FluidAudio/blob/main/Documentation/TTS/PocketTTS.md
+The collective-memory system still needs a more conservative endpoint/floor policy than a storytelling system. Silence is participant-owned interactional time, not merely latency to optimise away.
 
-Any cloned research/demo voice must be explicitly consented and its provenance recorded. No participant voice should be turned into a reusable synthesis profile merely because the technical system makes that easy.
+## Audio/privacy lifecycle lesson
+
+The audit found that model preparation had originally activated the microphone even though no speech was being captured. The corrected proof now:
+
+- prepares models without opening the microphone;
+- activates audio lazily only for voice capture/conversation;
+- releases the audio session immediately after the activity ends;
+- removes file I/O from the realtime audio callback;
+- protects/deletes temporary audio;
+- fails closed on unexpected live audio-format change rather than reallocating large buffers in the realtime callback.
+
+This is directly relevant here. A privacy-sensitive research system should not keep microphone resources active merely because local models are resident.
+
+## Offline lesson
+
+The private proof also falsified a useful assumption: a library-level `offlineMode` flag is not necessarily a network sandbox.
+
+At the pinned FluidAudio revision, ModelHub-managed download paths honour its offline flag, but some auxiliary PocketTTS asset paths use direct `URLSession` downloads and bypass it.
+
+Therefore the proof's hard no-network acceptance test is physical:
+
+- Airplane Mode on;
+- Wi-Fi off;
+- app terminated;
+- cold relaunch;
+- preparation from caches only.
+
+For this project, the transferable lesson is broader:
+
+> **offline/privacy claims must be tested at the system boundary, not inferred from a model library's configuration flag.**
+
+If a production study needs a provably offline capture mode, it should test/observe network capability at the process/device level and record exact model/cache revisions.
+
+## Local TTS / voice identity
+
+PocketTTS remains an interesting local TTS family, but the audit found that reliable non-English cloning required a newer FluidAudio repair than the latest stable release available on 3 September 2026. The repaired path uses a pack-local language-specific Mimi encoder.
+
+This reinforces an important research distinction:
+
+- local TTS is a technical capability;
+- reusable voice identity is governed data.
+
+No participant voice should become a reusable synthesis profile merely because the system can clone it. A collective-memory deployment may not need cloning at all; a deliberately neutral/project-owned voice may be more appropriate. That is an interaction/ethics decision, not an engineering default.
 
 ## Tokenizer-free TTS comparator: VoxCPM
 
-VoxCPM is a separate TTS family that generates continuous speech representations rather than discrete audio tokens.
+VoxCPM remains relevant because it generates continuous speech representations rather than discrete audio tokens.
 
-Its architecture is relevant to the wider mobile speech evaluation, but its versions have different practical roles:
+- VoxCPM-0.5B / VoxCPM1.5 are smaller but currently Chinese/English-oriented;
+- VoxCPM2 adds Spanish/multilingual cloning/control but is much larger;
+- its `llama.cpp-omni` path establishes portability, not satisfactory realtime iPhone performance.
 
-- VoxCPM-0.5B and VoxCPM1.5 are relatively small but currently Chinese/English only;
-- VoxCPM2 is 2B and supports 30 languages including Spanish, plus voice design/cloning;
-- VoxCPM2 now has an on-device/edge `llama.cpp-omni` GGUF path with CPU/Metal support.
-
-The official project reports about RTF 1.76 for Q8 inference on an Apple M4 Pro. That makes it worth benchmarking, but it does not establish acceptable realtime performance on an iPhone. It should therefore follow, not block, the lighter Pocket TTS proof.
-
-Public reference:
-
-- https://github.com/OpenBMB/VoxCPM
-
-## Interruption: test cascaded barge-in before full speech-to-speech
-
-The existing production architecture correctly treats participant interruption as potentially important while leaving full duplex unproven.
-
-A useful intermediate experiment is **interruptible cascaded conversation**:
-
-1. system TTS is playing;
-2. microphone remains active through platform echo-cancellation / voice-processing audio;
-3. local VAD detects participant speech;
-4. playback is cancelled promptly;
-5. the participant retains the floor;
-6. streaming ASR continues the new turn.
-
-This tests the interactional property we care about — participant ability to interrupt a mistaken or premature system turn — without making a full-duplex speech-language model an architectural prerequisite.
-
-The system's own end-of-turn policy must remain conservative for collective-memory capture. Silence is not a network delay to optimise away.
+It remains a later benchmark rather than a prerequisite for the mobile capture architecture.
 
 ## What this project must keep separate
 
-Even if the technical substrate is eventually shared, this project owns its own requirements for:
+Even if technical primitives are eventually shared, this project owns its own requirements for:
 
-- source audio as primary captured material;
+- original participant audio as primary captured material where consented;
 - ASR transcript as derivation;
-- exact mediation history;
+- exact mediation/delivery history;
 - participant-led interview policy;
 - conservative floor management;
 - consent and withdrawal;
@@ -158,38 +188,59 @@ A commercial storytelling runtime must not define those rules.
 
 ## Code-sharing boundary
 
-Do not make this public repository depend on a proprietary commercial repository merely to avoid duplicate work.
+Do not make this public repository depend on proprietary URSULA merely to avoid duplicate work.
 
-The current approach is:
+Current rule:
 
-1. allow the private proof to establish whether the generic mobile conversation architecture actually works;
-2. keep the generic audio/session/model interfaces deliberately separable from product logic;
-3. independently validate the same requirements against this project's research constraints;
-4. if both projects genuinely require the same stable generic substrate, make an explicit later decision to extract or publish that generic subset under an appropriate licence.
+1. let the private proof establish concrete mobile/audio/model failure modes;
+2. transfer architectural lessons and public-source evidence, not product code;
+3. independently test those lessons against this project's research constraints;
+4. only if both projects genuinely require the same stable generic substrate, make an explicit later decision to extract/publish that subset.
 
-That extraction should contain technical runtime only — audio lifecycle, model interfaces, event schemas, interruption and instrumentation — not storytelling logic or collective-memory research policy.
+A future generic public package, if justified, should contain technical runtime only:
 
-## Shared proof acceptance criteria relevant here
+- audio lifecycle;
+- model interfaces;
+- event/delivery schemas;
+- interruption/cancellation;
+- latency/resource instrumentation.
 
-A useful first proof should run on a physical supported iPhone with the network disabled after assets are installed and demonstrate:
+It should contain neither URSULA storytelling logic nor collective-memory interviewing/governance policy.
 
-- live Spanish microphone input;
-- streaming partial/final ASR;
+## Acceptance criteria relevant to this research project
+
+A useful shared engineering proof should establish on a physical supported phone:
+
+- local Spanish microphone capture;
+- explicit turn/floor evidence;
+- local Spanish ASR;
 - local multi-turn model response;
-- local Spanish TTS;
-- participant barge-in cancelling TTS;
+- local TTS;
+- participant barge-in cancelling synthetic speech promptly;
+- exact distinction between generated and actually delivered mediation;
 - measured end-to-end latency;
-- measured peak memory and thermal behaviour;
+- measured peak memory/thermal/battery behaviour;
 - explicit model/version provenance;
-- no hidden network dependency.
+- cold offline relaunch with no hidden network dependency.
 
-For this project specifically, later evaluation must additionally measure:
+For collective-memory capture specifically, later evaluation must additionally measure:
 
 - whether endpointing cuts off continuation;
-- whether interruption works for slower or hesitant speech;
-- ASR failures on names/places and Rioplatense forms;
-- whether synthetic speech changes participant willingness to continue;
-- whether the local model maintains the existing interviewer constraints;
+- whether the system tolerates slower/hesitant speech and long pauses;
+- ASR failures on names, places and Rioplatense forms;
+- whether interruption works without pressuring faster speech;
+- whether synthetic speech affects willingness to continue;
+- whether the local interviewer maintains project-specific constraints;
 - whether local-only operation materially improves the actual privacy/threat model rather than merely relocating sensitive data to an inadequately protected phone.
 
-No production choice follows automatically from a successful engineering proof.
+No production choice follows automatically from a successful URSULA engineering proof.
+
+## Public references
+
+- https://github.com/moonshine-ai/moonshine
+- https://github.com/moonshine-ai/moonshine-swift
+- https://developer.apple.com/documentation/FoundationModels
+- https://github.com/apple/coreai-models
+- https://github.com/kyutai-labs/pocket-tts
+- https://github.com/FluidInference/FluidAudio
+- https://github.com/OpenBMB/VoxCPM
