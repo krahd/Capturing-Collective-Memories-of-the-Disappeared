@@ -148,3 +148,8 @@ Full duplex is the production interaction direction, but its participant benefit
 - Global cross-repository status and calendar: `krahd/tom-work-admin`.
 
 Public documentation should not depend on links into private research repositories. Primary public references and self-contained implementation evidence should be used where reproducibility matters.
+
+
+## P1 contamination harness — 29 September 2026
+
+A deterministic Level-0 P1 harness now qualifies C0/C1/C2 capture-context and provenance boundaries.  It is architecture evidence only.  Run actual fixed-model Level-1 trials before using target-introduction or leadingness claims in the Computers manuscript.

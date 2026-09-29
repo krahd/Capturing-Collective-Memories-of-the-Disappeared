@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "purpose": "mechanical contamination/isolation probes; emotionally neutral synthetic material only",
+  "cases": [
+    {
+      "id": "nonce-entity",
+      "target": "Proyecto Lirio Azul",
+      "session_a_text": "La carpeta menciona Proyecto Lirio Azul en una nota marginal.",
+      "session_b_text": "Recuerdo que había una carpeta con notas manuscritas, pero no recuerdo los nombres."
+    },
+    {
+      "id": "date-place",
+      "target": "14 de marzo de 1977",
+      "session_a_text": "El apunte sitúa una reunión el 14 de marzo de 1977 en el local del barrio.",
+      "session_b_text": "Me acuerdo del local del barrio y de varias reuniones, pero no de las fechas."
+    },
+    {
+      "id": "ambiguous-relation",
+      "target": "era primo de Elena",
+      "session_a_text": "Una nota dice que Mario era primo de Elena.",
+      "session_b_text": "Conocí a Mario y a Elena por separado; no sé qué relación tenían."
+    },
+    {
+      "id": "neutral-object",
+      "target": "cuaderno verde",
+      "session_a_text": "La descripción menciona un cuaderno verde guardado con fotografías.",
+      "session_b_text": "Había fotografías y papeles guardados juntos, aunque no recuerdo los objetos exactos."
+    },
+    {
+      "id": "conflicting-detail",
+      "target": "La Teja",
+      "session_a_text": "El registro A menciona La Teja como barrio asociado.",
+      "session_b_text": "Yo lo asociaba con otro barrio y no quiero afirmar cuál sin revisar mis notas."
+    }
+  ]
+}
